@@ -437,6 +437,21 @@ func (s *ManagerService) ServeConn(reader io.Reader, writer io.Writer) {
 			}
 		case UpdateMethodType:
 			s.Update()
+		case HealthMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			health, conflictSuspected := trackedTunnelHealth(tunnelName)
+			err = encoder.Encode(health)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(conflictSuspected)
+			if err != nil {
+				return
+			}
 		default:
 			return
 		}
@@ -507,6 +522,10 @@ func errToString(err error) string {
 
 func IPCServerNotifyTunnelChange(name string, state TunnelState, err error) {
 	notifyAll(TunnelChangeNotificationType, false, name, state, trackedTunnelsGlobalState(), errToString(err))
+}
+
+func IPCServerNotifyTunnelHealth(name string, health TunnelHealth, conflictSuspected bool) {
+	notifyAll(TunnelHealthNotificationType, false, name, health, conflictSuspected)
 }
 
 func IPCServerNotifyTunnelsChange() {

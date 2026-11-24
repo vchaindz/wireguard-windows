@@ -31,3 +31,13 @@ Windows assigns a unique GUID to each new WireGuard adapter. The application tak
 ### Adapter Lifetime
 
 WireGuard's network adapter is created dynamically when a tunnel is started and destroyed when a tunnel is stopped. This means that additional filters, address families, or protocols should be bound to the adapter programmatically, possibly through use of dangerous script execution in the configuration file or by way of automatic NDIS layer binding.
+
+### Connection Check
+
+A tunnel's service is "active" as soon as its adapter is up, whether or not a peer ever answers, because WireGuard itself is connectionless. The manager service therefore samples each active tunnel's per-peer counters from the driver every 5 seconds and reports one of:
+
+- **Active (connected)** &ndash; at least one peer completed a handshake within the last 180 seconds.
+- **Active, but no connection** &ndash; packets have been sent for 20 seconds or more without any peer completing a handshake. This is also shown in the tunnel list and as a tray notification, and stays until a handshake succeeds.
+- **Active (connection not verified)** &ndash; there is no recent handshake, but nothing has been sent either. A tunnel without `PersistentKeepalive` only handshakes when there is traffic, so an idle tunnel cannot be told apart from a broken one. Nothing is sent to find out.
+
+The same samples are used to warn when another device appears to be using the same private key. In that situation the server answers whichever device spoke last, the other one hears nothing and renews its session after about 15 seconds, and the two keep displacing each other, which breaks long-lived connections on both. The warning is raised when sessions are renewed less than 60 seconds apart three times within five minutes, where the normal interval is two minutes. This is a heuristic: a very lossy path can cause the same pattern, and two devices that are never busy at the same time will not trigger it. The certain test is on the server, where the peer's endpoint in `wg show` alternates between two addresses. The remedy is a separate key pair, and tunnel address, for each device.

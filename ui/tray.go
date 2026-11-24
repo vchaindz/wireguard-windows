@@ -20,6 +20,11 @@ import (
 // Status + active CIDRs + separator
 const trayTunnelActionsOffset = 3
 
+type trayTunnelHealth struct {
+	health            manager.TunnelHealth
+	conflictSuspected bool
+}
+
 type Tray struct {
 	*walk.NotifyIcon
 
@@ -29,7 +34,11 @@ type Tray struct {
 
 	mtw *ManageTunnelsWindow
 
+	// Last health reported for each started tunnel, to notify only on transitions
+	tunnelHealth map[string]trayTunnelHealth
+
 	tunnelChangedCB  *manager.TunnelChangeCallback
+	tunnelHealthCB   *manager.TunnelHealthCallback
 	tunnelsChangedCB *manager.TunnelsChangeCallback
 
 	clicked func()
@@ -39,8 +48,9 @@ func NewTray(mtw *ManageTunnelsWindow) (*Tray, error) {
 	var err error
 
 	tray := &Tray{
-		mtw:     mtw,
-		tunnels: make(map[string]*walk.Action),
+		mtw:          mtw,
+		tunnels:      make(map[string]*walk.Action),
+		tunnelHealth: make(map[string]trayTunnelHealth),
 	}
 
 	tray.NotifyIcon, err = walk.NewNotifyIcon(mtw)
@@ -104,6 +114,7 @@ func (tray *Tray) setup() error {
 		tray.ContextMenu().Actions().Add(action)
 	}
 	tray.tunnelChangedCB = manager.IPCClientRegisterTunnelChange(tray.onTunnelChange)
+	tray.tunnelHealthCB = manager.IPCClientRegisterTunnelHealth(tray.onTunnelHealth)
 	tray.tunnelsChangedCB = manager.IPCClientRegisterTunnelsChange(tray.onTunnelsChange)
 	tray.onTunnelsChange()
 	globalState, _ := manager.IPCClientGlobalState()
@@ -116,6 +127,10 @@ func (tray *Tray) Dispose() error {
 	if tray.tunnelChangedCB != nil {
 		tray.tunnelChangedCB.Unregister()
 		tray.tunnelChangedCB = nil
+	}
+	if tray.tunnelHealthCB != nil {
+		tray.tunnelHealthCB.Unregister()
+		tray.tunnelHealthCB = nil
 	}
 	if tray.tunnelsChangedCB != nil {
 		tray.tunnelsChangedCB.Unregister()
@@ -277,6 +292,22 @@ func (tray *Tray) onTunnelChange(tunnel *manager.Tunnel, state, globalState mana
 			tray.ShowError(l18n.Sprintf("WireGuard Tunnel Error"), err.Error())
 		}
 		tray.setTunnelState(tunnel, state)
+		if state != manager.TunnelStarted {
+			delete(tray.tunnelHealth, tunnel.Name)
+		}
+	})
+}
+
+func (tray *Tray) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected bool) {
+	tray.mtw.Synchronize(func() {
+		last := tray.tunnelHealth[tunnel.Name]
+		tray.tunnelHealth[tunnel.Name] = trayTunnelHealth{health, conflictSuspected}
+		if health == manager.TunnelHealthNoConnection && last.health != manager.TunnelHealthNoConnection {
+			tray.ShowWarning(l18n.Sprintf("WireGuard: No Connection"), l18n.Sprintf("The %s tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.", tunnel.Name))
+		}
+		if conflictSuspected && !last.conflictSuspected {
+			tray.ShowWarning(l18n.Sprintf("WireGuard: Key Used Elsewhere"), l18n.Sprintf("Another device appears to be using the key of the %s tunnel, which breaks connections on both. Give each device its own key pair.", tunnel.Name))
+		}
 	})
 }
 

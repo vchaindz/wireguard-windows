@@ -623,6 +623,11 @@
             "translatorComment": "Copied from source."
         },
         {
+            "id": "Warning:",
+            "message": "Warning:",
+            "translation": ""
+        },
+        {
             "id": "Public key:",
             "message": "Public key:",
             "translation": "Clave pública:",
@@ -799,6 +804,11 @@
                     "expr": "config.Name"
                 }
             ]
+        },
+        {
+            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translation": ""
         },
         {
             "id": "Peer",
@@ -979,6 +989,21 @@
             "message": "Unknown state",
             "translation": "Estado desconocido",
             "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Active (connected)",
+            "message": "Active (connected)",
+            "translation": ""
+        },
+        {
+            "id": "Active, but no connection (peer does not answer)",
+            "message": "Active, but no connection (peer does not answer)",
+            "translation": ""
+        },
+        {
+            "id": "Active (connection not verified: no traffic yet)",
+            "message": "Active (connection not verified: no traffic yet)",
+            "translation": ""
         },
         {
             "id": "Log",
@@ -1185,6 +1210,46 @@
             "message": "WireGuard Tunnel Error",
             "translation": "Error en el túnel de WireGuard",
             "translatorComment": "Copied from source."
+        },
+        {
+            "id": "WireGuard: No Connection",
+            "message": "WireGuard: No Connection",
+            "translation": ""
+        },
+        {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard: Key Used Elsewhere",
+            "message": "WireGuard: Key Used Elsewhere",
+            "translation": ""
+        },
+        {
+            "id": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
         },
         {
             "id": "WireGuard: {TextForStateglobalState_true}",

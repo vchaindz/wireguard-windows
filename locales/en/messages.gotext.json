@@ -675,6 +675,13 @@
             "fuzzy": true
         },
         {
+            "id": "Warning:",
+            "message": "Warning:",
+            "translation": "Warning:",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Public key:",
             "message": "Public key:",
             "translation": "Public key:",
@@ -875,6 +882,13 @@
                     "expr": "config.Name"
                 }
             ],
+            "fuzzy": true
+        },
+        {
+            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translation": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
@@ -1079,6 +1093,27 @@
             "id": "Unknown state",
             "message": "Unknown state",
             "translation": "Unknown state",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Active (connected)",
+            "message": "Active (connected)",
+            "translation": "Active (connected)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Active, but no connection (peer does not answer)",
+            "message": "Active, but no connection (peer does not answer)",
+            "translation": "Active, but no connection (peer does not answer)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Active (connection not verified: no traffic yet)",
+            "message": "Active (connection not verified: no traffic yet)",
+            "translation": "Active (connection not verified: no traffic yet)",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1312,6 +1347,54 @@
             "message": "WireGuard Tunnel Error",
             "translation": "WireGuard Tunnel Error",
             "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: No Connection",
+            "message": "WireGuard: No Connection",
+            "translation": "WireGuard: No Connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Key Used Elsewhere",
+            "message": "WireGuard: Key Used Elsewhere",
+            "translation": "WireGuard: Key Used Elsewhere",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "translation": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
             "fuzzy": true
         },
         {

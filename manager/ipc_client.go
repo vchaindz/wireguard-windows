@@ -37,6 +37,7 @@ const (
 	ManagerStoppingNotificationType
 	UpdateFoundNotificationType
 	UpdateProgressNotificationType
+	TunnelHealthNotificationType
 )
 
 type MethodType int
@@ -55,6 +56,7 @@ const (
 	QuitMethodType
 	UpdateStateMethodType
 	UpdateMethodType
+	HealthMethodType
 )
 
 var (
@@ -70,6 +72,15 @@ type TunnelChangeCallback struct {
 var (
 	tunnelChangeCallbacks     = make(map[*TunnelChangeCallback]bool)
 	tunnelChangeCallbacksLock sync.RWMutex
+)
+
+type TunnelHealthCallback struct {
+	cb func(tunnel *Tunnel, health TunnelHealth, conflictSuspected bool)
+}
+
+var (
+	tunnelHealthCallbacks     = make(map[*TunnelHealthCallback]bool)
+	tunnelHealthCallbacksLock sync.RWMutex
 )
 
 type TunnelsChangeCallback struct {
@@ -208,6 +219,31 @@ func InitializeIPCClient(reader, writer, events *os.File) {
 					cb.cb(dp)
 				}
 				updateProgressCallbacksLock.RUnlock()
+			case TunnelHealthNotificationType:
+				var tunnel string
+				err := decoder.Decode(&tunnel)
+				if err != nil {
+					return
+				}
+				var health TunnelHealth
+				err = decoder.Decode(&health)
+				if err != nil {
+					return
+				}
+				var conflictSuspected bool
+				err = decoder.Decode(&conflictSuspected)
+				if err != nil {
+					return
+				}
+				if len(tunnel) == 0 {
+					continue
+				}
+				t := &Tunnel{tunnel}
+				tunnelHealthCallbacksLock.RLock()
+				for cb := range tunnelHealthCallbacks {
+					cb.cb(t, health, conflictSuspected)
+				}
+				tunnelHealthCallbacksLock.RUnlock()
 			}
 		}
 	}()
@@ -363,6 +399,28 @@ func (t *Tunnel) State() (tunnelState TunnelState, err error) {
 	return
 }
 
+// Health reports whether the started tunnel has a working session, and whether another device is suspected of
+// using the same private key. It is TunnelHealthUnknown for a tunnel that is not started.
+func (t *Tunnel) Health() (health TunnelHealth, conflictSuspected bool, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(HealthMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&health)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&conflictSuspected)
+	return
+}
+
 func IPCClientGlobalState() (tunnelState TunnelState, err error) {
 	rpcMutex.Lock()
 	defer rpcMutex.Unlock()
@@ -468,6 +526,20 @@ func (cb *TunnelChangeCallback) Unregister() {
 	tunnelChangeCallbacksLock.Lock()
 	delete(tunnelChangeCallbacks, cb)
 	tunnelChangeCallbacksLock.Unlock()
+}
+
+func IPCClientRegisterTunnelHealth(cb func(tunnel *Tunnel, health TunnelHealth, conflictSuspected bool)) *TunnelHealthCallback {
+	s := &TunnelHealthCallback{cb}
+	tunnelHealthCallbacksLock.Lock()
+	tunnelHealthCallbacks[s] = true
+	tunnelHealthCallbacksLock.Unlock()
+	return s
+}
+
+func (cb *TunnelHealthCallback) Unregister() {
+	tunnelHealthCallbacksLock.Lock()
+	delete(tunnelHealthCallbacks, cb)
+	tunnelHealthCallbacksLock.Unlock()
 }
 
 func IPCClientRegisterTunnelsChange(cb func()) *TunnelsChangeCallback {

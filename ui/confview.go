@@ -45,6 +45,7 @@ type toggleActiveLine struct {
 
 type interfaceView struct {
 	status       *labelStatusLine
+	warning      *labelTextLine
 	publicKey    *labelTextLine
 	listenPort   *labelTextLine
 	mtu          *labelTextLine
@@ -82,8 +83,8 @@ func (lsl *labelStatusLine) widgets() (walk.Widget, walk.Widget) {
 	return lsl.label, lsl.statusComposite
 }
 
-func (lsl *labelStatusLine) update(state manager.TunnelState) {
-	icon, err := iconForState(state, 14)
+func (lsl *labelStatusLine) update(state manager.TunnelState, health manager.TunnelHealth) {
+	icon, err := iconForState(displayState(state, health), 14)
 	if err == nil {
 		lsl.statusImage.SetImage(icon)
 	} else {
@@ -91,7 +92,7 @@ func (lsl *labelStatusLine) update(state manager.TunnelState) {
 	}
 
 	s, e := lsl.statusLabel.TextSelection()
-	lsl.statusLabel.SetText(textForState(state, false))
+	lsl.statusLabel.SetText(textForStateAndHealth(state, health))
 	lsl.statusLabel.SetTextSelection(s, e)
 }
 
@@ -141,7 +142,7 @@ func newLabelStatusLine(parent walk.Container) (*labelStatusLine, error) {
 	lsl.statusLabel.FocusedChanged().Attach(func() {
 		lsl.statusLabel.SetTextSelection(0, 0)
 	})
-	lsl.update(manager.TunnelUnknown)
+	lsl.update(manager.TunnelUnknown, manager.TunnelHealthUnknown)
 	lsl.statusLabel.Accessibility().SetRole(walk.AccRoleStatictext)
 
 	disposables.Spare()
@@ -309,6 +310,7 @@ func newInterfaceView(parent walk.Container) (*interfaceView, error) {
 	disposables.Add(iv.status)
 
 	items := []labelTextLineItem{
+		{l18n.Sprintf("Warning:"), &iv.warning},
 		{l18n.Sprintf("Public key:"), &iv.publicKey},
 		{l18n.Sprintf("Listen port:"), &iv.listenPort},
 		{l18n.Sprintf("MTU:"), &iv.mtu},
@@ -566,15 +568,18 @@ func NewConfView(parent walk.Container) (*ConfView, error) {
 				if cv.tunnel != nil {
 					tunnel := cv.tunnel
 					var state manager.TunnelState
+					var health manager.TunnelHealth
+					var conflictSuspected bool
 					var config conf.Config
 					if state, _ = tunnel.State(); state == manager.TunnelStarted {
 						config, _ = tunnel.RuntimeConfig()
+						health, conflictSuspected, _ = tunnel.Health()
 					}
 					if config.Name == "" {
 						config, _ = tunnel.StoredConfig()
 					}
 					cv.Synchronize(func() {
-						cv.setTunnel(tunnel, &config, state)
+						cv.setTunnel(tunnel, &config, state, health, conflictSuspected)
 					})
 				}
 			case <-cv.quit:
@@ -623,20 +628,23 @@ func (cv *ConfView) onTunnelChanged(tunnel *manager.Tunnel, state, globalState m
 	cv.Synchronize(func() {
 		cv.interfaze.toggleActive.updateGlobal(globalState)
 		if cv.tunnel != nil && cv.tunnel.Name == tunnel.Name {
-			cv.interfaze.status.update(state)
+			cv.interfaze.status.update(state, manager.TunnelHealthUnknown)
 			cv.interfaze.toggleActive.update(state)
 		}
 	})
 	if cv.tunnel != nil && cv.tunnel.Name == tunnel.Name {
 		var config conf.Config
+		var health manager.TunnelHealth
+		var conflictSuspected bool
 		if state == manager.TunnelStarted {
 			config, _ = tunnel.RuntimeConfig()
+			health, conflictSuspected, _ = tunnel.Health()
 		}
 		if config.Name == "" {
 			config, _ = tunnel.StoredConfig()
 		}
 		cv.Synchronize(func() {
-			cv.setTunnel(tunnel, &config, state)
+			cv.setTunnel(tunnel, &config, state, health, conflictSuspected)
 		})
 	}
 }
@@ -648,22 +656,25 @@ func (cv *ConfView) SetTunnel(tunnel *manager.Tunnel) {
 	var state manager.TunnelState
 	if tunnel != nil {
 		go func() {
+			var health manager.TunnelHealth
+			var conflictSuspected bool
 			if state, _ = tunnel.State(); state == manager.TunnelStarted {
 				config, _ = tunnel.RuntimeConfig()
+				health, conflictSuspected, _ = tunnel.Health()
 			}
 			if config.Name == "" {
 				config, _ = tunnel.StoredConfig()
 			}
 			cv.Synchronize(func() {
-				cv.setTunnel(tunnel, &config, state)
+				cv.setTunnel(tunnel, &config, state, health, conflictSuspected)
 			})
 		}()
 	} else {
-		cv.setTunnel(tunnel, &config, state)
+		cv.setTunnel(tunnel, &config, state, manager.TunnelHealthUnknown, false)
 	}
 }
 
-func (cv *ConfView) setTunnel(tunnel *manager.Tunnel, config *conf.Config, state manager.TunnelState) {
+func (cv *ConfView) setTunnel(tunnel *manager.Tunnel, config *conf.Config, state manager.TunnelState, health manager.TunnelHealth, conflictSuspected bool) {
 	if !(cv.tunnel == nil || tunnel == nil || tunnel.Name == cv.tunnel.Name) {
 		return
 	}
@@ -677,7 +688,12 @@ func (cv *ConfView) setTunnel(tunnel *manager.Tunnel, config *conf.Config, state
 	cv.name.SetVisible(tunnel != nil)
 
 	cv.interfaze.apply(&config.Interface)
-	cv.interfaze.status.update(state)
+	cv.interfaze.status.update(state, health)
+	if state == manager.TunnelStarted && conflictSuspected {
+		cv.interfaze.warning.show(l18n.Sprintf("Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair."))
+	} else {
+		cv.interfaze.warning.hide()
+	}
 	cv.interfaze.toggleActive.update(state)
 	inverse := make(map[*peerView]bool, len(cv.peers))
 	all := make([]*peerView, 0, len(cv.peers))

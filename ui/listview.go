@@ -24,6 +24,8 @@ type ListModel struct {
 
 	tunnels           []manager.Tunnel
 	lastObservedState map[manager.Tunnel]manager.TunnelState
+	// lastObservedHealth has an entry only for tunnels whose lastObservedState is TunnelStarted.
+	lastObservedHealth map[manager.Tunnel]manager.TunnelHealth
 }
 
 var cachedListViewIconsForWidthAndState = make(map[widthAndState]*walk.Bitmap)
@@ -53,6 +55,7 @@ type ListView struct {
 	model *ListModel
 
 	tunnelChangedCB        *manager.TunnelChangeCallback
+	tunnelHealthCB         *manager.TunnelHealthCallback
 	tunnelsChangedCB       *manager.TunnelsChangeCallback
 	tunnelsUpdateSuspended int32
 }
@@ -71,6 +74,7 @@ func NewListView(parent walk.Container) (*ListView, error) {
 
 	model := new(ListModel)
 	model.lastObservedState = make(map[manager.Tunnel]manager.TunnelState)
+	model.lastObservedHealth = make(map[manager.Tunnel]manager.TunnelHealth)
 	tv.SetModel(model)
 	tv.SetLastColumnStretched(true)
 	tv.SetHeaderHidden(true)
@@ -87,6 +91,7 @@ func NewListView(parent walk.Container) (*ListView, error) {
 	disposables.Spare()
 
 	tunnelsView.tunnelChangedCB = manager.IPCClientRegisterTunnelChange(tunnelsView.onTunnelChange)
+	tunnelsView.tunnelHealthCB = manager.IPCClientRegisterTunnelHealth(tunnelsView.onTunnelHealth)
 	tunnelsView.tunnelsChangedCB = manager.IPCClientRegisterTunnelsChange(tunnelsView.onTunnelsChange)
 
 	return tunnelsView, nil
@@ -96,6 +101,10 @@ func (tv *ListView) Dispose() {
 	if tv.tunnelChangedCB != nil {
 		tv.tunnelChangedCB.Unregister()
 		tv.tunnelChangedCB = nil
+	}
+	if tv.tunnelHealthCB != nil {
+		tv.tunnelHealthCB.Unregister()
+		tv.tunnelHealthCB = nil
 	}
 	if tv.tunnelsChangedCB != nil {
 		tv.tunnelsChangedCB.Unregister()
@@ -132,6 +141,14 @@ func (tv *ListView) StyleCell(style *walk.CellStyle) {
 			return
 		}
 		tv.model.lastObservedState[tv.model.tunnels[row]] = state
+	}
+	if state == manager.TunnelStarted {
+		health, ok := tv.model.lastObservedHealth[tv.model.tunnels[row]]
+		if !ok {
+			health, _, _ = tunnel.Health()
+			tv.model.lastObservedHealth[tv.model.tunnels[row]] = health
+		}
+		state = displayState(state, health)
 	}
 
 	icon, err := iconForState(state, 14)
@@ -193,8 +210,23 @@ func (tv *ListView) onTunnelChange(tunnel *manager.Tunnel, state, globalState ma
 
 		if idx != -1 {
 			tv.model.lastObservedState[tv.model.tunnels[idx]] = state
+			delete(tv.model.lastObservedHealth, tv.model.tunnels[idx])
 			tv.model.PublishRowChanged(idx)
 			return
+		}
+	})
+}
+
+func (tv *ListView) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected bool) {
+	tv.Synchronize(func() {
+		for i := range tv.model.tunnels {
+			if tv.model.tunnels[i].Name == tunnel.Name {
+				if tv.model.lastObservedState[tv.model.tunnels[i]] == manager.TunnelStarted {
+					tv.model.lastObservedHealth[tv.model.tunnels[i]] = health
+					tv.model.PublishRowChanged(i)
+				}
+				return
+			}
 		}
 	})
 }
@@ -233,6 +265,7 @@ func (tv *ListView) Load(asyncUI bool) {
 				tv.model.tunnels = append(tv.model.tunnels[:i], tv.model.tunnels[i+1:]...)
 				tv.model.PublishRowsRemoved(i, i) // TODO: Do we have to call that everytime or can we pass a range?
 				delete(tv.model.lastObservedState, tunnel)
+				delete(tv.model.lastObservedHealth, tunnel)
 			}
 		}
 		didAdd := false
