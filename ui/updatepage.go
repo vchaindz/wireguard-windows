@@ -14,27 +14,24 @@ import (
 )
 
 type UpdatePage struct {
-	*walk.TabPage
+	*walk.Composite
 }
 
-func NewUpdatePage() (*UpdatePage, error) {
+func NewUpdatePage(parent walk.Container) (*UpdatePage, error) {
 	var err error
 	var disposables walk.Disposables
 	defer disposables.Treat()
 
 	up := &UpdatePage{}
 
-	if up.TabPage, err = walk.NewTabPage(); err != nil {
+	if up.Composite, err = walk.NewComposite(parent); err != nil {
 		return nil, err
 	}
 	disposables.Add(up)
 
-	up.SetTitle(l18n.Sprintf("An Update is Available!"))
-
-	tabIcon, _ := loadShieldIcon(16)
-	up.SetImage(tabIcon)
-
-	up.SetLayout(walk.NewVBoxLayout())
+	layout := walk.NewVBoxLayout()
+	layout.SetMargins(walk.Margins{HNear: 24, VNear: 20, HFar: 24, VFar: 20})
+	up.SetLayout(layout)
 
 	instructions, err := walk.NewTextLabel(up)
 	if err != nil {
@@ -42,6 +39,7 @@ func NewUpdatePage() (*UpdatePage, error) {
 	}
 	instructions.SetText(l18n.Sprintf("An update to WireGuard is available. It is highly advisable to update without delay."))
 	instructions.SetMinMaxSize(walk.Size{1, 0}, walk.Size{0, 0})
+	instructions.SetTextColor(themeText.walk())
 
 	status, err := walk.NewTextLabel(up)
 	if err != nil {
@@ -49,6 +47,7 @@ func NewUpdatePage() (*UpdatePage, error) {
 	}
 	status.SetText(l18n.Sprintf("Status: Waiting for user"))
 	status.SetMinMaxSize(walk.Size{1, 0}, walk.Size{0, 0})
+	status.SetTextColor(themeTextDim.walk())
 
 	bar, err := walk.NewProgressBar(up)
 	if err != nil {

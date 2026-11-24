@@ -600,222 +600,6 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Status:",
-            "message": "Status:",
-            "translation": "स्थिति:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Deactivate",
-            "message": "\u0026Deactivate",
-            "translation": "निष्क्रिय करें (\u0026D)",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Activate",
-            "message": "\u0026Activate",
-            "translation": "सक्रिय करें (\u0026A)",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Warning:",
-            "message": "Warning:",
-            "translation": ""
-        },
-        {
-            "id": "Public key:",
-            "message": "Public key:",
-            "translation": "सार्वजनिक कुंजी:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Listen port:",
-            "message": "Listen port:",
-            "translation": "सुनने का पोर्ट:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "MTU:",
-            "message": "MTU:",
-            "translation": ""
-        },
-        {
-            "id": "Addresses:",
-            "message": "Addresses:",
-            "translation": "पते:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "DNS servers:",
-            "message": "DNS servers:",
-            "translation": "DNS सर्वर:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Scripts:",
-            "message": "Scripts:",
-            "translation": "स्क्रिप्ट:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Table:",
-            "message": "Table:",
-            "translation": "तालिका:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Preshared key:",
-            "message": "Preshared key:",
-            "translation": "पूर्व-साझा कुंजी:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Allowed IPs:",
-            "message": "Allowed IPs:",
-            "translation": "अनुमत IP:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Endpoint:",
-            "message": "Endpoint:",
-            "translation": "एंडपॉइंट:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Persistent keepalive:",
-            "message": "Persistent keepalive:",
-            "translation": "लगातार Keepalive:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Latest handshake:",
-            "message": "Latest handshake:",
-            "translation": "नवीनतम हैंडशेक:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Transfer:",
-            "message": "Transfer:",
-            "translation": "स्थानांतरण:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "pre-up",
-            "message": "pre-up",
-            "translation": "कनेक्शन से पहले",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "post-up",
-            "message": "post-up",
-            "translation": "कनेक्शन के बाद",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "pre-down",
-            "message": "pre-down",
-            "translation": "डिस्कनेक्शन से पहले",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "post-down",
-            "message": "post-down",
-            "translation": "डिस्कनेक्शन के बाद",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "disabled, per policy",
-            "message": "disabled, per policy",
-            "translation": "नीति अनुसार अक्षम",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "off",
-            "message": "off",
-            "translation": "बंद",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "enabled",
-            "message": "enabled",
-            "translation": "सक्षम",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "{String} received, {String_1} sent",
-            "message": "{String} received, {String_1} sent",
-            "translation": "{String} प्राप्त, {String_1} भेजा गया",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "String",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "c.RxBytes.String()"
-                },
-                {
-                    "id": "String_1",
-                    "string": "%[2]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 2,
-                    "expr": "c.TxBytes.String()"
-                }
-            ]
-        },
-        {
-            "id": "Failed to determine tunnel state",
-            "message": "Failed to determine tunnel state",
-            "translation": "टनल की स्थिति निर्धारित करने में विफल",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Failed to activate tunnel",
-            "message": "Failed to activate tunnel",
-            "translation": "टनल सक्रिय करने में विफल",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Failed to deactivate tunnel",
-            "message": "Failed to deactivate tunnel",
-            "translation": "टनल निष्क्रिय करने में विफल",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Interface: {Name}",
-            "message": "Interface: {Name}",
-            "translation": "इंटरफ़ेस: {Name}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "config.Name"
-                }
-            ]
-        },
-        {
-            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
-            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
-            "translation": ""
-        },
-        {
-            "id": "The connection is unstable: it was lost and re-established recently.",
-            "message": "The connection is unstable: it was lost and re-established recently.",
-            "translation": ""
-        },
-        {
-            "id": "Peer",
-            "message": "Peer",
-            "translation": "पीयर",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "Create new tunnel",
             "message": "Create new tunnel",
             "translation": "नया टनल बनाएँ",
@@ -990,37 +774,6 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Active (connected)",
-            "message": "Active (connected)",
-            "translation": ""
-        },
-        {
-            "id": "Active, but no connection (peer does not answer)",
-            "message": "Active, but no connection (peer does not answer)",
-            "translation": ""
-        },
-        {
-            "id": "Active, but peer does not answer (routes not applied, network unaffected)",
-            "message": "Active, but peer does not answer (routes not applied, network unaffected)",
-            "translation": ""
-        },
-        {
-            "id": "Active, but no connection (all network traffic is cut off)",
-            "message": "Active, but no connection (all network traffic is cut off)",
-            "translation": ""
-        },
-        {
-            "id": "Active (connection not verified yet)",
-            "message": "Active (connection not verified yet)",
-            "translation": ""
-        },
-        {
-            "id": "Log",
-            "message": "Log",
-            "translation": "लॉग",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "\u0026Copy",
             "message": "\u0026Copy",
             "translation": "प्रतिलिपि बनाएँ (\u0026C)",
@@ -1061,6 +814,22 @@
             "message": "Export log to file",
             "translation": "लॉग को फ़ाइल में निर्यात करें",
             "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Log",
+            "message": "Log",
+            "translation": "लॉग",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Copy",
+            "message": "Copy",
+            "translation": ""
+        },
+        {
+            "id": "Save to file…",
+            "message": "Save to file…",
+            "translation": ""
         },
         {
             "id": "\u0026About WireGuard…",
@@ -1107,6 +876,268 @@
             ]
         },
         {
+            "id": "An Update is Available!",
+            "message": "An Update is Available!",
+            "translation": "एक अद्यतन उपलब्ध है!",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Failed to determine tunnel state",
+            "message": "Failed to determine tunnel state",
+            "translation": "टनल की स्थिति निर्धारित करने में विफल",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Failed to activate tunnel",
+            "message": "Failed to activate tunnel",
+            "translation": "टनल सक्रिय करने में विफल",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Failed to deactivate tunnel",
+            "message": "Failed to deactivate tunnel",
+            "translation": "टनल निष्क्रिय करने में विफल",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Unable to create tunnel",
+            "message": "Unable to create tunnel",
+            "translation": "टनल बनाने में असमर्थ",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "message": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Delete tunnel ‘{Name}’",
+            "message": "Delete tunnel ‘{Name}’",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "{Question} You cannot undo this action.",
+            "message": "{Question} You cannot undo this action.",
+            "translation": "{Question} आप इस क्रिया को पूर्ववत् नहीं कर सकते।",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Question",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "question"
+                }
+            ]
+        },
+        {
+            "id": "Unable to delete tunnel",
+            "message": "Unable to delete tunnel",
+            "translation": "टनल हटाने में असमर्थ",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "A tunnel was unable to be removed: {Error}",
+            "message": "A tunnel was unable to be removed: {Error}",
+            "translation": "एक टनल को हटाया नहीं जा सका: {Error}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Error",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "err.Error()"
+                }
+            ]
+        },
+        {
+            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "translation": "कॉन्फ़िगरेशन फ़ाइलें (*.zip, *.conf)|*.zip;*.conf|सभी फ़ाइलें (*.*)|*.*",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Import tunnel(s) from file",
+            "message": "Import tunnel(s) from file",
+            "translation": "फ़ाइल से टनल आयात करें",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "no configuration files were found",
+            "message": "no configuration files were found",
+            "translation": "कोई कॉन्फ़िगरेशन फ़ाइल नहीं मिली",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Could not import selected configuration: {LastErr}",
+            "message": "Could not import selected configuration: {LastErr}",
+            "translation": "चयनित कॉन्फ़िगरेशन आयात नहीं किया जा सका: {LastErr}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LastErr",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "lastErr"
+                }
+            ]
+        },
+        {
+            "id": "Could not enumerate existing tunnels: {Err}",
+            "message": "Could not enumerate existing tunnels: {Err}",
+            "translation": "मौजूदा टनलों की गणना नहीं की जा सकी: {Err}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Err",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "err"
+                }
+            ]
+        },
+        {
+            "id": "Another tunnel already exists with the name ‘{Name}’",
+            "message": "Another tunnel already exists with the name ‘{Name}’",
+            "translation": "‘{Name}’ नाम का एक अन्य टनल पहले से मौजूद है",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "unparsedConfig.Name"
+                }
+            ]
+        },
+        {
+            "id": "Unable to import configuration: {LastErr}",
+            "message": "Unable to import configuration: {LastErr}",
+            "translation": "कॉन्फ़िगरेशन आयात करने में असमर्थ: {LastErr}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LastErr",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "lastErr"
+                }
+            ]
+        },
+        {
+            "id": "Imported tunnels",
+            "message": "Imported tunnels",
+            "translation": "आयातित टनल",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Imported {M} tunnels",
+            "message": "Imported {M} tunnels",
+            "translation": {
+                "select": {
+                    "feature": "plural",
+                    "arg": "M",
+                    "cases": {
+                        "one": {
+                            "msg": "{M} टनल आयात किया गया"
+                        },
+                        "other": {
+                            "msg": "{M} टनल आयात किए गए"
+                        }
+                    }
+                }
+            },
+            "placeholders": [
+                {
+                    "id": "M",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "m"
+                }
+            ]
+        },
+        {
+            "id": "Imported {M} of {N} tunnels",
+            "message": "Imported {M} of {N} tunnels",
+            "translation": {
+                "select": {
+                    "feature": "plural",
+                    "arg": "N",
+                    "cases": {
+                        "one": {
+                            "msg": "{N} में से {M} टनल आयात किया गया"
+                        },
+                        "other": {
+                            "msg": "{N} में से {M} टनल आयात किए गए"
+                        }
+                    }
+                }
+            },
+            "placeholders": [
+                {
+                    "id": "M",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "m"
+                },
+                {
+                    "id": "N",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "n"
+                }
+            ]
+        },
+        {
+            "id": "Configuration ZIP Files (*.zip)|*.zip",
+            "message": "Configuration ZIP Files (*.zip)|*.zip",
+            "translation": "कॉन्फ़िगरेशन ZIP फ़ाइलें (*.zip)|*.zip",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Export tunnels to zip",
+            "message": "Export tunnels to zip",
+            "translation": "टनलों को zip में निर्यात करें",
+            "translatorComment": "Copied from source."
+        },
+        {
             "id": "WireGuard Detection Error",
             "message": "WireGuard Detection Error",
             "translation": "WireGuard पहचान त्रुटि",
@@ -1129,45 +1160,376 @@
             ]
         },
         {
+            "id": "Not connected",
+            "message": "Not connected",
+            "translation": ""
+        },
+        {
+            "id": "No tunnel is active",
+            "message": "No tunnel is active",
+            "translation": ""
+        },
+        {
+            "id": "Activating…",
+            "message": "Activating…",
+            "translation": ""
+        },
+        {
+            "id": "Deactivating…",
+            "message": "Deactivating…",
+            "translation": ""
+        },
+        {
+            "id": "Connected",
+            "message": "Connected",
+            "translation": ""
+        },
+        {
+            "id": "Waiting for peer",
+            "message": "Waiting for peer",
+            "translation": ""
+        },
+        {
+            "id": "Peer does not answer · network unaffected",
+            "message": "Peer does not answer · network unaffected",
+            "translation": ""
+        },
+        {
+            "id": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "message": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "translation": ""
+        },
+        {
+            "id": "No connection",
+            "message": "No connection",
+            "translation": ""
+        },
+        {
+            "id": "Peer does not answer",
+            "message": "Peer does not answer",
+            "translation": ""
+        },
+        {
+            "id": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": ""
+        },
+        {
+            "id": "Network cut off",
+            "message": "Network cut off",
+            "translation": ""
+        },
+        {
+            "id": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "message": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "translation": ""
+        },
+        {
+            "id": "Active · connection not verified yet",
+            "message": "Active · connection not verified yet",
+            "translation": ""
+        },
+        {
+            "id": "Key used elsewhere",
+            "message": "Key used elsewhere",
+            "translation": ""
+        },
+        {
+            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translation": ""
+        },
+        {
+            "id": "The connection is unstable: it was lost and re-established recently.",
+            "message": "The connection is unstable: it was lost and re-established recently.",
+            "translation": ""
+        },
+        {
+            "id": "{Name} · {Short}",
+            "message": "{Name} · {Short}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "hero.tunnel.Name"
+                },
+                {
+                    "id": "Short",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "look.short"
+                }
+            ]
+        },
+        {
+            "id": "No tunnels yet",
+            "message": "No tunnels yet",
+            "translation": ""
+        },
+        {
+            "id": "Import a configuration file to get started.",
+            "message": "Import a configuration file to get started.",
+            "translation": ""
+        },
+        {
+            "id": "{Name} · latest handshake {String}",
+            "message": "{Name} · latest handshake {String}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "hero.tunnel.Name"
+                },
+                {
+                    "id": "String",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "handshake.String()"
+                }
+            ]
+        },
+        {
+            "id": "Address",
+            "message": "Address",
+            "translation": ""
+        },
+        {
+            "id": "Received",
+            "message": "Received",
+            "translation": ""
+        },
+        {
+            "id": "Sent",
+            "message": "Sent",
+            "translation": ""
+        },
+        {
+            "id": "Deactivate",
+            "message": "Deactivate",
+            "translation": ""
+        },
+        {
+            "id": "Details",
+            "message": "Details",
+            "translation": ""
+        },
+        {
+            "id": "Activate {Name}",
+            "message": "Activate {Name}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "OTHER TUNNELS",
+            "message": "OTHER TUNNELS",
+            "translation": ""
+        },
+        {
+            "id": "TUNNELS",
+            "message": "TUNNELS",
+            "translation": ""
+        },
+        {
+            "id": "Add tunnel",
+            "message": "Add tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Import",
+            "message": "Import",
+            "translation": ""
+        },
+        {
+            "id": "Export",
+            "message": "Export",
+            "translation": ""
+        },
+        {
+            "id": "Public key",
+            "message": "Public key",
+            "translation": ""
+        },
+        {
+            "id": "Listen port",
+            "message": "Listen port",
+            "translation": ""
+        },
+        {
+            "id": "MTU",
+            "message": "MTU",
+            "translation": ""
+        },
+        {
+            "id": "Addresses",
+            "message": "Addresses",
+            "translation": ""
+        },
+        {
+            "id": "DNS servers",
+            "message": "DNS servers",
+            "translation": ""
+        },
+        {
+            "id": "pre-up",
+            "message": "pre-up",
+            "translation": "कनेक्शन से पहले",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "post-up",
+            "message": "post-up",
+            "translation": "कनेक्शन के बाद",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "pre-down",
+            "message": "pre-down",
+            "translation": "डिस्कनेक्शन से पहले",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "post-down",
+            "message": "post-down",
+            "translation": "डिस्कनेक्शन के बाद",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "disabled, per policy",
+            "message": "disabled, per policy",
+            "translation": "नीति अनुसार अक्षम",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Scripts",
+            "message": "Scripts",
+            "translation": ""
+        },
+        {
+            "id": "Table",
+            "message": "Table",
+            "translation": ""
+        },
+        {
+            "id": "off",
+            "message": "off",
+            "translation": "बंद",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Preshared key",
+            "message": "Preshared key",
+            "translation": ""
+        },
+        {
+            "id": "enabled",
+            "message": "enabled",
+            "translation": "सक्षम",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Allowed IPs",
+            "message": "Allowed IPs",
+            "translation": ""
+        },
+        {
+            "id": "Endpoint",
+            "message": "Endpoint",
+            "translation": ""
+        },
+        {
+            "id": "Persistent keepalive",
+            "message": "Persistent keepalive",
+            "translation": ""
+        },
+        {
+            "id": "Latest handshake",
+            "message": "Latest handshake",
+            "translation": ""
+        },
+        {
+            "id": "Transfer",
+            "message": "Transfer",
+            "translation": ""
+        },
+        {
+            "id": "{String} received, {String_1} sent",
+            "message": "{String} received, {String_1} sent",
+            "translation": "{String} प्राप्त, {String_1} भेजा गया",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "String",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "c.RxBytes.String()"
+                },
+                {
+                    "id": "String_1",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "c.TxBytes.String()"
+                }
+            ]
+        },
+        {
+            "id": "Copy public key",
+            "message": "Copy public key",
+            "translation": ""
+        },
+        {
+            "id": "INTERFACE",
+            "message": "INTERFACE",
+            "translation": ""
+        },
+        {
+            "id": "PEER",
+            "message": "PEER",
+            "translation": ""
+        },
+        {
+            "id": "Activate",
+            "message": "Activate",
+            "translation": ""
+        },
+        {
+            "id": "Edit",
+            "message": "Edit",
+            "translation": ""
+        },
+        {
+            "id": "Remove",
+            "message": "Remove",
+            "translation": ""
+        },
+        {
             "id": "WireGuard: Deactivated",
             "message": "WireGuard: Deactivated",
             "translation": "WireGuard: निष्क्रिय",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Status: Unknown",
-            "message": "Status: Unknown",
-            "translation": "स्थिति: अज्ञात",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Addresses: None",
-            "message": "Addresses: None",
-            "translation": "पते: कोई नहीं",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Manage tunnels…",
-            "message": "\u0026Manage tunnels…",
-            "translation": "टनल प्रबंधित करें (\u0026M)…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Import tunnel(s) from file…",
-            "message": "\u0026Import tunnel(s) from file…",
-            "translation": "फ़ाइल से टनल आयात करें (\u0026I)…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "E\u0026xit",
-            "message": "E\u0026xit",
-            "translation": "बाहर निकलें (\u0026x)",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Tunnels",
-            "message": "\u0026Tunnels",
-            "translation": "टनल (\u0026T)",
             "translatorComment": "Copied from source."
         },
         {
@@ -1331,44 +1693,6 @@
             ]
         },
         {
-            "id": "Status: {StateText}",
-            "message": "Status: {StateText}",
-            "translation": "स्थिति: {StateText}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "StateText",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "stateText"
-                }
-            ]
-        },
-        {
-            "id": "Addresses: {EnumerationSeparator}",
-            "message": "Addresses: {EnumerationSeparator}",
-            "translation": "पते: {EnumerationSeparator}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "EnumerationSeparator",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "strings.Join(addrs, l18n.EnumerationSeparator())"
-                }
-            ]
-        },
-        {
-            "id": "An Update is Available!",
-            "message": "An Update is Available!",
-            "translation": "एक अद्यतन उपलब्ध है!",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "WireGuard Update Available",
             "message": "WireGuard Update Available",
             "translation": "WireGuard अद्यतन उपलब्ध",
@@ -1381,394 +1705,34 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Tunnels",
-            "message": "Tunnels",
-            "translation": "टनल",
-            "translatorComment": "Copied from source."
+            "id": "Turn off",
+            "message": "Turn off",
+            "translation": ""
         },
         {
-            "id": "\u0026Edit",
-            "message": "\u0026Edit",
-            "translation": "संपादित करें (\u0026E)",
-            "translatorComment": "Copied from source."
+            "id": "SWITCH TO",
+            "message": "SWITCH TO",
+            "translation": ""
         },
         {
-            "id": "Add \u0026empty tunnel…",
-            "message": "Add \u0026empty tunnel…",
-            "translation": "खाली टनल जोड़ें (\u0026e)…",
-            "translatorComment": "Copied from source."
+            "id": "Manage tunnels",
+            "message": "Manage tunnels",
+            "translation": ""
         },
         {
-            "id": "Add Tunnel",
-            "message": "Add Tunnel",
-            "translation": "टनल जोड़ें",
-            "translatorComment": "Copied from source."
+            "id": "Import…",
+            "message": "Import…",
+            "translation": ""
         },
         {
-            "id": "Remove selected tunnel(s)",
-            "message": "Remove selected tunnel(s)",
-            "translation": "चयनित टनल हटाएँ",
-            "translatorComment": "Copied from source."
+            "id": "About",
+            "message": "About",
+            "translation": ""
         },
         {
-            "id": "Export all tunnels to zip",
-            "message": "Export all tunnels to zip",
-            "translation": "सभी टनलों को zip में निर्यात करें",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Toggle",
-            "message": "\u0026Toggle",
-            "translation": "टॉगल करें (\u0026T)",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Export all tunnels to \u0026zip…",
-            "message": "Export all tunnels to \u0026zip…",
-            "translation": "सभी टनलों को zip में निर्यात करें (\u0026z)…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Edit \u0026selected tunnel…",
-            "message": "Edit \u0026selected tunnel…",
-            "translation": "चयनित टनल संपादित करें (\u0026s)…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Remove selected tunnel(s)",
-            "message": "\u0026Remove selected tunnel(s)",
-            "translation": "चयनित टनल हटाएँ (\u0026R)",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "no configuration files were found",
-            "message": "no configuration files were found",
-            "translation": "कोई कॉन्फ़िगरेशन फ़ाइल नहीं मिली",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Could not import selected configuration: {LastErr}",
-            "message": "Could not import selected configuration: {LastErr}",
-            "translation": "चयनित कॉन्फ़िगरेशन आयात नहीं किया जा सका: {LastErr}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "LastErr",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "lastErr"
-                }
-            ]
-        },
-        {
-            "id": "Could not enumerate existing tunnels: {Err}",
-            "message": "Could not enumerate existing tunnels: {Err}",
-            "translation": "मौजूदा टनलों की गणना नहीं की जा सकी: {Err}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Err",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "err"
-                }
-            ]
-        },
-        {
-            "id": "Another tunnel already exists with the name ‘{Name}’",
-            "message": "Another tunnel already exists with the name ‘{Name}’",
-            "translation": "‘{Name}’ नाम का एक अन्य टनल पहले से मौजूद है",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "unparsedConfig.Name"
-                }
-            ]
-        },
-        {
-            "id": "Unable to import configuration: {LastErr}",
-            "message": "Unable to import configuration: {LastErr}",
-            "translation": "कॉन्फ़िगरेशन आयात करने में असमर्थ: {LastErr}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "LastErr",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "lastErr"
-                }
-            ]
-        },
-        {
-            "id": "Imported tunnels",
-            "message": "Imported tunnels",
-            "translation": "आयातित टनल",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Imported {M} tunnels",
-            "message": "Imported {M} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "M",
-                    "cases": {
-                        "one": {
-                            "msg": "{M} टनल आयात किया गया"
-                        },
-                        "other": {
-                            "msg": "{M} टनल आयात किए गए"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "M",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "m"
-                }
-            ]
-        },
-        {
-            "id": "Imported {M} of {N} tunnels",
-            "message": "Imported {M} of {N} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "N",
-                    "cases": {
-                        "one": {
-                            "msg": "{N} में से {M} टनल आयात किया गया"
-                        },
-                        "other": {
-                            "msg": "{N} में से {M} टनल आयात किए गए"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "M",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "m"
-                },
-                {
-                    "id": "N",
-                    "string": "%[2]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 2,
-                    "expr": "n"
-                }
-            ]
-        },
-        {
-            "id": "Unable to create tunnel",
-            "message": "Unable to create tunnel",
-            "translation": "टनल बनाने में असमर्थ",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Delete {TunnelCount} tunnels",
-            "message": "Delete {TunnelCount} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "one": {
-                            "msg": "{TunnelCount} टनल हटाएँ"
-                        },
-                        "other": {
-                            "msg": "{TunnelCount} टनल हटाएँ"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "message": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "one": {
-                            "msg": "क्या आप वाकई {TunnelCount} टनल हटाना चाहते हैं?"
-                        },
-                        "other": {
-                            "msg": "क्या आप वाकई {TunnelCount} टनल हटाना चाहते हैं?"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Delete tunnel ‘{TunnelName}’",
-            "message": "Delete tunnel ‘{TunnelName}’",
-            "translation": "टनल ‘{TunnelName}’ हटाएँ",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "message": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "translation": "क्या आप वाकई टनल ‘{TunnelName}’ हटाना चाहते हैं?",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ]
-        },
-        {
-            "id": "{Question} You cannot undo this action.",
-            "message": "{Question} You cannot undo this action.",
-            "translation": "{Question} आप इस क्रिया को पूर्ववत् नहीं कर सकते।",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Question",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "question"
-                }
-            ]
-        },
-        {
-            "id": "Unable to delete tunnel",
-            "message": "Unable to delete tunnel",
-            "translation": "टनल हटाने में असमर्थ",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "A tunnel was unable to be removed: {Error}",
-            "message": "A tunnel was unable to be removed: {Error}",
-            "translation": "एक टनल को हटाया नहीं जा सका: {Error}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Error",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "errors[0].Error()"
-                }
-            ]
-        },
-        {
-            "id": "Unable to delete tunnels",
-            "message": "Unable to delete tunnels",
-            "translation": "टनलों को हटाने में असमर्थ",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "{Lenerrors} tunnels were unable to be removed.",
-            "message": "{Lenerrors} tunnels were unable to be removed.",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "Lenerrors",
-                    "cases": {
-                        "one": {
-                            "msg": "{Lenerrors} टनल हटाया नहीं जा सका।"
-                        },
-                        "other": {
-                            "msg": "{Lenerrors} टनल हटाए नहीं जा सके।"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "Lenerrors",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "len(errors)"
-                }
-            ]
-        },
-        {
-            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "translation": "कॉन्फ़िगरेशन फ़ाइलें (*.zip, *.conf)|*.zip;*.conf|सभी फ़ाइलें (*.*)|*.*",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Import tunnel(s) from file",
-            "message": "Import tunnel(s) from file",
-            "translation": "फ़ाइल से टनल आयात करें",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Configuration ZIP Files (*.zip)|*.zip",
-            "message": "Configuration ZIP Files (*.zip)|*.zip",
-            "translation": "कॉन्फ़िगरेशन ZIP फ़ाइलें (*.zip)|*.zip",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Export tunnels to zip",
-            "message": "Export tunnels to zip",
-            "translation": "टनलों को zip में निर्यात करें",
-            "translatorComment": "Copied from source."
+            "id": "Exit",
+            "message": "Exit",
+            "translation": ""
         },
         {
             "id": "{Title} (unsigned build, no updates)",
@@ -1857,6 +1821,22 @@
                     "underlyingType": "interface{Error() string}",
                     "argNum": 1,
                     "expr": "err"
+                }
+            ]
+        },
+        {
+            "id": "Status: {StateText}",
+            "message": "Status: {StateText}",
+            "translation": "स्थिति: {StateText}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "StateText",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "stateText"
                 }
             ]
         },

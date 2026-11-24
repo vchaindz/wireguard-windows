@@ -7,6 +7,7 @@ package ui
 
 import (
 	"sync"
+	"time"
 	"unsafe"
 
 	"github.com/lxn/walk"
@@ -17,14 +18,31 @@ import (
 	"golang.zx2c4.com/wireguard/windows/manager"
 )
 
+type screenKind int
+
+const (
+	screenStatus screenKind = iota
+	screenDetails
+	screenLog
+	screenUpdate
+)
+
 type ManageTunnelsWindow struct {
 	walk.FormBase
 
-	tabs        *walk.TabWidget
-	tunnelsPage *TunnelsPage
-	logPage     *LogPage
-	updatePage  *UpdatePage
+	model *appModel
 
+	screen      screenKind
+	detailsName string
+
+	// mainView draws the status screen and the details screen.
+	mainView     *canvasView
+	logScreen    *walk.Composite
+	logPage      *LogPage
+	updateScreen *walk.Composite
+	updatePage   *UpdatePage
+
+	quitTicker      chan struct{}
 	tunnelChangedCB *manager.TunnelChangeCallback
 }
 
@@ -42,6 +60,8 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	initedManageTunnels.Do(func() {
 		walk.AppendToWalkInit(func() {
 			walk.MustRegisterWindowClass(manageWindowWindowClass)
+			// The tray popup is created after the toolkit has run these functions, so its class is registered here.
+			walk.MustRegisterWindowClass(trayPopupWindowClass)
 			taskbarButtonCreatedMsg = win.RegisterWindowMessage(windows.StringToUTF16Ptr("TaskbarButtonCreated"))
 		})
 	})
@@ -65,16 +85,19 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	disposables.Add(mtw)
 	win.ChangeWindowMessageFilterEx(mtw.Handle(), raiseMsg, win.MSGFLT_ALLOW, nil)
 	mtw.SetPersistent(true)
+	useDarkWindowFrame(mtw.Handle())
 
 	if icon, err := loadLogoIcon(32); err == nil {
 		mtw.SetIcon(icon)
 	}
 	mtw.SetTitle("WireGuard")
 	mtw.SetFont(font)
-	mtw.SetSize(walk.Size{675, 525})
-	mtw.SetMinMaxSize(walk.Size{500, 400}, walk.Size{0, 0})
+	mtw.SetBackground(themeBrush(themeBackdrop))
+	mtw.SetSize(walk.Size{540, 780})
+	mtw.SetMinMaxSize(walk.Size{440, 560}, walk.Size{0, 0})
 	vlayout := walk.NewVBoxLayout()
-	vlayout.SetMargins(walk.Margins{5, 5, 5, 5})
+	vlayout.SetMargins(walk.Margins{})
+	vlayout.SetSpacing(0)
 	mtw.SetLayout(vlayout)
 	mtw.Closing().Attach(func(canceled *bool, reason walk.CloseReason) {
 		// "Close to tray" instead of exiting application
@@ -86,29 +109,83 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 		}
 	})
 
-	if mtw.tabs, err = walk.NewTabWidget(mtw); err != nil {
+	mtw.model = newAppModel(mtw.Synchronize)
+
+	if mtw.mainView, err = newCanvasView(mtw, func(s *scene, width, height float64) {
+		if mtw.screen == screenDetails {
+			mtw.buildDetails(s, width, height)
+		} else {
+			mtw.buildStatus(s, width, height)
+		}
+	}); err != nil {
 		return nil, err
 	}
 
-	if mtw.tunnelsPage, err = NewTunnelsPage(); err != nil {
+	if mtw.logScreen, err = mtw.newScreen(func() string { return l18n.Sprintf("Log") }); err != nil {
 		return nil, err
 	}
-	mtw.tabs.Pages().Add(mtw.tunnelsPage.TabPage)
-	mtw.tunnelsPage.CreateToolbar()
+	if mtw.logPage, err = NewLogPage(mtw.logScreen); err != nil {
+		return nil, err
+	}
+	logFooter, err := newCanvasView(mtw.logScreen, func(s *scene, width, height float64) {
+		buttonWidth := (width - 2*screenPadding - 8) / 2
+		s.button("copy", screenPadding, 16, buttonWidth, 44, l18n.Sprintf("Copy"), buttonOutline, mtw.logPage.copySelectionOrAll)
+		s.button("save", screenPadding+buttonWidth+8, 16, buttonWidth, 44, l18n.Sprintf("Save to file…"), buttonOutline, mtw.logPage.onSave)
+	})
+	if err != nil {
+		return nil, err
+	}
+	logFooter.SetMinMaxSize(walk.Size{0, footerHeight}, walk.Size{0, footerHeight})
+	mtw.logScreen.SetVisible(false)
 
-	if mtw.logPage, err = NewLogPage(); err != nil {
-		return nil, err
-	}
-	mtw.tabs.Pages().Add(mtw.logPage.TabPage)
+	mtw.model.onChanged(func() {
+		mtw.mainView.Invalidate()
+	})
 
 	mtw.VisibleChanged().Attach(func() {
 		if mtw.Visible() {
-			mtw.tunnelsPage.updateConfView()
+			mtw.model.refresh()
 			win.SetForegroundWindow(mtw.Handle())
 			win.BringWindowToTop(mtw.Handle())
 			mtw.logPage.scrollToBottom()
 		}
 	})
+
+	// While the window is shown, handshake times and traffic counters are kept up to date.
+	mtw.quitTicker = make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				if win.IsWindowVisible(mtw.Handle()) {
+					mtw.model.refresh()
+				}
+			case <-mtw.quitTicker:
+				return
+			}
+		}
+	}()
+
+	for _, shortcut := range []struct {
+		key     walk.Shortcut
+		admin   bool
+		handler func()
+	}{
+		{walk.Shortcut{walk.ModControl, walk.KeyO}, true, func() { mtw.model.importTunnels(mtw) }},
+		{walk.Shortcut{walk.ModControl, walk.KeyN}, true, func() { mtw.model.addTunnel(mtw) }},
+		{walk.Shortcut{walk.ModControl, walk.KeyL}, false, func() { mtw.showScreen(screenLog) }},
+		{walk.Shortcut{0, walk.KeyEscape}, false, func() { mtw.showScreen(screenStatus) }},
+	} {
+		if shortcut.admin && !IsAdmin {
+			continue
+		}
+		action := walk.NewAction()
+		action.SetShortcut(shortcut.key)
+		action.Triggered().Attach(shortcut.handler)
+		mtw.ShortcutActions().Add(action)
+	}
 
 	mtw.tunnelChangedCB = manager.IPCClientRegisterTunnelChange(mtw.onTunnelChange)
 	globalState, _ := manager.IPCClientGlobalState()
@@ -135,10 +212,69 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	return mtw, nil
 }
 
+// newScreen creates a hidden container for a screen made of native controls, with the header bar on top.
+func (mtw *ManageTunnelsWindow) newScreen(title func() string) (*walk.Composite, error) {
+	screen, err := walk.NewComposite(mtw)
+	if err != nil {
+		return nil, err
+	}
+	layout := walk.NewVBoxLayout()
+	layout.SetMargins(walk.Margins{})
+	layout.SetSpacing(0)
+	screen.SetLayout(layout)
+	screen.SetBackground(themeBrush(themeBackdrop))
+	header, err := newCanvasView(screen, func(s *scene, width, height float64) {
+		s.header(width, title(), func() { mtw.showScreen(screenStatus) })
+	})
+	if err != nil {
+		return nil, err
+	}
+	header.SetMinMaxSize(walk.Size{0, headerHeight + 1}, walk.Size{0, headerHeight + 1})
+	return screen, nil
+}
+
+// showScreen switches what the window shows.
+func (mtw *ManageTunnelsWindow) showScreen(screen screenKind) {
+	if screen == screenUpdate && mtw.updateScreen == nil {
+		screen = screenStatus
+	}
+	mtw.screen = screen
+	if screen != screenDetails {
+		mtw.detailsName = ""
+		mtw.model.showDetailsOf("")
+	}
+	mtw.mainView.resetScroll()
+	mtw.SetSuspended(true)
+	mtw.mainView.SetVisible(screen == screenStatus || screen == screenDetails)
+	mtw.logScreen.SetVisible(screen == screenLog)
+	if mtw.updateScreen != nil {
+		mtw.updateScreen.SetVisible(screen == screenUpdate)
+	}
+	mtw.SetSuspended(false)
+	mtw.mainView.Invalidate()
+	if screen == screenLog {
+		mtw.logPage.scrollToBottom()
+	}
+}
+
+// showDetails switches to the screen about one tunnel.
+func (mtw *ManageTunnelsWindow) showDetails(name string) {
+	mtw.showScreen(screenDetails)
+	mtw.detailsName = name
+	mtw.model.showDetailsOf(name)
+}
+
 func (mtw *ManageTunnelsWindow) Dispose() {
 	if mtw.tunnelChangedCB != nil {
 		mtw.tunnelChangedCB.Unregister()
 		mtw.tunnelChangedCB = nil
+	}
+	if mtw.quitTicker != nil {
+		close(mtw.quitTicker)
+		mtw.quitTicker = nil
+	}
+	if mtw.model != nil {
+		mtw.model.dispose()
 	}
 	mtw.FormBase.Dispose()
 }
@@ -183,10 +319,27 @@ func (mtw *ManageTunnelsWindow) UpdateFound() {
 	if IsAdmin {
 		mtw.SetTitle(l18n.Sprintf("%s (out of date)", mtw.Title()))
 	}
-	updatePage, err := NewUpdatePage()
-	if err == nil {
-		mtw.updatePage = updatePage
-		mtw.tabs.Pages().Add(updatePage.TabPage)
+	screen, err := mtw.newScreen(func() string { return l18n.Sprintf("An Update is Available!") })
+	if err != nil {
+		return
+	}
+	updatePage, err := NewUpdatePage(screen)
+	if err != nil {
+		screen.Dispose()
+		return
+	}
+	screen.SetVisible(false)
+	mtw.updateScreen, mtw.updatePage = screen, updatePage
+	mtw.model.updateAvailable = true
+	mtw.mainView.Invalidate()
+}
+
+// showUpdateOrStatus shows the update screen if there is an update, and the status screen otherwise.
+func (mtw *ManageTunnelsWindow) showUpdateOrStatus() {
+	if mtw.updateScreen != nil {
+		mtw.showScreen(screenUpdate)
+	} else {
+		mtw.showScreen(screenStatus)
 	}
 }
 
@@ -206,20 +359,14 @@ func (mtw *ManageTunnelsWindow) WndProc(hwnd win.HWND, msg uint32, wParam, lPara
 			return 0
 		}
 	case raiseMsg:
-		if mtw.tunnelsPage == nil || mtw.tabs == nil {
+		if mtw.mainView == nil || mtw.logScreen == nil {
 			mtw.Synchronize(func() {
 				mtw.SendMessage(msg, wParam, lParam)
 			})
 			return 0
 		}
-		if !mtw.Visible() {
-			mtw.tunnelsPage.listView.SelectFirstActiveTunnel()
-			if mtw.tabs.Pages().Len() != 3 {
-				mtw.tabs.SetCurrentIndex(0)
-			}
-		}
-		if mtw.tabs.Pages().Len() == 3 {
-			mtw.tabs.SetCurrentIndex(2)
+		if !mtw.Visible() || mtw.updateScreen != nil {
+			mtw.showUpdateOrStatus()
 		}
 		raise(mtw.Handle())
 		return 0

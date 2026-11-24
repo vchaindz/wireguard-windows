@@ -27,13 +27,6 @@ type widthAndDllIdx struct {
 // crosses IPC; it only selects an icon and its cache slot.
 const tunnelStartedNoConnection manager.TunnelState = -1
 
-func displayState(state manager.TunnelState, health manager.TunnelHealth) manager.TunnelState {
-	if state == manager.TunnelStarted && health.IsNoConnection() {
-		return tunnelStartedNoConnection
-	}
-	return state
-}
-
 var cachedOverlayIconsForWidthAndState = make(map[widthAndState]walk.Image)
 
 func iconWithOverlayForState(state manager.TunnelState, size int) (icon walk.Image, err error) {
@@ -121,24 +114,6 @@ func textForState(state manager.TunnelState, withEllipsis bool) (text string) {
 		}
 	}
 	return
-}
-
-func textForStateAndHealth(state manager.TunnelState, health manager.TunnelHealth) string {
-	if state == manager.TunnelStarted {
-		switch health {
-		case manager.TunnelHealthConnected:
-			return l18n.Sprintf("Active (connected)")
-		case manager.TunnelHealthNoConnection:
-			return l18n.Sprintf("Active, but no connection (peer does not answer)")
-		case manager.TunnelHealthWaitingForPeer:
-			return l18n.Sprintf("Active, but peer does not answer (routes not applied, network unaffected)")
-		case manager.TunnelHealthNoConnectionNetworkBlocked:
-			return l18n.Sprintf("Active, but no connection (all network traffic is cut off)")
-		case manager.TunnelHealthUnverified:
-			return l18n.Sprintf("Active (connection not verified yet)")
-		}
-	}
-	return textForState(state, false)
 }
 
 var cachedSystemIconsForWidthAndDllIdx = make(map[widthAndDllIdx]*walk.Icon)

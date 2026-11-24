@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/lxn/walk"
+	"github.com/lxn/win"
 	"golang.zx2c4.com/wireguard/windows/l18n"
 	"golang.zx2c4.com/wireguard/windows/ringlogger"
 )
@@ -21,19 +22,19 @@ const (
 )
 
 type LogPage struct {
-	*walk.TabPage
+	*walk.Composite
 	logView *walk.TableView
 	model   *logModel
 }
 
-func NewLogPage() (*LogPage, error) {
+func NewLogPage(parent walk.Container) (*LogPage, error) {
 	lp := &LogPage{}
 
 	var err error
 	var disposables walk.Disposables
 	defer disposables.Treat()
 
-	if lp.TabPage, err = walk.NewTabPage(); err != nil {
+	if lp.Composite, err = walk.NewComposite(parent); err != nil {
 		return nil, err
 	}
 	disposables.Add(lp)
@@ -42,15 +43,21 @@ func NewLogPage() (*LogPage, error) {
 		close(lp.model.quit)
 	})
 
-	lp.SetTitle(l18n.Sprintf("Log"))
-	lp.SetLayout(walk.NewVBoxLayout())
+	layout := walk.NewVBoxLayout()
+	layout.SetMargins(walk.Margins{HNear: 16, HFar: 16})
+	lp.SetLayout(layout)
 
 	if lp.logView, err = walk.NewTableView(lp); err != nil {
 		return nil, err
 	}
-	lp.logView.SetAlternatingRowBG(true)
 	lp.logView.SetLastColumnStretched(true)
-	lp.logView.SetGridlines(true)
+	lp.logView.SetHeaderHidden(true)
+	lp.logView.SetCellStyler(lp)
+	lp.logView.SetBackground(themeBrush(themeBackdrop))
+	for child := win.GetWindow(lp.logView.Handle(), win.GW_CHILD); child != 0; child = win.GetWindow(child, win.GW_HWNDNEXT) {
+		useDarkControlTheme(child)
+		win.SendMessage(child, win.LVM_SETBKCOLOR, 0, uintptr(themeBackdrop.walk()))
+	}
 
 	contextMenu, err := walk.NewMenu()
 	if err != nil {
@@ -99,25 +106,37 @@ func NewLogPage() (*LogPage, error) {
 	lp.logView.SetModel(lp.model)
 	setSelectionStatus()
 
-	buttonsContainer, err := walk.NewComposite(lp)
-	if err != nil {
-		return nil, err
-	}
-	buttonsContainer.SetLayout(walk.NewHBoxLayout())
-	buttonsContainer.Layout().SetMargins(walk.Margins{})
-
-	walk.NewHSpacer(buttonsContainer)
-
-	saveButton, err := walk.NewPushButton(buttonsContainer)
-	if err != nil {
-		return nil, err
-	}
-	saveButton.SetText(l18n.Sprintf("&Save"))
-	saveButton.Clicked().Attach(lp.onSave)
-
 	disposables.Spare()
 
 	return lp, nil
+}
+
+// StyleCell colors the log for the dark window and marks what the connection check reports.
+func (lp *LogPage) StyleCell(style *walk.CellStyle) {
+	style.BackgroundColor = themeBackdrop.walk()
+	style.TextColor = themeText.walk()
+	row := style.Row()
+	if style.Col() == 0 || row < 0 || row >= len(lp.model.items) {
+		style.TextColor = themeTextDim.walk()
+		return
+	}
+	if line := lp.model.items[row].Line; strings.Contains(line, "Connection check:") {
+		switch {
+		case strings.Contains(line, "tunnel is connected"), strings.Contains(line, "back to normal"):
+			style.TextColor = themeGreen.walk()
+		case strings.Contains(line, "not verified"):
+		default:
+			style.TextColor = themeAmberSoft.walk()
+		}
+	}
+}
+
+// copySelectionOrAll copies the selected lines, or the whole log when none is selected.
+func (lp *LogPage) copySelectionOrAll() {
+	if len(lp.logView.SelectedIndexes()) == 0 {
+		lp.onSelectAll()
+	}
+	lp.onCopy()
 }
 
 func (lp *LogPage) isAtBottom() bool {

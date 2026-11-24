@@ -590,222 +590,6 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Status:",
-            "message": "Status:",
-            "translation": "Trạng thái:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Deactivate",
-            "message": "\u0026Deactivate",
-            "translation": "\u0026Hủy kích hoạt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Activate",
-            "message": "\u0026Activate",
-            "translation": "\u0026Kích hoạt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Warning:",
-            "message": "Warning:",
-            "translation": ""
-        },
-        {
-            "id": "Public key:",
-            "message": "Public key:",
-            "translation": "Khoá công khai:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Listen port:",
-            "message": "Listen port:",
-            "translation": "Cổng lắng nghe:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "MTU:",
-            "message": "MTU:",
-            "translation": ""
-        },
-        {
-            "id": "Addresses:",
-            "message": "Addresses:",
-            "translation": "Địa chỉ:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "DNS servers:",
-            "message": "DNS servers:",
-            "translation": "Máy chủ DNS:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Scripts:",
-            "message": "Scripts:",
-            "translation": "Tập lệnh:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Table:",
-            "message": "Table:",
-            "translation": "Bảng định tuyến:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Preshared key:",
-            "message": "Preshared key:",
-            "translation": "Khoá chia sẻ trước:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Allowed IPs:",
-            "message": "Allowed IPs:",
-            "translation": "IP cho phép:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Endpoint:",
-            "message": "Endpoint:",
-            "translation": "Đầu cuối:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Persistent keepalive:",
-            "message": "Persistent keepalive:",
-            "translation": "Keepalive liên tục:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Latest handshake:",
-            "message": "Latest handshake:",
-            "translation": "Bắt tay gần nhất:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Transfer:",
-            "message": "Transfer:",
-            "translation": "Truyền tải:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "pre-up",
-            "message": "pre-up",
-            "translation": "trước khi bật",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "post-up",
-            "message": "post-up",
-            "translation": "sau khi bật",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "pre-down",
-            "message": "pre-down",
-            "translation": "trước khi tắt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "post-down",
-            "message": "post-down",
-            "translation": "sau khi tắt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "disabled, per policy",
-            "message": "disabled, per policy",
-            "translation": "đã vô hiệu hoá, theo chính sách",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "off",
-            "message": "off",
-            "translation": "tắt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "enabled",
-            "message": "enabled",
-            "translation": "đã kích hoạt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "{String} received, {String_1} sent",
-            "message": "{String} received, {String_1} sent",
-            "translation": "Nhận {String}, gửi {String_1}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "String",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "c.RxBytes.String()"
-                },
-                {
-                    "id": "String_1",
-                    "string": "%[2]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 2,
-                    "expr": "c.TxBytes.String()"
-                }
-            ]
-        },
-        {
-            "id": "Failed to determine tunnel state",
-            "message": "Failed to determine tunnel state",
-            "translation": "Không thể xác định tình trạng VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Failed to activate tunnel",
-            "message": "Failed to activate tunnel",
-            "translation": "Không thể kích hoạt VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Failed to deactivate tunnel",
-            "message": "Failed to deactivate tunnel",
-            "translation": "Không thể vô hiệu hóa VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Interface: {Name}",
-            "message": "Interface: {Name}",
-            "translation": "Giao diện: {Name}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "config.Name"
-                }
-            ]
-        },
-        {
-            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
-            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
-            "translation": ""
-        },
-        {
-            "id": "The connection is unstable: it was lost and re-established recently.",
-            "message": "The connection is unstable: it was lost and re-established recently.",
-            "translation": ""
-        },
-        {
-            "id": "Peer",
-            "message": "Peer",
-            "translation": "Mạng ngang hàng",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "Create new tunnel",
             "message": "Create new tunnel",
             "translation": "Tạo VPN",
@@ -980,37 +764,6 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Active (connected)",
-            "message": "Active (connected)",
-            "translation": ""
-        },
-        {
-            "id": "Active, but no connection (peer does not answer)",
-            "message": "Active, but no connection (peer does not answer)",
-            "translation": ""
-        },
-        {
-            "id": "Active, but peer does not answer (routes not applied, network unaffected)",
-            "message": "Active, but peer does not answer (routes not applied, network unaffected)",
-            "translation": ""
-        },
-        {
-            "id": "Active, but no connection (all network traffic is cut off)",
-            "message": "Active, but no connection (all network traffic is cut off)",
-            "translation": ""
-        },
-        {
-            "id": "Active (connection not verified yet)",
-            "message": "Active (connection not verified yet)",
-            "translation": ""
-        },
-        {
-            "id": "Log",
-            "message": "Log",
-            "translation": "Nhật ký",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "\u0026Copy",
             "message": "\u0026Copy",
             "translation": "\u0026Sao chép",
@@ -1051,6 +804,22 @@
             "message": "Export log to file",
             "translation": "Xuất nhật ký ra tệp",
             "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Log",
+            "message": "Log",
+            "translation": "Nhật ký",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Copy",
+            "message": "Copy",
+            "translation": ""
+        },
+        {
+            "id": "Save to file…",
+            "message": "Save to file…",
+            "translation": ""
         },
         {
             "id": "\u0026About WireGuard…",
@@ -1097,6 +866,262 @@
             ]
         },
         {
+            "id": "An Update is Available!",
+            "message": "An Update is Available!",
+            "translation": "Có bản cập nhật mới!",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Failed to determine tunnel state",
+            "message": "Failed to determine tunnel state",
+            "translation": "Không thể xác định tình trạng VPN",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Failed to activate tunnel",
+            "message": "Failed to activate tunnel",
+            "translation": "Không thể kích hoạt VPN",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Failed to deactivate tunnel",
+            "message": "Failed to deactivate tunnel",
+            "translation": "Không thể vô hiệu hóa VPN",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Unable to create tunnel",
+            "message": "Unable to create tunnel",
+            "translation": "Không thể tạo VPN",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "message": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Delete tunnel ‘{Name}’",
+            "message": "Delete tunnel ‘{Name}’",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "{Question} You cannot undo this action.",
+            "message": "{Question} You cannot undo this action.",
+            "translation": "{Question} Bạn không thể hoàn tác hành động này.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Question",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "question"
+                }
+            ]
+        },
+        {
+            "id": "Unable to delete tunnel",
+            "message": "Unable to delete tunnel",
+            "translation": "Không thể xoá VPN",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "A tunnel was unable to be removed: {Error}",
+            "message": "A tunnel was unable to be removed: {Error}",
+            "translation": "Không thể xoá một VPN: {Error}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Error",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "err.Error()"
+                }
+            ]
+        },
+        {
+            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "translation": "Tệp cấu hình (*.zip, *.conf)|*.zip;*.conf|Tất cả tệp (*.*)|*.*",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Import tunnel(s) from file",
+            "message": "Import tunnel(s) from file",
+            "translation": "Nhập VPN từ tệp",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "no configuration files were found",
+            "message": "no configuration files were found",
+            "translation": "không tìm thấy tệp cấu hình nào",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Could not import selected configuration: {LastErr}",
+            "message": "Could not import selected configuration: {LastErr}",
+            "translation": "Không thể nhập cấu hình đã chọn: {LastErr}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LastErr",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "lastErr"
+                }
+            ]
+        },
+        {
+            "id": "Could not enumerate existing tunnels: {Err}",
+            "message": "Could not enumerate existing tunnels: {Err}",
+            "translation": "Không thể liệt kê các VPN hiện có: {Err}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Err",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "err"
+                }
+            ]
+        },
+        {
+            "id": "Another tunnel already exists with the name ‘{Name}’",
+            "message": "Another tunnel already exists with the name ‘{Name}’",
+            "translation": "Đã tồn tại một VPN khác với tên ‘{Name}’",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "unparsedConfig.Name"
+                }
+            ]
+        },
+        {
+            "id": "Unable to import configuration: {LastErr}",
+            "message": "Unable to import configuration: {LastErr}",
+            "translation": "Không thể nhập cấu hình: {LastErr}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LastErr",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "lastErr"
+                }
+            ]
+        },
+        {
+            "id": "Imported tunnels",
+            "message": "Imported tunnels",
+            "translation": "Đã nhập VPN",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Imported {M} tunnels",
+            "message": "Imported {M} tunnels",
+            "translation": {
+                "select": {
+                    "feature": "plural",
+                    "arg": "M",
+                    "cases": {
+                        "other": {
+                            "msg": "Đã nhập {M} VPN"
+                        }
+                    }
+                }
+            },
+            "placeholders": [
+                {
+                    "id": "M",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "m"
+                }
+            ]
+        },
+        {
+            "id": "Imported {M} of {N} tunnels",
+            "message": "Imported {M} of {N} tunnels",
+            "translation": {
+                "select": {
+                    "feature": "plural",
+                    "arg": "N",
+                    "cases": {
+                        "other": {
+                            "msg": "Đã nhập {M} trên {N} VPN"
+                        }
+                    }
+                }
+            },
+            "placeholders": [
+                {
+                    "id": "M",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "m"
+                },
+                {
+                    "id": "N",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "n"
+                }
+            ]
+        },
+        {
+            "id": "Configuration ZIP Files (*.zip)|*.zip",
+            "message": "Configuration ZIP Files (*.zip)|*.zip",
+            "translation": "Tệp ZIP cấu hình (*.zip)|*.zip",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Export tunnels to zip",
+            "message": "Export tunnels to zip",
+            "translation": "Xuất các VPN ra tệp zip",
+            "translatorComment": "Copied from source."
+        },
+        {
             "id": "WireGuard Detection Error",
             "message": "WireGuard Detection Error",
             "translation": "Lỗi phát hiện WireGuard",
@@ -1119,45 +1144,376 @@
             ]
         },
         {
+            "id": "Not connected",
+            "message": "Not connected",
+            "translation": ""
+        },
+        {
+            "id": "No tunnel is active",
+            "message": "No tunnel is active",
+            "translation": ""
+        },
+        {
+            "id": "Activating…",
+            "message": "Activating…",
+            "translation": ""
+        },
+        {
+            "id": "Deactivating…",
+            "message": "Deactivating…",
+            "translation": ""
+        },
+        {
+            "id": "Connected",
+            "message": "Connected",
+            "translation": ""
+        },
+        {
+            "id": "Waiting for peer",
+            "message": "Waiting for peer",
+            "translation": ""
+        },
+        {
+            "id": "Peer does not answer · network unaffected",
+            "message": "Peer does not answer · network unaffected",
+            "translation": ""
+        },
+        {
+            "id": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "message": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "translation": ""
+        },
+        {
+            "id": "No connection",
+            "message": "No connection",
+            "translation": ""
+        },
+        {
+            "id": "Peer does not answer",
+            "message": "Peer does not answer",
+            "translation": ""
+        },
+        {
+            "id": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": ""
+        },
+        {
+            "id": "Network cut off",
+            "message": "Network cut off",
+            "translation": ""
+        },
+        {
+            "id": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "message": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "translation": ""
+        },
+        {
+            "id": "Active · connection not verified yet",
+            "message": "Active · connection not verified yet",
+            "translation": ""
+        },
+        {
+            "id": "Key used elsewhere",
+            "message": "Key used elsewhere",
+            "translation": ""
+        },
+        {
+            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translation": ""
+        },
+        {
+            "id": "The connection is unstable: it was lost and re-established recently.",
+            "message": "The connection is unstable: it was lost and re-established recently.",
+            "translation": ""
+        },
+        {
+            "id": "{Name} · {Short}",
+            "message": "{Name} · {Short}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "hero.tunnel.Name"
+                },
+                {
+                    "id": "Short",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "look.short"
+                }
+            ]
+        },
+        {
+            "id": "No tunnels yet",
+            "message": "No tunnels yet",
+            "translation": ""
+        },
+        {
+            "id": "Import a configuration file to get started.",
+            "message": "Import a configuration file to get started.",
+            "translation": ""
+        },
+        {
+            "id": "{Name} · latest handshake {String}",
+            "message": "{Name} · latest handshake {String}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "hero.tunnel.Name"
+                },
+                {
+                    "id": "String",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "handshake.String()"
+                }
+            ]
+        },
+        {
+            "id": "Address",
+            "message": "Address",
+            "translation": ""
+        },
+        {
+            "id": "Received",
+            "message": "Received",
+            "translation": ""
+        },
+        {
+            "id": "Sent",
+            "message": "Sent",
+            "translation": ""
+        },
+        {
+            "id": "Deactivate",
+            "message": "Deactivate",
+            "translation": ""
+        },
+        {
+            "id": "Details",
+            "message": "Details",
+            "translation": ""
+        },
+        {
+            "id": "Activate {Name}",
+            "message": "Activate {Name}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "OTHER TUNNELS",
+            "message": "OTHER TUNNELS",
+            "translation": ""
+        },
+        {
+            "id": "TUNNELS",
+            "message": "TUNNELS",
+            "translation": ""
+        },
+        {
+            "id": "Add tunnel",
+            "message": "Add tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Import",
+            "message": "Import",
+            "translation": ""
+        },
+        {
+            "id": "Export",
+            "message": "Export",
+            "translation": ""
+        },
+        {
+            "id": "Public key",
+            "message": "Public key",
+            "translation": ""
+        },
+        {
+            "id": "Listen port",
+            "message": "Listen port",
+            "translation": ""
+        },
+        {
+            "id": "MTU",
+            "message": "MTU",
+            "translation": ""
+        },
+        {
+            "id": "Addresses",
+            "message": "Addresses",
+            "translation": ""
+        },
+        {
+            "id": "DNS servers",
+            "message": "DNS servers",
+            "translation": ""
+        },
+        {
+            "id": "pre-up",
+            "message": "pre-up",
+            "translation": "trước khi bật",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "post-up",
+            "message": "post-up",
+            "translation": "sau khi bật",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "pre-down",
+            "message": "pre-down",
+            "translation": "trước khi tắt",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "post-down",
+            "message": "post-down",
+            "translation": "sau khi tắt",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "disabled, per policy",
+            "message": "disabled, per policy",
+            "translation": "đã vô hiệu hoá, theo chính sách",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Scripts",
+            "message": "Scripts",
+            "translation": ""
+        },
+        {
+            "id": "Table",
+            "message": "Table",
+            "translation": ""
+        },
+        {
+            "id": "off",
+            "message": "off",
+            "translation": "tắt",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Preshared key",
+            "message": "Preshared key",
+            "translation": ""
+        },
+        {
+            "id": "enabled",
+            "message": "enabled",
+            "translation": "đã kích hoạt",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Allowed IPs",
+            "message": "Allowed IPs",
+            "translation": ""
+        },
+        {
+            "id": "Endpoint",
+            "message": "Endpoint",
+            "translation": ""
+        },
+        {
+            "id": "Persistent keepalive",
+            "message": "Persistent keepalive",
+            "translation": ""
+        },
+        {
+            "id": "Latest handshake",
+            "message": "Latest handshake",
+            "translation": ""
+        },
+        {
+            "id": "Transfer",
+            "message": "Transfer",
+            "translation": ""
+        },
+        {
+            "id": "{String} received, {String_1} sent",
+            "message": "{String} received, {String_1} sent",
+            "translation": "Nhận {String}, gửi {String_1}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "String",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "c.RxBytes.String()"
+                },
+                {
+                    "id": "String_1",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "c.TxBytes.String()"
+                }
+            ]
+        },
+        {
+            "id": "Copy public key",
+            "message": "Copy public key",
+            "translation": ""
+        },
+        {
+            "id": "INTERFACE",
+            "message": "INTERFACE",
+            "translation": ""
+        },
+        {
+            "id": "PEER",
+            "message": "PEER",
+            "translation": ""
+        },
+        {
+            "id": "Activate",
+            "message": "Activate",
+            "translation": ""
+        },
+        {
+            "id": "Edit",
+            "message": "Edit",
+            "translation": ""
+        },
+        {
+            "id": "Remove",
+            "message": "Remove",
+            "translation": ""
+        },
+        {
             "id": "WireGuard: Deactivated",
             "message": "WireGuard: Deactivated",
             "translation": "WireGuard: Đã hủy kích hoạt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Status: Unknown",
-            "message": "Status: Unknown",
-            "translation": "Trạng thái: Không rõ",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Addresses: None",
-            "message": "Addresses: None",
-            "translation": "Địa chỉ: Không có",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Manage tunnels…",
-            "message": "\u0026Manage tunnels…",
-            "translation": "\u0026Quản lý VPN…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Import tunnel(s) from file…",
-            "message": "\u0026Import tunnel(s) from file…",
-            "translation": "\u0026Nhập VPN từ tệp…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "E\u0026xit",
-            "message": "E\u0026xit",
-            "translation": "T\u0026hoát",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Tunnels",
-            "message": "\u0026Tunnels",
-            "translation": "\u0026VPN",
             "translatorComment": "Copied from source."
         },
         {
@@ -1321,44 +1677,6 @@
             ]
         },
         {
-            "id": "Status: {StateText}",
-            "message": "Status: {StateText}",
-            "translation": "Trạng thái: {StateText}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "StateText",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "stateText"
-                }
-            ]
-        },
-        {
-            "id": "Addresses: {EnumerationSeparator}",
-            "message": "Addresses: {EnumerationSeparator}",
-            "translation": "Địa chỉ: {EnumerationSeparator}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "EnumerationSeparator",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "strings.Join(addrs, l18n.EnumerationSeparator())"
-                }
-            ]
-        },
-        {
-            "id": "An Update is Available!",
-            "message": "An Update is Available!",
-            "translation": "Có bản cập nhật mới!",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "WireGuard Update Available",
             "message": "WireGuard Update Available",
             "translation": "Có bản cập nhật WireGuard",
@@ -1371,379 +1689,34 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Tunnels",
-            "message": "Tunnels",
-            "translation": "Các VPN",
-            "translatorComment": "Copied from source."
+            "id": "Turn off",
+            "message": "Turn off",
+            "translation": ""
         },
         {
-            "id": "\u0026Edit",
-            "message": "\u0026Edit",
-            "translation": "\u0026Chỉnh sửa",
-            "translatorComment": "Copied from source."
+            "id": "SWITCH TO",
+            "message": "SWITCH TO",
+            "translation": ""
         },
         {
-            "id": "Add \u0026empty tunnel…",
-            "message": "Add \u0026empty tunnel…",
-            "translation": "Thêm VPN \u0026trống…",
-            "translatorComment": "Copied from source."
+            "id": "Manage tunnels",
+            "message": "Manage tunnels",
+            "translation": ""
         },
         {
-            "id": "Add Tunnel",
-            "message": "Add Tunnel",
-            "translation": "Thêm VPN",
-            "translatorComment": "Copied from source."
+            "id": "Import…",
+            "message": "Import…",
+            "translation": ""
         },
         {
-            "id": "Remove selected tunnel(s)",
-            "message": "Remove selected tunnel(s)",
-            "translation": "Xoá (các) VPN đã chọn",
-            "translatorComment": "Copied from source."
+            "id": "About",
+            "message": "About",
+            "translation": ""
         },
         {
-            "id": "Export all tunnels to zip",
-            "message": "Export all tunnels to zip",
-            "translation": "Xuất tất cả VPN ra tệp zip",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Toggle",
-            "message": "\u0026Toggle",
-            "translation": "\u0026Bật/Tắt",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Export all tunnels to \u0026zip…",
-            "message": "Export all tunnels to \u0026zip…",
-            "translation": "Xuất tất cả VPN ra tệp \u0026zip…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Edit \u0026selected tunnel…",
-            "message": "Edit \u0026selected tunnel…",
-            "translation": "Chỉnh sửa \u0026VPN đã chọn…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Remove selected tunnel(s)",
-            "message": "\u0026Remove selected tunnel(s)",
-            "translation": "\u0026Xoá (các) VPN đã chọn",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "no configuration files were found",
-            "message": "no configuration files were found",
-            "translation": "không tìm thấy tệp cấu hình nào",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Could not import selected configuration: {LastErr}",
-            "message": "Could not import selected configuration: {LastErr}",
-            "translation": "Không thể nhập cấu hình đã chọn: {LastErr}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "LastErr",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "lastErr"
-                }
-            ]
-        },
-        {
-            "id": "Could not enumerate existing tunnels: {Err}",
-            "message": "Could not enumerate existing tunnels: {Err}",
-            "translation": "Không thể liệt kê các VPN hiện có: {Err}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Err",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "err"
-                }
-            ]
-        },
-        {
-            "id": "Another tunnel already exists with the name ‘{Name}’",
-            "message": "Another tunnel already exists with the name ‘{Name}’",
-            "translation": "Đã tồn tại một VPN khác với tên ‘{Name}’",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "unparsedConfig.Name"
-                }
-            ]
-        },
-        {
-            "id": "Unable to import configuration: {LastErr}",
-            "message": "Unable to import configuration: {LastErr}",
-            "translation": "Không thể nhập cấu hình: {LastErr}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "LastErr",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "lastErr"
-                }
-            ]
-        },
-        {
-            "id": "Imported tunnels",
-            "message": "Imported tunnels",
-            "translation": "Đã nhập VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Imported {M} tunnels",
-            "message": "Imported {M} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "M",
-                    "cases": {
-                        "other": {
-                            "msg": "Đã nhập {M} VPN"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "M",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "m"
-                }
-            ]
-        },
-        {
-            "id": "Imported {M} of {N} tunnels",
-            "message": "Imported {M} of {N} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "N",
-                    "cases": {
-                        "other": {
-                            "msg": "Đã nhập {M} trên {N} VPN"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "M",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "m"
-                },
-                {
-                    "id": "N",
-                    "string": "%[2]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 2,
-                    "expr": "n"
-                }
-            ]
-        },
-        {
-            "id": "Unable to create tunnel",
-            "message": "Unable to create tunnel",
-            "translation": "Không thể tạo VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Delete {TunnelCount} tunnels",
-            "message": "Delete {TunnelCount} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "other": {
-                            "msg": "Xoá {TunnelCount} VPN"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "message": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "other": {
-                            "msg": "Bạn có chắc chắn muốn xoá {TunnelCount} VPN không?"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Delete tunnel ‘{TunnelName}’",
-            "message": "Delete tunnel ‘{TunnelName}’",
-            "translation": "Xoá VPN ‘{TunnelName}’",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "message": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "translation": "Bạn có chắc chắn muốn xoá VPN ‘{TunnelName}’ không?",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ]
-        },
-        {
-            "id": "{Question} You cannot undo this action.",
-            "message": "{Question} You cannot undo this action.",
-            "translation": "{Question} Bạn không thể hoàn tác hành động này.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Question",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "question"
-                }
-            ]
-        },
-        {
-            "id": "Unable to delete tunnel",
-            "message": "Unable to delete tunnel",
-            "translation": "Không thể xoá VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "A tunnel was unable to be removed: {Error}",
-            "message": "A tunnel was unable to be removed: {Error}",
-            "translation": "Không thể xoá một VPN: {Error}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Error",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "errors[0].Error()"
-                }
-            ]
-        },
-        {
-            "id": "Unable to delete tunnels",
-            "message": "Unable to delete tunnels",
-            "translation": "Không thể xoá các VPN",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "{Lenerrors} tunnels were unable to be removed.",
-            "message": "{Lenerrors} tunnels were unable to be removed.",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "Lenerrors",
-                    "cases": {
-                        "other": {
-                            "msg": "Không thể xoá {Lenerrors} VPN."
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "Lenerrors",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "len(errors)"
-                }
-            ]
-        },
-        {
-            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "translation": "Tệp cấu hình (*.zip, *.conf)|*.zip;*.conf|Tất cả tệp (*.*)|*.*",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Import tunnel(s) from file",
-            "message": "Import tunnel(s) from file",
-            "translation": "Nhập VPN từ tệp",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Configuration ZIP Files (*.zip)|*.zip",
-            "message": "Configuration ZIP Files (*.zip)|*.zip",
-            "translation": "Tệp ZIP cấu hình (*.zip)|*.zip",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Export tunnels to zip",
-            "message": "Export tunnels to zip",
-            "translation": "Xuất các VPN ra tệp zip",
-            "translatorComment": "Copied from source."
+            "id": "Exit",
+            "message": "Exit",
+            "translation": ""
         },
         {
             "id": "{Title} (unsigned build, no updates)",
@@ -1832,6 +1805,22 @@
                     "underlyingType": "interface{Error() string}",
                     "argNum": 1,
                     "expr": "err"
+                }
+            ]
+        },
+        {
+            "id": "Status: {StateText}",
+            "message": "Status: {StateText}",
+            "translation": "Trạng thái: {StateText}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "StateText",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "stateText"
                 }
             ]
         },
