@@ -23,6 +23,7 @@ const trayTunnelActionsOffset = 3
 type trayTunnelHealth struct {
 	health            manager.TunnelHealth
 	conflictSuspected bool
+	unstable          bool
 }
 
 type Tray struct {
@@ -298,12 +299,22 @@ func (tray *Tray) onTunnelChange(tunnel *manager.Tunnel, state, globalState mana
 	})
 }
 
-func (tray *Tray) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected bool) {
+func (tray *Tray) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected, unstable bool) {
 	tray.mtw.Synchronize(func() {
 		last := tray.tunnelHealth[tunnel.Name]
-		tray.tunnelHealth[tunnel.Name] = trayTunnelHealth{health, conflictSuspected}
-		if health == manager.TunnelHealthNoConnection && last.health != manager.TunnelHealthNoConnection {
-			tray.ShowWarning(l18n.Sprintf("WireGuard: No Connection"), l18n.Sprintf("The %s tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.", tunnel.Name))
+		tray.tunnelHealth[tunnel.Name] = trayTunnelHealth{health, conflictSuspected, unstable}
+		if health.IsNoConnection() && !last.health.IsNoConnection() {
+			switch health {
+			case manager.TunnelHealthWaitingForPeer:
+				tray.ShowWarning(l18n.Sprintf("WireGuard: No Connection"), l18n.Sprintf("The %s tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.", tunnel.Name))
+			case manager.TunnelHealthNoConnectionNetworkBlocked:
+				tray.ShowWarning(l18n.Sprintf("WireGuard: Network Cut Off"), l18n.Sprintf("The %s tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.", tunnel.Name))
+			default:
+				tray.ShowWarning(l18n.Sprintf("WireGuard: No Connection"), l18n.Sprintf("The %s tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.", tunnel.Name))
+			}
+		}
+		if unstable && !last.unstable && !last.conflictSuspected {
+			tray.ShowWarning(l18n.Sprintf("WireGuard: Unstable Connection"), l18n.Sprintf("The connection of the %s tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.", tunnel.Name))
 		}
 		if conflictSuspected && !last.conflictSuspected {
 			tray.ShowWarning(l18n.Sprintf("WireGuard: Key Used Elsewhere"), l18n.Sprintf("Another device appears to be using the key of the %s tunnel, which breaks connections on both. Give each device its own key pair.", tunnel.Name))

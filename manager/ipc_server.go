@@ -443,12 +443,16 @@ func (s *ManagerService) ServeConn(reader io.Reader, writer io.Writer) {
 			if err != nil {
 				return
 			}
-			health, conflictSuspected := trackedTunnelHealth(tunnelName)
+			health, conflictSuspected, unstable := trackedTunnelHealth(tunnelName)
 			err = encoder.Encode(health)
 			if err != nil {
 				return
 			}
 			err = encoder.Encode(conflictSuspected)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(unstable)
 			if err != nil {
 				return
 			}
@@ -524,8 +528,8 @@ func IPCServerNotifyTunnelChange(name string, state TunnelState, err error) {
 	notifyAll(TunnelChangeNotificationType, false, name, state, trackedTunnelsGlobalState(), errToString(err))
 }
 
-func IPCServerNotifyTunnelHealth(name string, health TunnelHealth, conflictSuspected bool) {
-	notifyAll(TunnelHealthNotificationType, false, name, health, conflictSuspected)
+func IPCServerNotifyTunnelHealth(name string, health TunnelHealth, conflictSuspected, unstable bool) {
+	notifyAll(TunnelHealthNotificationType, false, name, health, conflictSuspected, unstable)
 }
 
 func IPCServerNotifyTunnelsChange() {

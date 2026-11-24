@@ -75,7 +75,7 @@ var (
 )
 
 type TunnelHealthCallback struct {
-	cb func(tunnel *Tunnel, health TunnelHealth, conflictSuspected bool)
+	cb func(tunnel *Tunnel, health TunnelHealth, conflictSuspected, unstable bool)
 }
 
 var (
@@ -235,13 +235,18 @@ func InitializeIPCClient(reader, writer, events *os.File) {
 				if err != nil {
 					return
 				}
+				var unstable bool
+				err = decoder.Decode(&unstable)
+				if err != nil {
+					return
+				}
 				if len(tunnel) == 0 {
 					continue
 				}
 				t := &Tunnel{tunnel}
 				tunnelHealthCallbacksLock.RLock()
 				for cb := range tunnelHealthCallbacks {
-					cb.cb(t, health, conflictSuspected)
+					cb.cb(t, health, conflictSuspected, unstable)
 				}
 				tunnelHealthCallbacksLock.RUnlock()
 			}
@@ -399,9 +404,10 @@ func (t *Tunnel) State() (tunnelState TunnelState, err error) {
 	return
 }
 
-// Health reports whether the started tunnel has a working session, and whether another device is suspected of
-// using the same private key. It is TunnelHealthUnknown for a tunnel that is not started.
-func (t *Tunnel) Health() (health TunnelHealth, conflictSuspected bool, err error) {
+// Health reports whether the started tunnel has a working session, whether another device is suspected of using
+// the same private key, and whether the connection was lost and re-established recently. It is
+// TunnelHealthUnknown for a tunnel that is not started.
+func (t *Tunnel) Health() (health TunnelHealth, conflictSuspected, unstable bool, err error) {
 	rpcMutex.Lock()
 	defer rpcMutex.Unlock()
 
@@ -418,6 +424,10 @@ func (t *Tunnel) Health() (health TunnelHealth, conflictSuspected bool, err erro
 		return
 	}
 	err = rpcDecoder.Decode(&conflictSuspected)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&unstable)
 	return
 }
 
@@ -528,7 +538,7 @@ func (cb *TunnelChangeCallback) Unregister() {
 	tunnelChangeCallbacksLock.Unlock()
 }
 
-func IPCClientRegisterTunnelHealth(cb func(tunnel *Tunnel, health TunnelHealth, conflictSuspected bool)) *TunnelHealthCallback {
+func IPCClientRegisterTunnelHealth(cb func(tunnel *Tunnel, health TunnelHealth, conflictSuspected, unstable bool)) *TunnelHealthCallback {
 	s := &TunnelHealthCallback{cb}
 	tunnelHealthCallbacksLock.Lock()
 	tunnelHealthCallbacks[s] = true

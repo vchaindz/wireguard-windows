@@ -34,6 +34,7 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 
 	var watcher *interfaceWatcher
 	var adapter *driver.Adapter
+	var peerWaiter *peerWaiter
 	var luid winipcfg.LUID
 	var config *conf.Config
 	var err error
@@ -82,6 +83,9 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 
 		if logErr == nil && adapter != nil && config != nil {
 			logErr = runScriptCommand(config.Interface.PreDown, config.Name)
+		}
+		if peerWaiter != nil {
+			peerWaiter.cancel()
 		}
 		if watcher != nil {
 			watcher.Destroy()
@@ -187,10 +191,15 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 		return
 	}
 
-	err = enableFirewall(config, luid)
-	if err != nil {
-		serviceError = services.ErrorFirewall
-		return
+	// Unless the administrator says otherwise, routes, addresses, DNS and firewall rules are applied only once a
+	// peer has answered, so that a tunnel to a peer that is gone does not take the machine off the network.
+	waitForPeerBeforeRouting := config.WaitsForPeerBeforeRouting()
+	if !waitForPeerBeforeRouting {
+		err = enableFirewall(config, luid)
+		if err != nil {
+			serviceError = services.ErrorFirewall
+			return
+		}
 	}
 
 	log.Println("Dropping privileges")
@@ -211,12 +220,21 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 		serviceError = services.ErrorDeviceBringUp
 		return
 	}
-	watcher.Configure(adapter, config, luid)
+	var peerAnswered <-chan struct{}
+	if waitForPeerBeforeRouting {
+		log.Println("Waiting for a peer to answer before applying routes, DNS and firewall rules")
+		peerWaiter = waitForPeer(adapter, config)
+		peerAnswered = peerWaiter.answered
+		// The service has to count as running while it waits, or it could not be asked to stop.
+		serviceState = svc.Running
+	} else {
+		watcher.Configure(adapter, config, luid)
 
-	err = runScriptCommand(config.Interface.PostUp, config.Name)
-	if err != nil {
-		serviceError = services.ErrorRunScript
-		return
+		err = runScriptCommand(config.Interface.PostUp, config.Name)
+		if err != nil {
+			serviceError = services.ErrorRunScript
+			return
+		}
 	}
 
 	changes <- svc.Status{State: serviceState, Accepts: svc.AcceptStop | svc.AcceptShutdown}
@@ -224,6 +242,20 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 	var started bool
 	for {
 		select {
+		case <-peerAnswered:
+			peerAnswered = nil
+			log.Println("Peer answered, applying routes, DNS and firewall rules")
+			err = enableFirewall(config, luid)
+			if err != nil {
+				serviceError = services.ErrorFirewall
+				return
+			}
+			watcher.Configure(adapter, config, luid)
+			err = runScriptCommand(config.Interface.PostUp, config.Name)
+			if err != nil {
+				serviceError = services.ErrorRunScript
+				return
+			}
 		case c := <-r:
 			switch c.Cmd {
 			case svc.Stop, svc.Shutdown:

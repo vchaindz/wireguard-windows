@@ -569,17 +569,17 @@ func NewConfView(parent walk.Container) (*ConfView, error) {
 					tunnel := cv.tunnel
 					var state manager.TunnelState
 					var health manager.TunnelHealth
-					var conflictSuspected bool
+					var conflictSuspected, unstable bool
 					var config conf.Config
 					if state, _ = tunnel.State(); state == manager.TunnelStarted {
 						config, _ = tunnel.RuntimeConfig()
-						health, conflictSuspected, _ = tunnel.Health()
+						health, conflictSuspected, unstable, _ = tunnel.Health()
 					}
 					if config.Name == "" {
 						config, _ = tunnel.StoredConfig()
 					}
 					cv.Synchronize(func() {
-						cv.setTunnel(tunnel, &config, state, health, conflictSuspected)
+						cv.setTunnel(tunnel, &config, state, health, conflictSuspected, unstable)
 					})
 				}
 			case <-cv.quit:
@@ -635,16 +635,16 @@ func (cv *ConfView) onTunnelChanged(tunnel *manager.Tunnel, state, globalState m
 	if cv.tunnel != nil && cv.tunnel.Name == tunnel.Name {
 		var config conf.Config
 		var health manager.TunnelHealth
-		var conflictSuspected bool
+		var conflictSuspected, unstable bool
 		if state == manager.TunnelStarted {
 			config, _ = tunnel.RuntimeConfig()
-			health, conflictSuspected, _ = tunnel.Health()
+			health, conflictSuspected, unstable, _ = tunnel.Health()
 		}
 		if config.Name == "" {
 			config, _ = tunnel.StoredConfig()
 		}
 		cv.Synchronize(func() {
-			cv.setTunnel(tunnel, &config, state, health, conflictSuspected)
+			cv.setTunnel(tunnel, &config, state, health, conflictSuspected, unstable)
 		})
 	}
 }
@@ -657,24 +657,24 @@ func (cv *ConfView) SetTunnel(tunnel *manager.Tunnel) {
 	if tunnel != nil {
 		go func() {
 			var health manager.TunnelHealth
-			var conflictSuspected bool
+			var conflictSuspected, unstable bool
 			if state, _ = tunnel.State(); state == manager.TunnelStarted {
 				config, _ = tunnel.RuntimeConfig()
-				health, conflictSuspected, _ = tunnel.Health()
+				health, conflictSuspected, unstable, _ = tunnel.Health()
 			}
 			if config.Name == "" {
 				config, _ = tunnel.StoredConfig()
 			}
 			cv.Synchronize(func() {
-				cv.setTunnel(tunnel, &config, state, health, conflictSuspected)
+				cv.setTunnel(tunnel, &config, state, health, conflictSuspected, unstable)
 			})
 		}()
 	} else {
-		cv.setTunnel(tunnel, &config, state, manager.TunnelHealthUnknown, false)
+		cv.setTunnel(tunnel, &config, state, manager.TunnelHealthUnknown, false, false)
 	}
 }
 
-func (cv *ConfView) setTunnel(tunnel *manager.Tunnel, config *conf.Config, state manager.TunnelState, health manager.TunnelHealth, conflictSuspected bool) {
+func (cv *ConfView) setTunnel(tunnel *manager.Tunnel, config *conf.Config, state manager.TunnelState, health manager.TunnelHealth, conflictSuspected, unstable bool) {
 	if !(cv.tunnel == nil || tunnel == nil || tunnel.Name == cv.tunnel.Name) {
 		return
 	}
@@ -691,6 +691,8 @@ func (cv *ConfView) setTunnel(tunnel *manager.Tunnel, config *conf.Config, state
 	cv.interfaze.status.update(state, health)
 	if state == manager.TunnelStarted && conflictSuspected {
 		cv.interfaze.warning.show(l18n.Sprintf("Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair."))
+	} else if state == manager.TunnelStarted && unstable {
+		cv.interfaze.warning.show(l18n.Sprintf("The connection is unstable: it was lost and re-established recently."))
 	} else {
 		cv.interfaze.warning.hide()
 	}

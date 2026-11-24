@@ -118,21 +118,23 @@ var messageKeyToIndex = map[string]int{
 	"About WireGuard":                       38,
 	"Activating":                            90,
 	"Active":                                89,
-	"Active (connected)":                    181,
-	"Active (connection not verified: no traffic yet)": 183,
-	"Active, but no connection (peer does not answer)": 182,
-	"Add &empty tunnel…":                               126,
-	"Add Tunnel":                                       127,
-	"Addresses:":                                       47,
-	"Addresses: %s":                                    120,
-	"Addresses: None":                                  110,
-	"All peers must have public keys":                  37,
-	"Allowed IPs:":                                     52,
-	"An Update is Available!":                          121,
-	"An interface must have a private key":             35,
+	"Active (connected)":                    182,
+	"Active (connection not verified yet)":  186,
+	"Active, but no connection (all network traffic is cut off)":                185,
+	"Active, but no connection (peer does not answer)":                          183,
+	"Active, but peer does not answer (routes not applied, network unaffected)": 184,
+	"Add &empty tunnel…":                   126,
+	"Add Tunnel":                           127,
+	"Addresses:":                           47,
+	"Addresses: %s":                        120,
+	"Addresses: None":                      110,
+	"All peers must have public keys":      37,
+	"Allowed IPs:":                         52,
+	"An Update is Available!":              121,
+	"An interface must have a private key": 35,
 	"An update to WireGuard is available. It is highly advisable to update without delay.":                                              159,
 	"An update to WireGuard is now available. You are advised to update as soon as possible.":                                           123,
-	"Another device appears to be using the key of the %s tunnel, which breaks connections on both. Give each device its own key pair.": 187,
+	"Another device appears to be using the key of the %s tunnel, which breaks connections on both. Give each device its own key pair.": 195,
 	"Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.":        180,
 	"Another tunnel already exists with the name ‘%s’":                                                                                  137,
 	"Another tunnel already exists with the name ‘%s’.":                                                                                 85,
@@ -214,7 +216,11 @@ var messageKeyToIndex = map[string]int{
 	"Text Files (*.txt)|*.txt|All Files (*.*)|*.*":                                                                                      100,
 	"The %s tunnel has been activated.":                                                                                                 116,
 	"The %s tunnel has been deactivated.":                                                                                               118,
-	"The %s tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.": 185,
+	"The %s tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.":                                                            191,
+	"The %s tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.":                              188,
+	"The %s tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.":         190,
+	"The connection is unstable: it was lost and re-established recently.":                                                                                             181,
+	"The connection of the %s tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.": 193,
 	"Time":                               98,
 	"Transfer:":                          56,
 	"Tunnel Error":                       103,
@@ -247,11 +253,13 @@ var messageKeyToIndex = map[string]int{
 	"WireGuard logo image": 39,
 	"WireGuard may only be used by users who are a member of the Builtin %s group.": 8,
 	"WireGuard system tray icon did not appear after 30 seconds.":                   10,
-	"WireGuard: %s":                 178,
-	"WireGuard: Deactivated":        108,
-	"WireGuard: Key Used Elsewhere": 186,
-	"WireGuard: No Connection":      184,
-	"Writing file failed":           87,
+	"WireGuard: %s":                  178,
+	"WireGuard: Deactivated":         108,
+	"WireGuard: Key Used Elsewhere":  194,
+	"WireGuard: Network Cut Off":     189,
+	"WireGuard: No Connection":       187,
+	"WireGuard: Unstable Connection": 192,
+	"Writing file failed":            87,
 	"You must use the native version of WireGuard on this computer.": 6,
 	"[EnumerationSeparator]":            172,
 	"[UnitSeparator]":                   173,
@@ -267,7 +275,7 @@ var messageKeyToIndex = map[string]int{
 	"♥ &Donate!":                        42,
 }
 
-var afIndex = []uint32{ // 189 elements
+var afIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x0000004d,
 	0x00000065, 0x00000077, 0x000000b0, 0x000000f9,
@@ -321,8 +329,11 @@ var afIndex = []uint32{ // 189 elements
 	0x000014b4, 0x000014b4, 0x000014b4, 0x000014b4,
 	0x000014b4, 0x000014b4, 0x000014b4, 0x000014b4,
 	0x000014b4, 0x000014b4, 0x000014b4, 0x000014b4,
+	0x000014b4, 0x000014b4, 0x000014b4, 0x000014b4,
+	// Entry C0 - DF
+	0x000014b4, 0x000014b4, 0x000014b4, 0x000014b4,
 	0x000014b4,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const afData string = "" + // Size: 5300 bytes
 	"\x02Fout\x04\x00\x01 \x06\x02Fout:\x02(geen argument): verhoog regte en " +
@@ -411,7 +422,7 @@ const afData string = "" + // Size: 5300 bytes
 	" Wag vir administrateur\x02Status: Wag vir bywerkingsdiens\x02Fout: %[1]" +
 	"v. Probeer asseblief weer.\x02Status: Voltooid!"
 
-var arIndex = []uint32{ // 189 elements
+var arIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x0000006e,
 	0x00000091, 0x000000b4, 0x00000116, 0x00000182,
@@ -465,8 +476,11 @@ var arIndex = []uint32{ // 189 elements
 	0x00002306, 0x00002306, 0x00002306, 0x00002306,
 	0x00002306, 0x00002306, 0x00002306, 0x00002306,
 	0x00002306, 0x00002306, 0x00002306, 0x00002306,
+	0x00002306, 0x00002306, 0x00002306, 0x00002306,
+	// Entry C0 - DF
+	0x00002306, 0x00002306, 0x00002306, 0x00002306,
 	0x00002306,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const arData string = "" + // Size: 8966 bytes
 	"\x02خطأ\x04\x00\x01 \x08\x02خطأ:\x02(بدون معطيات): تصعيد الصلاحيات وتثبي" +
@@ -564,7 +578,7 @@ const arData string = "" + // Size: 8966 bytes
 	"\x02%.2[1]f\u00a0ميبيبايت\x02%.2[1]f\u00a0جيبيبايت\x02%.2[1]f\u00a0تيبيب" +
 	"ايت\x02، \x02، \x02الحالة:\x02الحالة: %[1]s"
 
-var caIndex = []uint32{ // 189 elements
+var caIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000006, 0x00000045,
 	0x00000059, 0x00000074, 0x000000b3, 0x000000f9,
@@ -618,8 +632,11 @@ var caIndex = []uint32{ // 189 elements
 	0x000016bb, 0x000016c8, 0x000016cd, 0x000016de,
 	0x000016de, 0x000016de, 0x000016de, 0x000016de,
 	0x000016de, 0x000016de, 0x000016de, 0x000016de,
+	0x000016de, 0x000016de, 0x000016de, 0x000016de,
+	// Entry C0 - DF
+	0x000016de, 0x000016de, 0x000016de, 0x000016de,
 	0x000016de,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const caData string = "" + // Size: 5854 bytes
 	"\x02Error\x02(sense argument): eleva i instal·la el servei d'administrad" +
@@ -715,7 +732,7 @@ const caData string = "" + // Size: 5854 bytes
 	"\x02%.2[1]f\u00a0TiB\x02Estat:\x02Estat: %[1]s\x02%[1]s: %[2]q\x02MTU:" +
 	"\x02WireGuard: %[1]s"
 
-var csIndex = []uint32{ // 189 elements
+var csIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000012, 0x0000005b,
 	0x00000075, 0x00000096, 0x000000c9, 0x00000112,
@@ -769,8 +786,11 @@ var csIndex = []uint32{ // 189 elements
 	0x00001785, 0x00001792, 0x00001797, 0x000017a8,
 	0x000017a8, 0x000017a8, 0x000017a8, 0x000017a8,
 	0x000017a8, 0x000017a8, 0x000017a8, 0x000017a8,
+	0x000017a8, 0x000017a8, 0x000017a8, 0x000017a8,
+	// Entry C0 - DF
+	0x000017a8, 0x000017a8, 0x000017a8, 0x000017a8,
 	0x000017a8,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const csData string = "" + // Size: 6056 bytes
 	"\x02Chyba\x04\x00\x01 \x07\x02Chyba:\x02(žádný argument): Zvýšit oprávně" +
@@ -869,7 +889,7 @@ const csData string = "" + // Size: 6056 bytes
 	".2[1]f\u00a0TiB\x02Stav:\x02Stav: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireG" +
 	"uard: %[1]s"
 
-var daIndex = []uint32{ // 189 elements
+var daIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x00000048,
 	0x0000005d, 0x00000078, 0x000000b0, 0x000000f2,
@@ -923,8 +943,11 @@ var daIndex = []uint32{ // 189 elements
 	0x000014eb, 0x000014f8, 0x000014fd, 0x0000150e,
 	0x0000150e, 0x0000150e, 0x0000150e, 0x0000150e,
 	0x0000150e, 0x0000150e, 0x0000150e, 0x0000150e,
+	0x0000150e, 0x0000150e, 0x0000150e, 0x0000150e,
+	// Entry C0 - DF
+	0x0000150e, 0x0000150e, 0x0000150e, 0x0000150e,
 	0x0000150e,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const daData string = "" + // Size: 5390 bytes
 	"\x02Fejl\x04\x00\x01 \x06\x02Fejl:\x02(intet argument): ophøj og install" +
@@ -1014,7 +1037,7 @@ const daData string = "" + // Size: 5390 bytes
 	"]f\u00a0KiB\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB" +
 	"\x02Status:\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var deIndex = []uint32{ // 189 elements
+var deIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x00000066,
 	0x00000081, 0x00000098, 0x000000ee, 0x0000013a,
@@ -1068,8 +1091,11 @@ var deIndex = []uint32{ // 189 elements
 	0x00001822, 0x0000182f, 0x00001834, 0x00001845,
 	0x00001845, 0x00001845, 0x00001845, 0x00001845,
 	0x00001845, 0x00001845, 0x00001845, 0x00001845,
+	0x00001845, 0x00001845, 0x00001845, 0x00001845,
+	// Entry C0 - DF
+	0x00001845, 0x00001845, 0x00001845, 0x00001845,
 	0x00001845,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const deData string = "" + // Size: 6213 bytes
 	"\x02Fehler\x04\x00\x01 \x08\x02Fehler:\x02(kein Argument): Als Administr" +
@@ -1171,7 +1197,7 @@ const deData string = "" + // Size: 6213 bytes
 	"%.2[1]f\u00a0TiB\x02Status:\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02" +
 	"WireGuard: %[1]s"
 
-var elIndex = []uint32{ // 189 elements
+var elIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000d, 0x00000020, 0x000000a9,
 	0x000000c4, 0x000000f3, 0x00000176, 0x00000206,
@@ -1225,8 +1251,11 @@ var elIndex = []uint32{ // 189 elements
 	0x00002935, 0x00002942, 0x00002947, 0x00002958,
 	0x00002958, 0x00002958, 0x00002958, 0x00002958,
 	0x00002958, 0x00002958, 0x00002958, 0x00002958,
+	0x00002958, 0x00002958, 0x00002958, 0x00002958,
+	// Entry C0 - DF
+	0x00002958, 0x00002958, 0x00002958, 0x00002958,
 	0x00002958,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const elData string = "" + // Size: 10584 bytes
 	"\x02Σφάλμα\x04\x00\x01 \x0e\x02Σφάλμα:\x02(χωρίς όρισμα): ανύψωση δικαιω" +
@@ -1330,7 +1359,7 @@ const elData string = "" + // Size: 10584 bytes
 	"\x02Κατάσταση:\x02Κατάσταση: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard:" +
 	" %[1]s"
 
-var enIndex = []uint32{ // 189 elements
+var enIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000012, 0x00000045,
 	0x0000005b, 0x00000070, 0x000000b6, 0x000000f5,
@@ -1382,12 +1411,15 @@ var enIndex = []uint32{ // 189 elements
 	0x0000137a, 0x00001387, 0x00001394, 0x000013a1,
 	0x000013ae, 0x000013c5, 0x000013d5, 0x000013dd,
 	0x000013eb, 0x000013f8, 0x000013fd, 0x0000140e,
-	0x00001417, 0x00001492, 0x000014a5, 0x000014d6,
-	0x00001507, 0x00001520, 0x00001589, 0x000015a7,
-	0x0000162c,
-} // Size: 780 bytes
+	0x00001417, 0x00001492, 0x000014d7, 0x000014ea,
+	0x0000151b, 0x00001565, 0x000015a0, 0x000015c5,
+	0x000015de, 0x00001665, 0x00001680, 0x0000171c,
+	// Entry C0 - DF
+	0x00001785, 0x000017a4, 0x00001848, 0x00001866,
+	0x000018eb,
+} // Size: 812 bytes
 
-const enData string = "" + // Size: 5676 bytes
+const enData string = "" + // Size: 6379 bytes
 	"\x02Error\x04\x00\x01 \x07\x02Error:\x02(no argument): elevate and insta" +
 	"ll manager service\x02Usage: %[1]s [\x0a%[2]s]\x02Command Line Options" +
 	"\x02Unable to determine whether the process is running under WOW64: %[1]" +
@@ -1473,15 +1505,25 @@ const enData string = "" + // Size: 5676 bytes
 	"rationSeparator]\x02[UnitSeparator]\x02Status:\x02Status: %[1]s\x02%[1]s" +
 	": %[2]q\x02MTU:\x02WireGuard: %[1]s\x02Warning:\x02Another device appear" +
 	"s to be using this tunnel's key, which breaks connections on both. Give " +
-	"each device its own key pair.\x02Active (connected)\x02Active, but no co" +
-	"nnection (peer does not answer)\x02Active (connection not verified: no t" +
-	"raffic yet)\x02WireGuard: No Connection\x02The %[1]s tunnel is active, b" +
-	"ut its peer does not answer. Check the endpoint, the keys and your netwo" +
-	"rk.\x02WireGuard: Key Used Elsewhere\x02Another device appears to be usi" +
-	"ng the key of the %[1]s tunnel, which breaks connections on both. Give e" +
-	"ach device its own key pair."
+	"each device its own key pair.\x02The connection is unstable: it was lost" +
+	" and re-established recently.\x02Active (connected)\x02Active, but no co" +
+	"nnection (peer does not answer)\x02Active, but peer does not answer (rou" +
+	"tes not applied, network unaffected)\x02Active, but no connection (all n" +
+	"etwork traffic is cut off)\x02Active (connection not verified yet)\x02Wi" +
+	"reGuard: No Connection\x02The %[1]s tunnel is active, but its peer does " +
+	"not answer. Its routes have not been applied, so the rest of your networ" +
+	"k is unaffected.\x02WireGuard: Network Cut Off\x02The %[1]s tunnel takes" +
+	" over all network traffic, but its peer does not answer. Your network is" +
+	" cut off until the peer answers or you deactivate the tunnel.\x02The %[1" +
+	"]s tunnel is active, but its peer does not answer. Check the endpoint, t" +
+	"he keys and your network.\x02WireGuard: Unstable Connection\x02The conne" +
+	"ction of the %[1]s tunnel was lost and re-established. If this keeps hap" +
+	"pening, check your network, or whether another device uses the same conf" +
+	"iguration.\x02WireGuard: Key Used Elsewhere\x02Another device appears to" +
+	" be using the key of the %[1]s tunnel, which breaks connections on both." +
+	" Give each device its own key pair."
 
-var es_ESIndex = []uint32{ // 189 elements
+var es_ESIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000006, 0x00000044,
 	0x00000058, 0x00000077, 0x000000c5, 0x000000ff,
@@ -1535,8 +1577,11 @@ var es_ESIndex = []uint32{ // 189 elements
 	0x000017c2, 0x000017cf, 0x000017d4, 0x000017e5,
 	0x000017e5, 0x000017e5, 0x000017e5, 0x000017e5,
 	0x000017e5, 0x000017e5, 0x000017e5, 0x000017e5,
+	0x000017e5, 0x000017e5, 0x000017e5, 0x000017e5,
+	// Entry C0 - DF
+	0x000017e5, 0x000017e5, 0x000017e5, 0x000017e5,
 	0x000017e5,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const es_ESData string = "" + // Size: 6117 bytes
 	"\x02Error\x02(sin argumento): eleve e instale el servicio de administrad" +
@@ -1636,7 +1681,7 @@ const es_ESData string = "" + // Size: 6117 bytes
 	"%.2[1]f TiB\x02Estado:\x02Estado: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireG" +
 	"uard: %[1]s"
 
-var etIndex = []uint32{ // 189 elements
+var etIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x00000047,
 	0x00000060, 0x00000071, 0x000000b9, 0x00000101,
@@ -1690,8 +1735,11 @@ var etIndex = []uint32{ // 189 elements
 	0x00001561, 0x0000156e, 0x00001573, 0x00001584,
 	0x00001584, 0x00001584, 0x00001584, 0x00001584,
 	0x00001584, 0x00001584, 0x00001584, 0x00001584,
+	0x00001584, 0x00001584, 0x00001584, 0x00001584,
+	// Entry C0 - DF
+	0x00001584, 0x00001584, 0x00001584, 0x00001584,
 	0x00001584,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const etData string = "" + // Size: 5508 bytes
 	"\x02Viga\x04\x00\x01 \x06\x02Viga:\x02(tühi muutuja): paigalda haldustee" +
@@ -1783,7 +1831,7 @@ const etData string = "" + // Size: 5508 bytes
 	"\u00a0TiB\x02Staatus:\x02Staatus: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireG" +
 	"uard: %[1]s"
 
-var faIndex = []uint32{ // 189 elements
+var faIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x00000068,
 	0x00000087, 0x000000ab, 0x0000010b, 0x0000016e,
@@ -1837,8 +1885,11 @@ var faIndex = []uint32{ // 189 elements
 	0x00002073, 0x00002080, 0x00002085, 0x00002096,
 	0x00002096, 0x00002096, 0x00002096, 0x00002096,
 	0x00002096, 0x00002096, 0x00002096, 0x00002096,
+	0x00002096, 0x00002096, 0x00002096, 0x00002096,
+	// Entry C0 - DF
+	0x00002096, 0x00002096, 0x00002096, 0x00002096,
 	0x00002096,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const faData string = "" + // Size: 8342 bytes
 	"\x02خطا\x04\x00\x01 \x08\x02خطا:\x02(بدون ورودیی): سرویس مدیریت را ارتقا" +
@@ -1929,7 +1980,7 @@ const faData string = "" + // Size: 8342 bytes
 	"%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02، \x02، \x02" +
 	"وضعیت:\x02وضعیت: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var fiIndex = []uint32{ // 189 elements
+var fiIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000012, 0x00000062,
 	0x0000007b, 0x00000091, 0x000000f6, 0x0000013a,
@@ -1983,8 +2034,11 @@ var fiIndex = []uint32{ // 189 elements
 	0x0000166a, 0x00001677, 0x0000167c, 0x0000168d,
 	0x0000168d, 0x0000168d, 0x0000168d, 0x0000168d,
 	0x0000168d, 0x0000168d, 0x0000168d, 0x0000168d,
+	0x0000168d, 0x0000168d, 0x0000168d, 0x0000168d,
+	// Entry C0 - DF
+	0x0000168d, 0x0000168d, 0x0000168d, 0x0000168d,
 	0x0000168d,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const fiData string = "" + // Size: 5773 bytes
 	"\x02Virhe\x04\x00\x01 \x07\x02Virhe:\x02(ei määrityksiä): suorita järjes" +
@@ -2078,7 +2132,7 @@ const fiData string = "" + // Size: 5773 bytes
 	"\x02%.2[1]f\u00a0TiB\x02Tila:\x02Tila: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02" +
 	"WireGuard: %[1]s"
 
-var frIndex = []uint32{ // 189 elements
+var frIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000015, 0x00000054,
 	0x00000071, 0x00000091, 0x000000d9, 0x00000120,
@@ -2132,8 +2186,11 @@ var frIndex = []uint32{ // 189 elements
 	0x000018b9, 0x000018c7, 0x000018cd, 0x000018df,
 	0x000018df, 0x000018df, 0x000018df, 0x000018df,
 	0x000018df, 0x000018df, 0x000018df, 0x000018df,
+	0x000018df, 0x000018df, 0x000018df, 0x000018df,
+	// Entry C0 - DF
+	0x000018df, 0x000018df, 0x000018df, 0x000018df,
 	0x000018df,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const frData string = "" + // Size: 6367 bytes
 	"\x02Erreur\x04\x00\x01 \x09\x02Erreur :\x02(sans argument) : élever et i" +
@@ -2236,7 +2293,7 @@ const frData string = "" + // Size: 6367 bytes
 	".2[1]f\u00a0Tio\x02 \x02État :\x02État : %[1]s\x02%[1]s : %[2]q\x02MTU :" +
 	"\x02WireGuard : %[1]s"
 
-var heIndex = []uint32{ // 189 elements
+var heIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000b, 0x0000001c, 0x00000070,
 	0x0000008b, 0x000000b0, 0x000000f8, 0x00000144,
@@ -2290,8 +2347,11 @@ var heIndex = []uint32{ // 189 elements
 	0x00001cc4, 0x00001cc4, 0x00001cc4, 0x00001cc4,
 	0x00001cc4, 0x00001cc4, 0x00001cc4, 0x00001cc4,
 	0x00001cc4, 0x00001cc4, 0x00001cc4, 0x00001cc4,
+	0x00001cc4, 0x00001cc4, 0x00001cc4, 0x00001cc4,
+	// Entry C0 - DF
+	0x00001cc4, 0x00001cc4, 0x00001cc4, 0x00001cc4,
 	0x00001cc4,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const heData string = "" + // Size: 7364 bytes
 	"\x02שגיאה\x04\x00\x01 \x0c\x02שגיאה:\x02(ללא ארגומנט): העלאת הרשאות והתק" +
@@ -2373,7 +2433,7 @@ const heData string = "" + // Size: 7364 bytes
 	".\x02מצב: ממתין למנהל המערכת\x02מצב: ממתין לשירות העדכון\x02שגיאה: %[1]v" +
 	". אנא נסה שוב.\x02מצב: הושלם!\x02מצב:\x02מצב: %[1]s"
 
-var hiIndex = []uint32{ // 189 elements
+var hiIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000013, 0x0000002c, 0x000000e1,
 	0x00000101, 0x00000131, 0x000001f7, 0x00000293,
@@ -2427,8 +2487,11 @@ var hiIndex = []uint32{ // 189 elements
 	0x00002ea6, 0x00002ea6, 0x00002ea6, 0x00002ea6,
 	0x00002ea6, 0x00002ea6, 0x00002ea6, 0x00002ea6,
 	0x00002ea6, 0x00002ea6, 0x00002ea6, 0x00002ea6,
+	0x00002ea6, 0x00002ea6, 0x00002ea6, 0x00002ea6,
+	// Entry C0 - DF
+	0x00002ea6, 0x00002ea6, 0x00002ea6, 0x00002ea6,
 	0x00002ea6,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const hiData string = "" + // Size: 11942 bytes
 	"\x02त्रुटि\x04\x00\x01 \x14\x02त्रुटि:\x02(कोई आर्ग्युमेंट नहीं): अधिकार" +
@@ -2517,7 +2580,7 @@ const hiData string = "" + // Size: 11942 bytes
 	"्थिति: अद्यतनकर्ता सेवा की प्रतीक्षा में\x02त्रुटि: %[1]v. कृपया पुनः " +
 	"प्रयास करें।\x02स्थिति: पूर्ण!\x02स्थिति:\x02स्थिति: %[1]s"
 
-var huIndex = []uint32{ // 189 elements
+var huIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x00000068,
 	0x00000083, 0x0000009e, 0x000000df, 0x00000129,
@@ -2571,8 +2634,11 @@ var huIndex = []uint32{ // 189 elements
 	0x00001806, 0x00001806, 0x00001806, 0x00001806,
 	0x00001806, 0x00001806, 0x00001806, 0x00001806,
 	0x00001806, 0x00001806, 0x00001806, 0x00001806,
+	0x00001806, 0x00001806, 0x00001806, 0x00001806,
+	// Entry C0 - DF
+	0x00001806, 0x00001806, 0x00001806, 0x00001806,
 	0x00001806,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const huData string = "" + // Size: 6150 bytes
 	"\x02Hiba\x04\x00\x01 \x06\x02Hiba:\x02(argumentum nélkül): jogosultságok" +
@@ -2667,7 +2733,7 @@ const huData string = "" + // Size: 6150 bytes
 	"\x02Hiba: %[1]v. Próbálja meg újra.\x02Állapot: Befejezve!\x02Állapot:" +
 	"\x02Állapot: %[1]s"
 
-var idIndex = []uint32{ // 189 elements
+var idIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000a, 0x0000001a, 0x00000057,
 	0x00000072, 0x00000084, 0x000000cf, 0x0000010e,
@@ -2721,8 +2787,11 @@ var idIndex = []uint32{ // 189 elements
 	0x0000142f, 0x0000143c, 0x00001441, 0x00001452,
 	0x00001452, 0x00001452, 0x00001452, 0x00001452,
 	0x00001452, 0x00001452, 0x00001452, 0x00001452,
+	0x00001452, 0x00001452, 0x00001452, 0x00001452,
+	// Entry C0 - DF
+	0x00001452, 0x00001452, 0x00001452, 0x00001452,
 	0x00001452,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const idData string = "" + // Size: 5202 bytes
 	"\x02Kesalahan\x04\x00\x01 \x0b\x02Kesalahan:\x02(tidak ada argumen): nai" +
@@ -2810,7 +2879,7 @@ const idData string = "" + // Size: 5202 bytes
 	"B\x02Status:\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]" +
 	"s"
 
-var itIndex = []uint32{ // 189 elements
+var itIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x00000051,
 	0x0000006a, 0x00000082, 0x000000ca, 0x00000109,
@@ -2864,8 +2933,11 @@ var itIndex = []uint32{ // 189 elements
 	0x000016f8, 0x00001705, 0x0000170a, 0x0000171b,
 	0x0000171b, 0x0000171b, 0x0000171b, 0x0000171b,
 	0x0000171b, 0x0000171b, 0x0000171b, 0x0000171b,
+	0x0000171b, 0x0000171b, 0x0000171b, 0x0000171b,
+	// Entry C0 - DF
+	0x0000171b, 0x0000171b, 0x0000171b, 0x0000171b,
 	0x0000171b,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const itData string = "" + // Size: 5915 bytes
 	"\x02Errore\x04\x00\x01 \x08\x02Errore:\x02(nessun argomento): eleva e in" +
@@ -2963,7 +3035,7 @@ const itData string = "" + // Size: 5915 bytes
 	"2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02 \x02Stato:" +
 	"\x02Stato: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var jaIndex = []uint32{ // 189 elements
+var jaIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000a, 0x0000001a, 0x00000077,
 	0x00000091, 0x000000b6, 0x00000102, 0x0000015c,
@@ -3017,8 +3089,11 @@ var jaIndex = []uint32{ // 189 elements
 	0x00001a57, 0x00001a64, 0x00001a69, 0x00001a7a,
 	0x00001a7a, 0x00001a7a, 0x00001a7a, 0x00001a7a,
 	0x00001a7a, 0x00001a7a, 0x00001a7a, 0x00001a7a,
+	0x00001a7a, 0x00001a7a, 0x00001a7a, 0x00001a7a,
+	// Entry C0 - DF
+	0x00001a7a, 0x00001a7a, 0x00001a7a, 0x00001a7a,
 	0x00001a7a,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const jaData string = "" + // Size: 6778 bytes
 	"\x02エラー\x04\x00\x01 \x0b\x02エラー:\x02(引数なし): 管理者権限でmanagerサービスをインストールしてくだ" +
@@ -3078,7 +3153,7 @@ const jaData string = "" + // Size: 6778 bytes
 	"\x02、\x02 \x02状態:\x02状態: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1" +
 	"]s"
 
-var koIndex = []uint32{ // 189 elements
+var koIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x0000004b,
 	0x00000062, 0x00000073, 0x000000bc, 0x0000010c,
@@ -3132,8 +3207,11 @@ var koIndex = []uint32{ // 189 elements
 	0x000016e4, 0x000016f1, 0x000016f6, 0x0000170d,
 	0x0000170d, 0x0000170d, 0x0000170d, 0x0000170d,
 	0x0000170d, 0x0000170d, 0x0000170d, 0x0000170d,
+	0x0000170d, 0x0000170d, 0x0000170d, 0x0000170d,
+	// Entry C0 - DF
+	0x0000170d, 0x0000170d, 0x0000170d, 0x0000170d,
 	0x0000170d,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const koData string = "" + // Size: 5901 bytes
 	"\x02오류\x04\x00\x01 \x08\x02오류:\x02(인수 없음): 관리자 서비스 상승 및 설치\x02사용: %[1]s " +
@@ -3191,7 +3269,7 @@ const koData string = "" + // Size: 5901 bytes
 	"\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02상태:\x02상태: %[1]s" +
 	"\x02%[1]s: %[2]q\x02MTU:\x02와이어가드: %[1]s"
 
-var lbIndex = []uint32{ // 189 elements
+var lbIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x0000006b,
 	0x00000086, 0x0000009e, 0x000000f2, 0x0000013b,
@@ -3245,8 +3323,11 @@ var lbIndex = []uint32{ // 189 elements
 	0x000018ef, 0x000018fc, 0x00001901, 0x00001912,
 	0x00001912, 0x00001912, 0x00001912, 0x00001912,
 	0x00001912, 0x00001912, 0x00001912, 0x00001912,
+	0x00001912, 0x00001912, 0x00001912, 0x00001912,
+	// Entry C0 - DF
+	0x00001912, 0x00001912, 0x00001912, 0x00001912,
 	0x00001912,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const lbData string = "" + // Size: 6418 bytes
 	"\x02Feeler\x04\x00\x01 \x08\x02Feeler:\x02(Keen Argument): Als Administr" +
@@ -3349,7 +3430,7 @@ const lbData string = "" + // Size: 6418 bytes
 	"f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02, \x02, \x02Status" +
 	":\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var nbIndex = []uint32{ // 189 elements
+var nbIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x00000052,
 	0x00000067, 0x00000079, 0x000000b3, 0x00000100,
@@ -3403,8 +3484,11 @@ var nbIndex = []uint32{ // 189 elements
 	0x0000148c, 0x0000148c, 0x0000148c, 0x0000148c,
 	0x0000148c, 0x0000148c, 0x0000148c, 0x0000148c,
 	0x0000148c, 0x0000148c, 0x0000148c, 0x0000148c,
+	0x0000148c, 0x0000148c, 0x0000148c, 0x0000148c,
+	// Entry C0 - DF
+	0x0000148c, 0x0000148c, 0x0000148c, 0x0000148c,
 	0x0000148c,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const nbData string = "" + // Size: 5260 bytes
 	"\x02Feil\x04\x00\x01 \x06\x02Feil:\x02(ingen argument): hev rettigheter " +
@@ -3492,7 +3576,7 @@ const nbData string = "" + // Size: 5260 bytes
 	"enter på administrator\x02Status: Venter på oppdateringstjenesten\x02Fei" +
 	"l: %[1]v. Prøv igjen.\x02Status: Fullført!"
 
-var nlIndex = []uint32{ // 189 elements
+var nlIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000c, 0x00000017, 0x0000005a,
 	0x00000078, 0x0000008f, 0x000000d2, 0x00000115,
@@ -3546,8 +3630,11 @@ var nlIndex = []uint32{ // 189 elements
 	0x0000162c, 0x00001639, 0x0000163e, 0x0000164f,
 	0x0000164f, 0x0000164f, 0x0000164f, 0x0000164f,
 	0x0000164f, 0x0000164f, 0x0000164f, 0x0000164f,
+	0x0000164f, 0x0000164f, 0x0000164f, 0x0000164f,
+	// Entry C0 - DF
+	0x0000164f, 0x0000164f, 0x0000164f, 0x0000164f,
 	0x0000164f,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const nlData string = "" + // Size: 5711 bytes
 	"\x02Foutmelding\x04\x00\x01 \x06\x02Fout:\x02(geen argumenten): Verhoog " +
@@ -3643,7 +3730,7 @@ const nlData string = "" + // Size: 5711 bytes
 	"\u00a0GiB\x02%.2[1]f\u00a0TiB\x02 \x02Status:\x02Status: %[1]s\x02%[1]s:" +
 	" %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var nn_NOIndex = []uint32{ // 189 elements
+var nn_NOIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x0000004b,
 	0x00000060, 0x00000071, 0x000000ab, 0x000000f4,
@@ -3697,8 +3784,11 @@ var nn_NOIndex = []uint32{ // 189 elements
 	0x000014a8, 0x000014a8, 0x000014a8, 0x000014a8,
 	0x000014a8, 0x000014a8, 0x000014a8, 0x000014a8,
 	0x000014a8, 0x000014a8, 0x000014a8, 0x000014a8,
+	0x000014a8, 0x000014a8, 0x000014a8, 0x000014a8,
+	// Entry C0 - DF
+	0x000014a8, 0x000014a8, 0x000014a8, 0x000014a8,
 	0x000014a8,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const nn_NOData string = "" + // Size: 5288 bytes
 	"\x02Feil\x04\x00\x01 \x06\x02Feil:\x02(ingen argument): hev rettar og in" +
@@ -3786,7 +3876,7 @@ const nn_NOData string = "" + // Size: 5288 bytes
 	" oppdatere.\x02Status: Ventar på administrator\x02Status: Ventar på oppd" +
 	"ateringstenesta\x02Feil: %[1]v. Prøv igjen.\x02Status: Ferdig!"
 
-var pa_INIndex = []uint32{ // 189 elements
+var pa_INIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000010, 0x00000026, 0x000000c0,
 	0x000000e0, 0x0000010d, 0x0000019a, 0x00000238,
@@ -3840,8 +3930,11 @@ var pa_INIndex = []uint32{ // 189 elements
 	0x00002e87, 0x00002e94, 0x00002e99, 0x00002eb9,
 	0x00002eb9, 0x00002eb9, 0x00002eb9, 0x00002eb9,
 	0x00002eb9, 0x00002eb9, 0x00002eb9, 0x00002eb9,
+	0x00002eb9, 0x00002eb9, 0x00002eb9, 0x00002eb9,
+	// Entry C0 - DF
+	0x00002eb9, 0x00002eb9, 0x00002eb9, 0x00002eb9,
 	0x00002eb9,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const pa_INData string = "" + // Size: 11961 bytes
 	"\x02ਗ਼ਲਤੀ\x04\x00\x01 \x11\x02ਗ਼ਲਤੀ:\x02(ਕੋਈ ਆਰਗੂਮੈਂਟ ਨਹੀਂ): ਅਧਿਕਾਰ ਉਚਾਈ" +
@@ -3931,7 +4024,7 @@ const pa_INData string = "" + // Size: 11961 bytes
 	"\u00a0KiB\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB" +
 	"\x02ਸਥਿਤੀ:\x02ਸਥਿਤੀ: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02ਵਾਇਰਗਾਰਡ: %[1]s"
 
-var plIndex = []uint32{ // 189 elements
+var plIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x0000005c,
 	0x00000074, 0x0000008b, 0x000000d9, 0x00000117,
@@ -3985,8 +4078,11 @@ var plIndex = []uint32{ // 189 elements
 	0x000018ea, 0x000018f7, 0x000018fc, 0x0000190d,
 	0x0000190d, 0x0000190d, 0x0000190d, 0x0000190d,
 	0x0000190d, 0x0000190d, 0x0000190d, 0x0000190d,
+	0x0000190d, 0x0000190d, 0x0000190d, 0x0000190d,
+	// Entry C0 - DF
+	0x0000190d, 0x0000190d, 0x0000190d, 0x0000190d,
 	0x0000190d,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const plData string = "" + // Size: 6413 bytes
 	"\x02Błąd\x04\x00\x01 \x08\x02Błąd:\x02(brak argumentu): Podnieś uprawnie" +
@@ -4090,7 +4186,7 @@ const plData string = "" + // Size: 6413 bytes
 	"iB\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02Status" +
 	":\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var pt_BRIndex = []uint32{ // 189 elements
+var pt_BRIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x0000004a,
 	0x0000005e, 0x0000007b, 0x000000cd, 0x0000010d,
@@ -4144,8 +4240,11 @@ var pt_BRIndex = []uint32{ // 189 elements
 	0x000016da, 0x000016e7, 0x000016ec, 0x000016fd,
 	0x000016fd, 0x000016fd, 0x000016fd, 0x000016fd,
 	0x000016fd, 0x000016fd, 0x000016fd, 0x000016fd,
+	0x000016fd, 0x000016fd, 0x000016fd, 0x000016fd,
+	// Entry C0 - DF
+	0x000016fd, 0x000016fd, 0x000016fd, 0x000016fd,
 	0x000016fd,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const pt_BRData string = "" + // Size: 5885 bytes
 	"\x02Erro\x04\x00\x01 \x06\x02Erro:\x02(sem argumento): elevar e instalar" +
@@ -4240,7 +4339,7 @@ const pt_BRData string = "" + // Size: 5885 bytes
 	"2[1]f GiB\x02%.2[1]f TiB\x02Status:\x02Status: %[1]s\x02%[1]s: %[2]q\x02" +
 	"MTU:\x02WireGuard: %[1]s"
 
-var pt_PTIndex = []uint32{ // 189 elements
+var pt_PTIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x00000045,
 	0x00000062, 0x00000080, 0x000000d2, 0x00000112,
@@ -4294,8 +4393,11 @@ var pt_PTIndex = []uint32{ // 189 elements
 	0x0000173a, 0x0000173a, 0x0000173a, 0x0000173a,
 	0x0000173a, 0x0000173a, 0x0000173a, 0x0000173a,
 	0x0000173a, 0x0000173a, 0x0000173a, 0x0000173a,
+	0x0000173a, 0x0000173a, 0x0000173a, 0x0000173a,
+	// Entry C0 - DF
+	0x0000173a, 0x0000173a, 0x0000173a, 0x0000173a,
 	0x0000173a,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const pt_PTData string = "" + // Size: 5946 bytes
 	"\x02Erro\x04\x00\x01 \x06\x02Erro:\x02(sem argumento): elevar e instalar" +
@@ -4390,7 +4492,7 @@ const pt_PTData string = "" + // Size: 5946 bytes
 	"dor\x02Estado: a aguardar pelo serviço de actualização\x02Erro: %[1]v. T" +
 	"ente novamente.\x02Estado: concluído!\x02Estado:\x02Estado: %[1]s"
 
-var roIndex = []uint32{ // 189 elements
+var roIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x0000006a,
 	0x00000084, 0x0000009f, 0x000000de, 0x00000127,
@@ -4444,8 +4546,11 @@ var roIndex = []uint32{ // 189 elements
 	0x000018ca, 0x000018d7, 0x000018dc, 0x000018ed,
 	0x000018ed, 0x000018ed, 0x000018ed, 0x000018ed,
 	0x000018ed, 0x000018ed, 0x000018ed, 0x000018ed,
+	0x000018ed, 0x000018ed, 0x000018ed, 0x000018ed,
+	// Entry C0 - DF
+	0x000018ed, 0x000018ed, 0x000018ed, 0x000018ed,
 	0x000018ed,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const roData string = "" + // Size: 6381 bytes
 	"\x02Eroare\x04\x00\x01 \x08\x02Eroare:\x02(fără argument): obținere drep" +
@@ -4549,7 +4654,7 @@ const roData string = "" + // Size: 6381 bytes
 	".2[1]f\u00a0TiB\x02Stare:\x02Stare: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02Wir" +
 	"eGuard: %[1]s"
 
-var ruIndex = []uint32{ // 189 elements
+var ruIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000d, 0x00000020, 0x000000bc,
 	0x000000e7, 0x0000011a, 0x0000017d, 0x000001fd,
@@ -4603,8 +4708,11 @@ var ruIndex = []uint32{ // 189 elements
 	0x000026bf, 0x000026cc, 0x000026d1, 0x000026e2,
 	0x000026e2, 0x000026e2, 0x000026e2, 0x000026e2,
 	0x000026e2, 0x000026e2, 0x000026e2, 0x000026e2,
+	0x000026e2, 0x000026e2, 0x000026e2, 0x000026e2,
+	// Entry C0 - DF
+	0x000026e2, 0x000026e2, 0x000026e2, 0x000026e2,
 	0x000026e2,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const ruData string = "" + // Size: 9954 bytes
 	"\x02Ошибка\x04\x00\x01 \x0e\x02Ошибка:\x02(нет аргумента): получить прав" +
@@ -4705,7 +4813,7 @@ const ruData string = "" + // Size: 9954 bytes
 	"2[1]f КиБ\x02%.2[1]f МиБ\x02%.2[1]f ГиБ\x02%.2[1]f ТиБ\x02Статус:\x02Ста" +
 	"тус: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var si_LKIndex = []uint32{ // 189 elements
+var si_LKIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000013, 0x00000026, 0x000000bc,
 	0x000000df, 0x0000010f, 0x000001aa, 0x00000236,
@@ -4759,8 +4867,11 @@ var si_LKIndex = []uint32{ // 189 elements
 	0x00002f63, 0x00002f70, 0x00002f75, 0x00002f75,
 	0x00002f75, 0x00002f75, 0x00002f75, 0x00002f75,
 	0x00002f75, 0x00002f75, 0x00002f75, 0x00002f75,
+	0x00002f75, 0x00002f75, 0x00002f75, 0x00002f75,
+	// Entry C0 - DF
+	0x00002f75, 0x00002f75, 0x00002f75, 0x00002f75,
 	0x00002f75,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const si_LKData string = "" + // Size: 12149 bytes
 	"\x02දෝෂයකි\x04\x00\x01 \x0e\x02දෝෂය:\x02(තර්කයක් නැත): කළමනාකරු සේවාව ඉහ" +
@@ -4853,7 +4964,7 @@ const si_LKData string = "" + // Size: 12149 bytes
 	".බ. %.2[1]f\x02තත්\u200dවය:\x02තත්\u200dවය: %[1]s\x02%[1]s: %[2]q\x02MTU" +
 	":"
 
-var skIndex = []uint32{ // 189 elements
+var skIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000012, 0x0000006a,
 	0x00000084, 0x000000a3, 0x000000dd, 0x0000012a,
@@ -4907,8 +5018,11 @@ var skIndex = []uint32{ // 189 elements
 	0x00001919, 0x00001926, 0x0000192b, 0x0000193c,
 	0x0000193c, 0x0000193c, 0x0000193c, 0x0000193c,
 	0x0000193c, 0x0000193c, 0x0000193c, 0x0000193c,
+	0x0000193c, 0x0000193c, 0x0000193c, 0x0000193c,
+	// Entry C0 - DF
+	0x0000193c, 0x0000193c, 0x0000193c, 0x0000193c,
 	0x0000193c,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const skData string = "" + // Size: 6460 bytes
 	"\x02Chyba\x04\x00\x01 \x07\x02Chyba:\x02(bez argumentu): získať administ" +
@@ -5010,7 +5124,7 @@ const skData string = "" + // Size: 6460 bytes
 	"\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02 \x02Stav:\x02Stav:" +
 	" %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var slIndex = []uint32{ // 189 elements
+var slIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x00000065,
 	0x0000007d, 0x00000096, 0x000000ce, 0x00000114,
@@ -5064,8 +5178,11 @@ var slIndex = []uint32{ // 189 elements
 	0x00001750, 0x0000175d, 0x00001762, 0x00001773,
 	0x00001773, 0x00001773, 0x00001773, 0x00001773,
 	0x00001773, 0x00001773, 0x00001773, 0x00001773,
+	0x00001773, 0x00001773, 0x00001773, 0x00001773,
+	// Entry C0 - DF
+	0x00001773, 0x00001773, 0x00001773, 0x00001773,
 	0x00001773,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const slData string = "" + // Size: 6003 bytes
 	"\x02Napaka\x04\x00\x01 \x08\x02Napaka:\x02(brez argumenta): povzdigni na" +
@@ -5166,7 +5283,7 @@ const slData string = "" + // Size: 6003 bytes
 	"KiB\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02 \x02" +
 	"Status:\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var srIndex = []uint32{ // 189 elements
+var srIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000d, 0x00000020, 0x0000009d,
 	0x000000be, 0x000000e9, 0x00000144, 0x000001af,
@@ -5220,8 +5337,11 @@ var srIndex = []uint32{ // 189 elements
 	0x0000244c, 0x0000244c, 0x0000244c, 0x0000244c,
 	0x0000244c, 0x0000244c, 0x0000244c, 0x0000244c,
 	0x0000244c, 0x0000244c, 0x0000244c, 0x0000244c,
+	0x0000244c, 0x0000244c, 0x0000244c, 0x0000244c,
+	// Entry C0 - DF
+	0x0000244c, 0x0000244c, 0x0000244c, 0x0000244c,
 	0x0000244c,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const srData string = "" + // Size: 9292 bytes
 	"\x02Грешка\x04\x00\x01 \x0e\x02Грешка:\x02(без аргумента): повишава прив" +
@@ -5315,7 +5435,7 @@ const srData string = "" + // Size: 9292 bytes
 	"атор\x02Статус: Чека се сервис за ажурирање\x02Грешка: %[1]v. Покушајте" +
 	" поново.\x02Статус: Завршено!\x02Статус:\x02Статус: %[1]s"
 
-var sv_SEIndex = []uint32{ // 189 elements
+var sv_SEIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000004, 0x0000000e, 0x00000046,
 	0x00000062, 0x00000079, 0x000000b9, 0x00000109,
@@ -5369,8 +5489,11 @@ var sv_SEIndex = []uint32{ // 189 elements
 	0x00001530, 0x0000153d, 0x00001542, 0x00001553,
 	0x00001553, 0x00001553, 0x00001553, 0x00001553,
 	0x00001553, 0x00001553, 0x00001553, 0x00001553,
+	0x00001553, 0x00001553, 0x00001553, 0x00001553,
+	// Entry C0 - DF
+	0x00001553, 0x00001553, 0x00001553, 0x00001553,
 	0x00001553,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const sv_SEData string = "" + // Size: 5459 bytes
 	"\x02Fel\x04\x00\x01 \x05\x02Fel:\x02(inget argument): höj och installera" +
@@ -5460,7 +5583,7 @@ const sv_SEData string = "" + // Size: 5459 bytes
 	"\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02Status:" +
 	"\x02Status: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var trIndex = []uint32{ // 189 elements
+var trIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000005, 0x00000010, 0x0000005e,
 	0x00000078, 0x00000094, 0x000000d8, 0x0000011d,
@@ -5514,8 +5637,11 @@ var trIndex = []uint32{ // 189 elements
 	0x000015ff, 0x0000160c, 0x00001611, 0x00001622,
 	0x00001622, 0x00001622, 0x00001622, 0x00001622,
 	0x00001622, 0x00001622, 0x00001622, 0x00001622,
+	0x00001622, 0x00001622, 0x00001622, 0x00001622,
+	// Entry C0 - DF
+	0x00001622, 0x00001622, 0x00001622, 0x00001622,
 	0x00001622,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const trData string = "" + // Size: 5666 bytes
 	"\x02Hata\x04\x00\x01 \x06\x02Hata:\x02(parametre belirtilmediyse): gerek" +
@@ -5604,7 +5730,7 @@ const trData string = "" + // Size: 5666 bytes
 	"1]f\u00a0KiB\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB" +
 	"\x02Durum:\x02Durum: %[1]s\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var ukIndex = []uint32{ // 189 elements
+var ukIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x0000000f, 0x00000024, 0x000000a3,
 	0x000000cc, 0x000000ff, 0x00000159, 0x000001d3,
@@ -5658,8 +5784,11 @@ var ukIndex = []uint32{ // 189 elements
 	0x0000255c, 0x00002569, 0x0000256e, 0x0000257f,
 	0x0000257f, 0x0000257f, 0x0000257f, 0x0000257f,
 	0x0000257f, 0x0000257f, 0x0000257f, 0x0000257f,
+	0x0000257f, 0x0000257f, 0x0000257f, 0x0000257f,
+	// Entry C0 - DF
+	0x0000257f, 0x0000257f, 0x0000257f, 0x0000257f,
 	0x0000257f,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const ukData string = "" + // Size: 9599 bytes
 	"\x02Помилка\x04\x00\x01 \x10\x02Помилка:\x02(немає аргумента): отримати " +
@@ -5758,7 +5887,7 @@ const ukData string = "" + // Size: 9599 bytes
 	"\x02%.2[1]f МБ\x02%.2[1]f ГБ\x02%.2[1]f TiB\x02Статус:\x02Статус: %[1]s" +
 	"\x02%[1]s: %[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var viIndex = []uint32{ // 189 elements
+var viIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000006, 0x00000012, 0x0000005f,
 	0x0000007b, 0x00000094, 0x000000f2, 0x00000145,
@@ -5812,8 +5941,11 @@ var viIndex = []uint32{ // 189 elements
 	0x00001770, 0x00001770, 0x00001770, 0x00001770,
 	0x00001770, 0x00001770, 0x00001770, 0x00001770,
 	0x00001770, 0x00001770, 0x00001770, 0x00001770,
+	0x00001770, 0x00001770, 0x00001770, 0x00001770,
+	// Entry C0 - DF
+	0x00001770, 0x00001770, 0x00001770, 0x00001770,
 	0x00001770,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const viData string = "" + // Size: 6000 bytes
 	"\x02Lỗi\x04\x00\x01 \x07\x02Lỗi:\x02(không có tham số): nâng quyền và cà" +
@@ -5894,7 +6026,7 @@ const viData string = "" + // Size: 6000 bytes
 	"ạng thái: Hoàn tất!\x02%[1]d B\x02%.2[1]f KiB\x02%.2[1]f MiB\x02%.2[1]" +
 	"f GiB\x02%.2[1]f TiB\x02Trạng thái:\x02Trạng thái: %[1]s"
 
-var zh_CNIndex = []uint32{ // 189 elements
+var zh_CNIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000014, 0x0000003d,
 	0x00000054, 0x00000064, 0x00000098, 0x000000d6,
@@ -5948,8 +6080,11 @@ var zh_CNIndex = []uint32{ // 189 elements
 	0x00001125, 0x00001133, 0x00001138, 0x00001149,
 	0x00001149, 0x00001149, 0x00001149, 0x00001149,
 	0x00001149, 0x00001149, 0x00001149, 0x00001149,
+	0x00001149, 0x00001149, 0x00001149, 0x00001149,
+	// Entry C0 - DF
+	0x00001149, 0x00001149, 0x00001149, 0x00001149,
 	0x00001149,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const zh_CNData string = "" + // Size: 4425 bytes
 	"\x02错误\x04\x00\x01 \x08\x02错误:\x02(无参数): 提升并安装管理服务\x02用法: %[1]s [\x0a%[2" +
@@ -5997,7 +6132,7 @@ const zh_CNData string = "" + // Size: 4425 bytes
 	"iB\x02%.2[1]f\u00a0MiB\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02、\x02 " +
 	"\x02状态:\x02状态: %[1]s\x02%[1]s：%[2]q\x02MTU:\x02WireGuard: %[1]s"
 
-var zh_TWIndex = []uint32{ // 189 elements
+var zh_TWIndex = []uint32{ // 197 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000007, 0x00000016, 0x00000046,
 	0x00000065, 0x00000075, 0x000000b3, 0x000000ee,
@@ -6051,8 +6186,11 @@ var zh_TWIndex = []uint32{ // 189 elements
 	0x00001232, 0x00001241, 0x00001245, 0x00001257,
 	0x00001257, 0x00001257, 0x00001257, 0x00001257,
 	0x00001257, 0x00001257, 0x00001257, 0x00001257,
+	0x00001257, 0x00001257, 0x00001257, 0x00001257,
+	// Entry C0 - DF
+	0x00001257, 0x00001257, 0x00001257, 0x00001257,
 	0x00001257,
-} // Size: 780 bytes
+} // Size: 812 bytes
 
 const zh_TWData string = "" + // Size: 4695 bytes
 	"\x02錯誤\x04\x00\x01 \x0a\x02錯誤：\x02(無參數)：提升權限並安裝管理服務\x02使用方法： %[1]s [\x0a" +
@@ -6102,4 +6240,4 @@ const zh_TWData string = "" + // Size: 4695 bytes
 	"B\x02%.2[1]f\u00a0GiB\x02%.2[1]f\u00a0TiB\x02、\x02 \x02狀態\x02[狀態] %[1]s" +
 	"\x02%[1]s： %[2]q\x02MTU\x02WireGuard - %[1]s"
 
-	// Total table size 305563 bytes (298KiB); checksum: AB824338
+	// Total table size 307546 bytes (300KiB); checksum: 5FB5129C

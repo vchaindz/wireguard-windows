@@ -37,3 +37,17 @@ executing these scripts.
 ```
 > reg add HKLM\Software\WireGuard /v DangerousScriptExecution /t REG_DWORD /d 1 /f
 ```
+
+#### `HKLM\Software\WireGuard\ApplyRoutesImmediately`
+
+By default, the tunnel service brings the adapter up and then waits for a peer
+to complete a handshake before it applies routes, addresses, DNS servers, and
+firewall rules, so that activating a tunnel whose peer is gone does not take
+the machine off the network. Until then, traffic uses the ordinary network,
+which means the kill-switch of a `/0` tunnel only takes effect once the peer
+has answered. When this key is set to `DWORD(1)`, everything is applied at
+once, before any peer has answered, as in the official client.
+
+```
+> reg add HKLM\Software\WireGuard /v ApplyRoutesImmediately /t REG_DWORD /d 1 /f
+```

@@ -145,7 +145,7 @@ func (tv *ListView) StyleCell(style *walk.CellStyle) {
 	if state == manager.TunnelStarted {
 		health, ok := tv.model.lastObservedHealth[tv.model.tunnels[row]]
 		if !ok {
-			health, _, _ = tunnel.Health()
+			health, _, _, _ = tunnel.Health()
 			tv.model.lastObservedHealth[tv.model.tunnels[row]] = health
 		}
 		state = displayState(state, health)
@@ -217,7 +217,7 @@ func (tv *ListView) onTunnelChange(tunnel *manager.Tunnel, state, globalState ma
 	})
 }
 
-func (tv *ListView) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected bool) {
+func (tv *ListView) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected, unstable bool) {
 	tv.Synchronize(func() {
 		for i := range tv.model.tunnels {
 			if tv.model.tunnels[i].Name == tunnel.Name {

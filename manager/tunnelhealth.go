@@ -8,6 +8,8 @@ package manager
 import (
 	"log"
 	"time"
+
+	"golang.zx2c4.com/wireguard/windows/conf"
 )
 
 // TunnelHealth says whether a started tunnel actually has a working WireGuard session, which the service state alone
@@ -23,7 +25,37 @@ const (
 	TunnelHealthConnected
 	// TunnelHealthNoConnection means packets are being sent but no peer completes a handshake.
 	TunnelHealthNoConnection
+	// TunnelHealthWaitingForPeer is TunnelHealthNoConnection for a tunnel that has never had a handshake and
+	// therefore has not applied its routes yet: the rest of the network is unaffected.
+	TunnelHealthWaitingForPeer
+	// TunnelHealthNoConnectionNetworkBlocked is TunnelHealthNoConnection for a tunnel that has taken over all
+	// traffic: the machine has no usable network until the peer answers or the tunnel is deactivated.
+	TunnelHealthNoConnectionNetworkBlocked
 )
+
+// IsNoConnection reports whether the health is one of the kinds of a peer not answering.
+func (health TunnelHealth) IsNoConnection() bool {
+	switch health {
+	case TunnelHealthNoConnection, TunnelHealthWaitingForPeer, TunnelHealthNoConnectionNetworkBlocked:
+		return true
+	}
+	return false
+}
+
+// refineTunnelHealth says what a missing connection means for the rest of the network. A tunnel that waits for
+// its peer before routing has applied its routes exactly if it ever had a handshake.
+func refineTunnelHealth(health TunnelHealth, everHandshake, waitsForPeerBeforeRouting, routesAllTraffic bool) TunnelHealth {
+	if health != TunnelHealthNoConnection {
+		return health
+	}
+	if waitsForPeerBeforeRouting && !everHandshake {
+		return TunnelHealthWaitingForPeer
+	}
+	if routesAllTraffic {
+		return TunnelHealthNoConnectionNetworkBlocked
+	}
+	return health
+}
 
 const (
 	healthSampleInterval = 5 * time.Second
@@ -41,6 +73,10 @@ const (
 	healthConflictShortGap  = 60 * time.Second
 	healthConflictWindow    = 5 * time.Minute
 	healthConflictShortGaps = 3
+
+	// A single early renewal means that the session was lost once and recovered, which is what an unreliable
+	// path looks like before it happens often enough to suspect a second device.
+	healthUnstableShortGaps = 1
 )
 
 type peerSample struct {
@@ -68,7 +104,9 @@ func newHealthEvaluator() *healthEvaluator {
 	return &healthEvaluator{peers: make(map[[32]byte]*peerHealthState)}
 }
 
-func (e *healthEvaluator) observe(now time.Time, samples []peerSample) (health TunnelHealth, conflictSuspected bool) {
+// observe reports the tunnel's health, whether another device is suspected of using the same key, and, if not,
+// whether the connection was lost and re-established recently.
+func (e *healthEvaluator) observe(now time.Time, samples []peerSample) (health TunnelHealth, conflictSuspected, unstable bool) {
 	present := make(map[[32]byte]bool, len(samples))
 	anyConnected, anyNoConnection := false, false
 	for i := range samples {
@@ -94,6 +132,8 @@ func (e *healthEvaluator) observe(now time.Time, samples []peerSample) (health T
 		}
 		if shortGaps >= healthConflictShortGaps {
 			conflictSuspected = true
+		} else if shortGaps >= healthUnstableShortGaps {
+			unstable = true
 		}
 
 		if !sample.lastHandshake.IsZero() && now.Sub(sample.lastHandshake) < healthHandshakeFresh {
@@ -129,6 +169,9 @@ func (e *healthEvaluator) observe(now time.Time, samples []peerSample) (health T
 		}
 	}
 
+	if conflictSuspected {
+		unstable = false
+	}
 	switch {
 	case anyConnected:
 		health = TunnelHealthConnected
@@ -148,6 +191,7 @@ type tunnelHealthMonitor struct {
 type tunnelHealthStatus struct {
 	health            TunnelHealth
 	conflictSuspected bool
+	unstable          bool
 }
 
 // Both maps are protected by trackedTunnelsLock.
@@ -156,11 +200,11 @@ var (
 	trackedTunnelsHealth = make(map[string]tunnelHealthStatus)
 )
 
-func trackedTunnelHealth(tunnelName string) (TunnelHealth, bool) {
+func trackedTunnelHealth(tunnelName string) (health TunnelHealth, conflictSuspected, unstable bool) {
 	trackedTunnelsLock.Lock()
 	defer trackedTunnelsLock.Unlock()
 	status := trackedTunnelsHealth[tunnelName]
-	return status.health, status.conflictSuspected
+	return status.health, status.conflictSuspected, status.unstable
 }
 
 func startTunnelHealthMonitor(tunnelName string) {
@@ -193,6 +237,11 @@ func stopTunnelHealthMonitor(tunnelName string) {
 func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 	defer close(monitor.done)
 	evaluator := newHealthEvaluator()
+	var waitsForPeerBeforeRouting, routesAllTraffic bool
+	if config, err := conf.LoadFromName(tunnelName); err == nil {
+		waitsForPeerBeforeRouting = config.WaitsForPeerBeforeRouting()
+		routesAllTraffic = config.RoutesAllTraffic()
+	}
 	ticker := time.NewTicker(healthSampleInterval)
 	defer ticker.Stop()
 	var last tunnelHealthStatus
@@ -204,7 +253,15 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 		}
 		if samples, err := sampleTunnelPeers(tunnelName); err == nil {
 			var status tunnelHealthStatus
-			status.health, status.conflictSuspected = evaluator.observe(time.Now(), samples)
+			status.health, status.conflictSuspected, status.unstable = evaluator.observe(time.Now(), samples)
+			everHandshake := false
+			for i := range samples {
+				if !samples[i].lastHandshake.IsZero() {
+					everHandshake = true
+					break
+				}
+			}
+			status.health = refineTunnelHealth(status.health, everHandshake, waitsForPeerBeforeRouting, routesAllTraffic)
 			if status != last {
 				trackedTunnelsLock.Lock()
 				current := tunnelHealthMonitors[tunnelName] == monitor
@@ -221,8 +278,12 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 						log.Printf("[%s] Connection check: handshake completed, tunnel is connected", tunnelName)
 					case TunnelHealthNoConnection:
 						log.Printf("[%s] Connection check: packets are being sent but no peer completes a handshake", tunnelName)
+					case TunnelHealthWaitingForPeer:
+						log.Printf("[%s] Connection check: no peer answers; routes have not been applied, so the rest of the network is unaffected", tunnelName)
+					case TunnelHealthNoConnectionNetworkBlocked:
+						log.Printf("[%s] Connection check: no peer completes a handshake, and this tunnel takes over all traffic, so the network is cut off", tunnelName)
 					case TunnelHealthUnverified:
-						log.Printf("[%s] Connection check: no recent handshake and no traffic, connection is not verified", tunnelName)
+						log.Printf("[%s] Connection check: no recent handshake, connection is not verified", tunnelName)
 					}
 				}
 				if status.conflictSuspected != last.conflictSuspected {
@@ -232,7 +293,10 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 						log.Printf("[%s] Connection check: handshake rate is back to normal", tunnelName)
 					}
 				}
-				IPCServerNotifyTunnelHealth(tunnelName, status.health, status.conflictSuspected)
+				if status.unstable && !last.unstable {
+					log.Printf("[%s] Connection check: the session was lost and re-established; the connection is unstable", tunnelName)
+				}
+				IPCServerNotifyTunnelHealth(tunnelName, status.health, status.conflictSuspected, status.unstable)
 				last = status
 			}
 		}

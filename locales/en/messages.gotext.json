@@ -892,6 +892,13 @@
             "fuzzy": true
         },
         {
+            "id": "The connection is unstable: it was lost and re-established recently.",
+            "message": "The connection is unstable: it was lost and re-established recently.",
+            "translation": "The connection is unstable: it was lost and re-established recently.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Peer",
             "message": "Peer",
             "translation": "Peer",
@@ -1111,9 +1118,23 @@
             "fuzzy": true
         },
         {
-            "id": "Active (connection not verified: no traffic yet)",
-            "message": "Active (connection not verified: no traffic yet)",
-            "translation": "Active (connection not verified: no traffic yet)",
+            "id": "Active, but peer does not answer (routes not applied, network unaffected)",
+            "message": "Active, but peer does not answer (routes not applied, network unaffected)",
+            "translation": "Active, but peer does not answer (routes not applied, network unaffected)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Active, but no connection (all network traffic is cut off)",
+            "message": "Active, but no connection (all network traffic is cut off)",
+            "translation": "Active, but no connection (all network traffic is cut off)",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Active (connection not verified yet)",
+            "message": "Active (connection not verified yet)",
+            "translation": "Active (connection not verified yet)",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1357,9 +1378,74 @@
             "fuzzy": true
         },
         {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "translation": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Network Cut Off",
+            "message": "WireGuard: Network Cut Off",
+            "translation": "WireGuard: Network Cut Off",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "message": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "translation": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
             "id": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
             "message": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
             "translation": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Unstable Connection",
+            "message": "WireGuard: Unstable Connection",
+            "translation": "WireGuard: Unstable Connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "message": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "translation": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
             "translatorComment": "Copied from source.",
             "placeholders": [
                 {
