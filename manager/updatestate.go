@@ -51,7 +51,7 @@ func checkForUpdates() {
 			IPCServerNotifyUpdateFound(updateState)
 			didNotify = true
 		} else if err != nil && !didNotify {
-			log.Printf("Update checker: %v", err)
+			log.Printf("Warning: update checker: %v", err)
 			if noError {
 				jitterSleep(time.Minute*4, time.Minute*6)
 				noError = false

@@ -25,6 +25,7 @@ type EditDialog struct {
 	pubkeyEdit                      *walk.LineEdit
 	syntaxEdit                      *syntax.SyntaxEdit
 	blockUntunneledTrafficCB        *walk.CheckBox
+	blockUntunneledTrafficLabel     *walk.TextLabel
 	saveButton                      *walk.PushButton
 	config                          conf.Config
 	lastPrivateKey                  string
@@ -129,7 +130,20 @@ func newEditDialog(owner walk.Form, tunnel *manager.Tunnel) (*EditDialog, error)
 	if dlg.blockUntunneledTrafficCB, err = walk.NewCheckBox(buttonsContainer); err != nil {
 		return nil, err
 	}
-	dlg.blockUntunneledTrafficCB.SetText(l18n.Sprintf("&Block untunneled traffic (kill-switch)"))
+	// The text of a check box cannot be given a color, so it is shown by a label next to the box instead.
+	blockUntunneledTrafficText := l18n.Sprintf("&Block untunneled traffic (kill-switch)")
+	dlg.blockUntunneledTrafficCB.Accessibility().SetName(strings.Replace(blockUntunneledTrafficText, "&", "", 1))
+	dlg.blockUntunneledTrafficCB.SetMinMaxSize(walk.Size{Width: 16}, walk.Size{Width: 16})
+	if dlg.blockUntunneledTrafficLabel, err = walk.NewTextLabel(buttonsContainer); err != nil {
+		return nil, err
+	}
+	dlg.blockUntunneledTrafficLabel.SetText(strings.Replace(blockUntunneledTrafficText, "&", "", 1))
+	dlg.blockUntunneledTrafficLabel.SetVisible(false)
+	dlg.blockUntunneledTrafficLabel.MouseDown().Attach(func(x, y int, button walk.MouseButton) {
+		if button == walk.LeftButton {
+			dlg.blockUntunneledTrafficCB.SetChecked(!dlg.blockUntunneledTrafficCB.Checked())
+		}
+	})
 	dlg.blockUntunneledTrafficCB.SetToolTipText(l18n.Sprintf("When a configuration has exactly one peer, and that peer has an allowed IPs containing at least one of 0.0.0.0/0 or ::/0, and the interface does not have table off, then the tunnel service engages a firewall ruleset to block all traffic that is neither to nor from the tunnel interface or is to the wrong DNS server, with special exceptions for DHCP and NDP."))
 	dlg.blockUntunneledTrafficCB.SetVisible(false)
 	dlg.blockUntunneledTrafficCB.CheckedChanged().Attach(dlg.onBlockUntunneledTrafficCBCheckedChanged)
@@ -151,6 +165,15 @@ func newEditDialog(owner walk.Form, tunnel *manager.Tunnel) (*EditDialog, error)
 
 	dlg.SetCancelButton(cancelButton)
 	dlg.SetDefaultButton(dlg.saveButton)
+
+	darkenDialog(dlg.Dialog)
+	buttonsContainer.SetBackground(themeBrush(themeBackdrop))
+	darkenLabels(themeTextDim, nameLabel, pubkeyLabel)
+	darkenLabels(themeText, dlg.blockUntunneledTrafficLabel)
+	darkenEdits(dlg.nameEdit, dlg.pubkeyEdit)
+	darkenButtons(dlg.saveButton, cancelButton, dlg.blockUntunneledTrafficCB)
+	useDarkControlTheme(dlg.syntaxEdit.Handle())
+	dlg.syntaxEdit.SetDarkColors(win.COLORREF(themePanel.walk()), win.COLORREF(themeText.walk()))
 
 	dlg.syntaxEdit.PrivateKeyChanged().Attach(dlg.onSyntaxEditPrivateKeyChanged)
 	dlg.syntaxEdit.BlockUntunneledTrafficStateChanged().Attach(dlg.onBlockUntunneledTrafficStateChanged)
@@ -285,11 +308,14 @@ func (dlg *EditDialog) onBlockUntunneledTrafficStateChanged(state int) {
 	switch syntax.BlockState(state) {
 	case syntax.InevaluableBlockingUntunneledTraffic:
 		dlg.blockUntunneledTrafficCB.SetVisible(false)
+		dlg.blockUntunneledTrafficLabel.SetVisible(false)
 	case syntax.BlockingUntunneledTraffic:
 		dlg.blockUntunneledTrafficCB.SetVisible(true)
+		dlg.blockUntunneledTrafficLabel.SetVisible(true)
 		dlg.blockUntunneledTrafficCB.SetChecked(true)
 	case syntax.NotBlockingUntunneledTraffic:
 		dlg.blockUntunneledTrafficCB.SetVisible(true)
+		dlg.blockUntunneledTrafficLabel.SetVisible(true)
 		dlg.blockUntunneledTrafficCB.SetChecked(false)
 	}
 	dlg.blockUntunneledTraficCheckGuard = false

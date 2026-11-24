@@ -62,6 +62,7 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 			walk.MustRegisterWindowClass(manageWindowWindowClass)
 			// The tray popup is created after the toolkit has run these functions, so its class is registered here.
 			walk.MustRegisterWindowClass(trayPopupWindowClass)
+			walk.MustRegisterWindowClass(canvasViewWindowClass)
 			taskbarButtonCreatedMsg = win.RegisterWindowMessage(windows.StringToUTF16Ptr("TaskbarButtonCreated"))
 		})
 	})
@@ -93,7 +94,7 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	mtw.SetTitle("WireGuard")
 	mtw.SetFont(font)
 	mtw.SetBackground(themeBrush(themeBackdrop))
-	mtw.SetSize(walk.Size{540, 780})
+	mtw.SetSize(walk.Size{540, 860})
 	mtw.SetMinMaxSize(walk.Size{440, 560}, walk.Size{0, 0})
 	vlayout := walk.NewVBoxLayout()
 	vlayout.SetMargins(walk.Margins{})
@@ -124,6 +125,11 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	if mtw.logScreen, err = mtw.newScreen(func() string { return l18n.Sprintf("Log") }); err != nil {
 		return nil, err
 	}
+	logFilters, err := newCanvasView(mtw.logScreen, mtw.buildLogFilters)
+	if err != nil {
+		return nil, err
+	}
+	logFilters.SetMinMaxSize(walk.Size{0, logFiltersHeight}, walk.Size{0, logFiltersHeight})
 	if mtw.logPage, err = NewLogPage(mtw.logScreen); err != nil {
 		return nil, err
 	}
@@ -140,6 +146,9 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 
 	mtw.model.onChanged(func() {
 		mtw.mainView.Invalidate()
+		if mtw.screen == screenLog {
+			logFilters.Invalidate()
+		}
 	})
 
 	mtw.VisibleChanged().Attach(func() {
@@ -160,7 +169,7 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 			select {
 			case <-ticker.C:
 				if win.IsWindowVisible(mtw.Handle()) {
-					mtw.model.refresh()
+					mtw.model.refreshCounters()
 				}
 			case <-mtw.quitTicker:
 				return
@@ -233,6 +242,36 @@ func (mtw *ManageTunnelsWindow) newScreen(title func() string) (*walk.Composite,
 	return screen, nil
 }
 
+const logFiltersHeight = 50
+
+// buildLogFilters draws the chips over the log: everything, warnings and errors only, and one per
+// tunnel as far as they fit.
+func (mtw *ManageTunnelsWindow) buildLogFilters(s *scene, width, height float64) {
+	if mtw.logPage == nil {
+		return
+	}
+	tunnel, warningsOnly := mtw.logPage.filter()
+	set := func(tunnel string, warningsOnly bool) func() {
+		return func() {
+			mtw.logPage.setFilter(tunnel, warningsOnly)
+		}
+	}
+	x, y := float64(screenPadding)-12, 10.0
+	x += s.chip("all", x, y, l18n.Sprintf("All"), len(tunnel) == 0 && !warningsOnly, themeText, set("", false)) + 6
+	x += s.chip("warnings", x, y, l18n.Sprintf("Warnings and errors"), warningsOnly, themeAmberSoft, set(tunnel, !warningsOnly)) + 6
+	for i := range mtw.model.entries {
+		name := mtw.model.entries[i].tunnel.Name
+		if x+s.widthOf(name, fontSmall)+26 > width-16 {
+			break
+		}
+		next := name
+		if tunnel == name {
+			next = ""
+		}
+		x += s.chip("tunnel:"+name, x, y, name, tunnel == name, themeText, set(next, warningsOnly)) + 6
+	}
+}
+
 // showScreen switches what the window shows.
 func (mtw *ManageTunnelsWindow) showScreen(screen screenKind) {
 	if screen == screenUpdate && mtw.updateScreen == nil {
@@ -243,7 +282,7 @@ func (mtw *ManageTunnelsWindow) showScreen(screen screenKind) {
 		mtw.detailsName = ""
 		mtw.model.showDetailsOf("")
 	}
-	mtw.mainView.resetScroll()
+	mtw.mainView.reset()
 	mtw.SetSuspended(true)
 	mtw.mainView.SetVisible(screen == screenStatus || screen == screenDetails)
 	mtw.logScreen.SetVisible(screen == screenLog)

@@ -8,6 +8,7 @@ package ui
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/lxn/walk"
 
@@ -143,6 +144,7 @@ func (mtw *ManageTunnelsWindow) buildStatus(s *scene, width, height float64) {
 		y += 40
 	}
 
+	now := time.Now()
 	hero := model.hero()
 	look := lookFor(hero)
 	subtitle := look.short
@@ -180,19 +182,20 @@ func (mtw *ManageTunnelsWindow) buildStatus(s *scene, width, height float64) {
 	// Address and traffic of the active tunnel
 	if hero != nil && hero.state == manager.TunnelStarted && hero.config != nil {
 		_, rx, tx := trafficOf(hero.config)
-		tiles := [3][2]string{
-			{l18n.Sprintf("Address"), joinAddresses(hero.config.Interface.Addresses)},
-			{l18n.Sprintf("Received"), rx.String()},
-			{l18n.Sprintf("Sent"), tx.String()},
+		tiles := [][2]string{{l18n.Sprintf("Address"), joinAddresses(hero.config.Interface.Addresses)}}
+		if !hero.metrics.ConnectedSince.IsZero() {
+			tiles = append(tiles, [2]string{l18n.Sprintf("Connected for"), formatDuration(now.Sub(hero.metrics.ConnectedSince))})
 		}
-		tileWidth := (inner - 16) / 3
+		tiles = append(tiles, [2]string{l18n.Sprintf("Received"), rx.String()}, [2]string{l18n.Sprintf("Sent"), tx.String()})
+		tileWidth := (inner - float64(len(tiles)-1)*8) / float64(len(tiles))
 		for i, tile := range tiles {
 			x := left + float64(i)*(tileWidth+8)
 			s.fill(x, y, tileWidth, 54, 8, themePanel)
 			s.label(tile[0], fontSmall, themeTextDim, x+12, y+8, tileWidth-24, 18, textLeft)
 			s.label(tile[1], fontBodyBold, themeText, x+12, y+26, tileWidth-24, 20, textLeft)
 		}
-		y += 54 + 14
+		y += 54 + 8
+		y += s.trafficGraph(left, y, inner, model.traffic[hero.tunnel.Name]) + 14
 	}
 
 	// The main action
@@ -265,11 +268,16 @@ func (mtw *ManageTunnelsWindow) buildStatus(s *scene, width, height float64) {
 			s.fill(left, rowY, inner, rowHeight, 8, background)
 			s.glyph(rowLook.glyph, left+14, rowY+22)
 			s.label(name, fontBodyBold, themeText, left+38, rowY+9, inner-38-76, 20, textLeft)
-			s.label(rowLook.short, fontSmall, rowLook.shortColor, left+38, rowY+29, inner-38-76, 18, textLeft)
+			status := rowLook.short
+			if lastActive := lastActiveText(&entry.metrics, now); entry.state == manager.TunnelStopped && len(lastActive) > 0 {
+				status = l18n.Sprintf("%s · %s", status, lastActive)
+			}
+			s.label(status, fontSmall, rowLook.shortColor, left+38, rowY+29, inner-38-76, 18, textLeft)
 			s.toggle("toggle:"+name, left+inner-14-toggleWidth, rowY+16, entry.active(), model.canToggle(), func() { model.toggle(mtw, name) })
 			rowY += rowHeight + rowGap
 		}
 		s.clearClip()
+		s.scrollThumb(width-10, y, viewport)
 	}
 
 	// The footer
@@ -436,6 +444,12 @@ func (mtw *ManageTunnelsWindow) buildDetails(s *scene, width, height float64) {
 	if title, text := connectionWarning(entry); len(text) > 0 {
 		y += s.notice(left, y, inner, noticeAmber, title, text) + 14
 	}
+	if entry.state == manager.TunnelStarted && entry.config != nil {
+		y += s.trafficGraph(left, y, inner, model.traffic[name]) + 14
+	}
+	if rows := connectionRows(entry, model.traffic[name], time.Now()); len(rows) > 0 {
+		y += s.card(left, y, inner, l18n.Sprintf("CONNECTION"), rows) + 14
+	}
 	if entry.config != nil {
 		y += s.card(left, y, inner, l18n.Sprintf("INTERFACE"), interfaceRows(&entry.config.Interface)) + 14
 		for i := range entry.config.Peers {
@@ -445,6 +459,7 @@ func (mtw *ManageTunnelsWindow) buildDetails(s *scene, width, height float64) {
 	}
 	s.maxScroll = y + s.scroll + 4 - footerY
 	s.clearClip()
+	s.scrollThumb(width-10, top+4, footerY-top-8)
 
 	// The header
 	s.fill(0, 0, width, headerHeight, 0, themeBackdrop)

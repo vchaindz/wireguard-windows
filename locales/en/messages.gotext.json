@@ -929,6 +929,20 @@
             "fuzzy": true
         },
         {
+            "id": "All",
+            "message": "All",
+            "translation": "All",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Warnings and errors",
+            "message": "Warnings and errors",
+            "translation": "Warnings and errors",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Tunnel Error",
             "message": "Tunnel Error",
             "translation": "Tunnel Error",
@@ -1468,6 +1482,13 @@
             "fuzzy": true
         },
         {
+            "id": "Connected for",
+            "message": "Connected for",
+            "translation": "Connected for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Received",
             "message": "Received",
             "translation": "Received",
@@ -1720,6 +1741,13 @@
             "fuzzy": true
         },
         {
+            "id": "CONNECTION",
+            "message": "CONNECTION",
+            "translation": "CONNECTION",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "INTERFACE",
             "message": "INTERFACE",
             "translation": "INTERFACE",
@@ -1752,6 +1780,285 @@
             "message": "Remove",
             "translation": "Remove",
             "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{String}/s",
+            "message": "{String}/s",
+            "translation": "{String}/s",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "String",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "conf.Bytes(bytesPerSecond + 0.5).String()"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds} s",
+            "message": "{Seconds} s",
+            "translation": "{Seconds} s",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds__60} min",
+            "message": "{Seconds__60} min",
+            "translation": "{Seconds__60} min",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds__60",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 60"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds__3600} h {Seconds__3600__60} min",
+            "message": "{Seconds__3600} h {Seconds__3600__60} min",
+            "translation": "{Seconds__3600} h {Seconds__3600__60} min",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds__3600",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 3600"
+                },
+                {
+                    "id": "Seconds__3600__60",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 3600 / 60"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "message": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "translation": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds__86400",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 86400"
+                },
+                {
+                    "id": "Seconds__86400__3600",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 86400 / 3600"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "last active {LastActiveEnd} ago for {LastActiveDuration}",
+            "message": "last active {LastActiveEnd} ago for {LastActiveDuration}",
+            "translation": "last active {LastActiveEnd} ago for {LastActiveDuration}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LastActiveEnd",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatDuration(now.Sub(metrics.LastActiveEnd))"
+                },
+                {
+                    "id": "LastActiveDuration",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(metrics.LastActiveDuration)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Active for",
+            "message": "Active for",
+            "translation": "Active for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "not connected",
+            "message": "not connected",
+            "translation": "not connected",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Receiving",
+            "message": "Receiving",
+            "translation": "Receiving",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sending",
+            "message": "Sending",
+            "translation": "Sending",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Interface errors",
+            "message": "Interface errors",
+            "translation": "Interface errors",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{InErrors} in, {OutErrors} out",
+            "message": "{InErrors} in, {OutErrors} out",
+            "translation": "{InErrors} in, {OutErrors} out",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "InErrors",
+                    "string": "%[1]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 1,
+                    "expr": "metrics.InErrors"
+                },
+                {
+                    "id": "OutErrors",
+                    "string": "%[2]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 2,
+                    "expr": "metrics.OutErrors"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Dropped packets",
+            "message": "Dropped packets",
+            "translation": "Dropped packets",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Connection failures",
+            "message": "Connection failures",
+            "translation": "Connection failures",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{ConnectionFailures}",
+            "message": "{ConnectionFailures}",
+            "translation": "{ConnectionFailures}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "ConnectionFailures",
+                    "string": "%[1]d",
+                    "type": "uint32",
+                    "underlyingType": "uint32",
+                    "argNum": 1,
+                    "expr": "metrics.ConnectionFailures"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Reconnects",
+            "message": "Reconnects",
+            "translation": "Reconnects",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last active",
+            "message": "Last active",
+            "translation": "Last active",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last active for",
+            "message": "Last active for",
+            "translation": "Last active for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last 60 seconds",
+            "message": "Last 60 seconds",
+            "translation": "Last 60 seconds",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "In {Rx}",
+            "message": "In {Rx}",
+            "translation": "In {Rx}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Rx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatRate(rate.rx)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Out {Tx}",
+            "message": "Out {Tx}",
+            "translation": "Out {Tx}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Tx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatRate(rate.tx)"
+                }
+            ],
             "fuzzy": true
         },
         {

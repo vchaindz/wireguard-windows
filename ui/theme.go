@@ -35,6 +35,8 @@ const (
 	themeGreenBg  rgb = 0x14261F
 	themeGreenInk rgb = 0x0B1F16
 
+	themeBlue rgb = 0x7FB7FF
+
 	themeAmber       rgb = 0xFFB84D
 	themeAmberHot    rgb = 0xFFC670
 	themeAmberBg     rgb = 0x2E2410
@@ -147,4 +149,32 @@ func themeBrush(color rgb) walk.Brush {
 		return walk.NullBrush()
 	}
 	return brush
+}
+
+// darkenDialog gives a native dialog the dark frame and background of the main window.
+func darkenDialog(dlg *walk.Dialog) {
+	useDarkWindowFrame(dlg.Handle())
+	dlg.SetBackground(themeBrush(themeBackdrop))
+}
+
+// darkenLabels makes labels readable on the dark background.
+func darkenLabels(color rgb, labels ...*walk.TextLabel) {
+	for _, label := range labels {
+		label.SetTextColor(color.walk())
+	}
+}
+
+// darkenEdits gives line edits the colors of a panel.
+func darkenEdits(edits ...*walk.LineEdit) {
+	for _, edit := range edits {
+		edit.SetTextColor(themeText.walk())
+		edit.SetBackground(themeBrush(themePanel))
+	}
+}
+
+// darkenButtons makes Windows draw push buttons and check boxes in their dark variant.
+func darkenButtons(buttons ...walk.Window) {
+	for _, button := range buttons {
+		useDarkControlTheme(button.Handle())
+	}
 }

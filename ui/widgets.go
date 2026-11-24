@@ -198,3 +198,24 @@ func (s *scene) backButton(action func()) {
 	}
 	s.line(1.8, themeText, 29, 19, 23, 26, 29, 33)
 }
+
+// chip draws a pill that filters a list and returns its width. A selected chip is filled.
+func (s *scene) chip(id string, x, y float64, label string, selected bool, accent rgb, action func()) float64 {
+	const height = 30
+	width := s.widthOf(label, fontSmall) + 26
+	hot := s.hit(id, x, y, width, height, action)
+	ink := accent
+	switch {
+	case selected:
+		s.fill(x, y, width, height, height/2, accent)
+		ink = themeBackdrop
+	case hot:
+		s.fill(x, y, width, height, height/2, themePanelHot)
+		s.stroke(x, y, width, height, height/2, 1, themeBorder)
+	default:
+		s.stroke(x, y, width, height, height/2, 1, themeBorder)
+	}
+	font := fontSmall
+	s.label(label, font, ink, x, y, width, height, textCenter)
+	return width
+}

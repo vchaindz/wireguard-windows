@@ -23,7 +23,7 @@ func runScriptCommand(command, interfaceName string) error {
 		return nil
 	}
 	if !conf.AdminBool("DangerousScriptExecution") {
-		log.Printf("Skipping execution of script, because dangerous script execution is safely disabled: %#q", command)
+		log.Printf("Warning: skipping execution of script, because dangerous script execution is safely disabled: %#q", command)
 		return nil
 	}
 	log.Printf("Executing: %#q", command)
@@ -69,6 +69,6 @@ func runScriptCommand(command, interfaceName string) error {
 	if state.ExitCode() == 0 {
 		return nil
 	}
-	log.Printf("Command error exit status: %d", state.ExitCode())
+	log.Printf("Warning: command error exit status: %d", state.ExitCode())
 	return windows.ERROR_GENERIC_COMMAND_FAILED
 }

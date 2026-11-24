@@ -31,11 +31,11 @@ func resolveHostname(name string) (resolvedIPString string, err error) {
 			return
 		}
 		if err == windows.WSATRY_AGAIN {
-			log.Printf("Temporary DNS error when resolving %s, so sleeping for 4 seconds", name)
+			log.Printf("Warning: temporary DNS error when resolving %s, so sleeping for 4 seconds", name)
 			continue
 		}
 		if err == windows.WSAHOST_NOT_FOUND && services.StartedAtBoot() {
-			log.Printf("Host not found when resolving %s at boot time, so sleeping for 4 seconds", name)
+			log.Printf("Warning: host not found when resolving %s at boot time, so sleeping for 4 seconds", name)
 			continue
 		}
 		return

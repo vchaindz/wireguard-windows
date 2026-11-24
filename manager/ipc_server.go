@@ -105,7 +105,7 @@ func (s *ManagerService) Start(tunnelName string) error {
 		for _, t := range tt {
 			state, err := s.State(t)
 			if err == nil && (state == TunnelStarted || state == TunnelStarting) {
-				log.Printf("[%s] Trying again to stop zombie tunnel", t)
+				log.Printf("[%s] Warning: trying again to stop zombie tunnel", t)
 				s.Stop(t)
 				time.Sleep(time.Millisecond * 100)
 			}
@@ -437,6 +437,16 @@ func (s *ManagerService) ServeConn(reader io.Reader, writer io.Writer) {
 			}
 		case UpdateMethodType:
 			s.Update()
+		case MetricsMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(trackedTunnelMetrics(tunnelName))
+			if err != nil {
+				return
+			}
 		case HealthMethodType:
 			var tunnelName string
 			err := decoder.Decode(&tunnelName)

@@ -46,10 +46,18 @@ type TimestampedWriter interface {
 }
 
 func logMessage(level loggerLevel, timestamp uint64, msg *uint16) int {
+	// The level is written the way the rest of the program marks warnings and errors in the log.
+	text := windows.UTF16PtrToString(msg)
+	switch level {
+	case logWarn:
+		text = "Warning: " + text
+	case logErr:
+		text = "Error: " + text
+	}
 	if tw, ok := log.Default().Writer().(TimestampedWriter); ok {
-		tw.WriteWithTimestamp([]byte(log.Default().Prefix()+windows.UTF16PtrToString(msg)), (int64(timestamp)-116444736000000000)*100)
+		tw.WriteWithTimestamp([]byte(log.Default().Prefix()+text), (int64(timestamp)-116444736000000000)*100)
 	} else {
-		log.Println(windows.UTF16PtrToString(msg))
+		log.Println(text)
 	}
 	return 0
 }

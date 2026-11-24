@@ -111,7 +111,7 @@ func NewLogPage(parent walk.Container) (*LogPage, error) {
 	return lp, nil
 }
 
-// StyleCell colors the log for the dark window and marks what the connection check reports.
+// StyleCell colors the log for the dark window and marks warnings and errors.
 func (lp *LogPage) StyleCell(style *walk.CellStyle) {
 	style.BackgroundColor = themeBackdrop.walk()
 	style.TextColor = themeText.walk()
@@ -120,15 +120,28 @@ func (lp *LogPage) StyleCell(style *walk.CellStyle) {
 		style.TextColor = themeTextDim.walk()
 		return
 	}
-	if line := lp.model.items[row].Line; strings.Contains(line, "Connection check:") {
-		switch {
-		case strings.Contains(line, "tunnel is connected"), strings.Contains(line, "back to normal"):
-			style.TextColor = themeGreen.walk()
-		case strings.Contains(line, "not verified"):
-		default:
-			style.TextColor = themeAmberSoft.walk()
-		}
+	switch ringlogger.ParseLine(lp.model.items[row].Line).Level {
+	case ringlogger.LevelWarning:
+		style.TextColor = themeAmberSoft.walk()
+	case ringlogger.LevelError:
+		style.TextColor = themeRedSoft.walk()
 	}
+}
+
+// setFilter restricts the log to the lines of one tunnel, if a name is given, and to warnings and errors.
+func (lp *LogPage) setFilter(tunnel string, warningsOnly bool) {
+	mdl := lp.model
+	if mdl.filterTunnel == tunnel && mdl.warningsOnly == warningsOnly {
+		return
+	}
+	mdl.filterTunnel, mdl.warningsOnly = tunnel, warningsOnly
+	mdl.applyFilter()
+	mdl.PublishRowsReset()
+	lp.scrollToBottom()
+}
+
+func (lp *LogPage) filter() (tunnel string, warningsOnly bool) {
+	return lp.model.filterTunnel, lp.model.warningsOnly
 }
 
 // copySelectionOrAll copies the selected lines, or the whole log when none is selected.
@@ -192,9 +205,32 @@ func (lp *LogPage) onSave() {
 
 type logModel struct {
 	walk.ReflectTableModelBase
-	lp    *LogPage
-	quit  chan struct{}
+	lp   *LogPage
+	quit chan struct{}
+	// all holds every line; items holds the ones that pass the filter and is what the table shows.
+	all   []ringlogger.FollowLine
 	items []ringlogger.FollowLine
+
+	filterTunnel string
+	warningsOnly bool
+}
+
+func (mdl *logModel) applyFilter() {
+	if len(mdl.filterTunnel) == 0 && !mdl.warningsOnly {
+		mdl.items = mdl.all
+		return
+	}
+	mdl.items = nil
+	for i := range mdl.all {
+		parsed := ringlogger.ParseLine(mdl.all[i].Line)
+		if len(mdl.filterTunnel) > 0 && parsed.Tunnel != mdl.filterTunnel {
+			continue
+		}
+		if mdl.warningsOnly && parsed.Level == ringlogger.LevelInfo {
+			continue
+		}
+		mdl.items = append(mdl.items, mdl.all[i])
+	}
 }
 
 func newLogModel(lp *LogPage) *logModel {
@@ -214,10 +250,11 @@ func newLogModel(lp *LogPage) *logModel {
 				mdl.lp.Synchronize(func() {
 					isAtBottom := mdl.lp.isAtBottom() && len(lp.logView.SelectedIndexes()) <= 1
 
-					mdl.items = append(mdl.items, items...)
-					if len(mdl.items) > maxLogLinesDisplayed {
-						mdl.items = mdl.items[len(mdl.items)-maxLogLinesDisplayed:]
+					mdl.all = append(mdl.all, items...)
+					if len(mdl.all) > maxLogLinesDisplayed {
+						mdl.all = mdl.all[len(mdl.all)-maxLogLinesDisplayed:]
 					}
+					mdl.applyFilter()
 					mdl.PublishRowsReset()
 
 					if isAtBottom {

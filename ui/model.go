@@ -15,6 +15,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/lxn/walk"
 
@@ -32,6 +34,8 @@ type tunnelEntry struct {
 	unstable          bool
 	// config is the runtime configuration of a started tunnel, or the stored one of the tunnel whose details are shown.
 	config *conf.Config
+	// metrics is what the manager has observed about the tunnel since the manager started.
+	metrics manager.TunnelMetrics
 }
 
 func (entry *tunnelEntry) active() bool {
@@ -46,17 +50,22 @@ type appModel struct {
 	updateAvailable bool
 	// lastUsed is the tunnel that was most recently toggled, offered for activation when none is active.
 	lastUsed string
+	// traffic holds the traffic rates of the started tunnels, by name.
+	traffic map[string]*trafficHistory
 
 	synchronize func(func())
 	changed     []func()
 
 	refreshRequests chan struct{}
-	detailsLock     sync.Mutex
-	detailsName     string
+	// fullRefreshPending is set when the next refresh has to reload everything, not only the counters.
+	fullRefreshPending int32
+	detailsLock        sync.Mutex
+	detailsName        string
 
 	tunnelChangedCB  *manager.TunnelChangeCallback
 	tunnelHealthCB   *manager.TunnelHealthCallback
 	tunnelsChangedCB *manager.TunnelsChangeCallback
+	disposeOnce      sync.Once
 }
 
 func newAppModel(synchronize func(func())) *appModel {
@@ -65,32 +74,88 @@ func newAppModel(synchronize func(func())) *appModel {
 		refreshRequests: make(chan struct{}, 1),
 	}
 	go func() {
+		// The tunnels that the last full load found started; only these have counters worth updating.
+		var started []manager.Tunnel
 		for range model.refreshRequests {
-			entries, globalState := model.load()
-			model.synchronize(func() {
-				model.entries, model.globalState = entries, globalState
-				for _, changed := range model.changed {
-					changed()
+			if atomic.SwapInt32(&model.fullRefreshPending, 0) != 0 {
+				entries, globalState := model.load()
+				started = started[:0]
+				for i := range entries {
+					if entries[i].state == manager.TunnelStarted {
+						started = append(started, entries[i].tunnel)
+					}
 				}
+				model.synchronize(func() {
+					model.entries, model.globalState = entries, globalState
+					model.recordTraffic(time.Now())
+					model.notifyChanged()
+				})
+				continue
+			}
+			if len(started) == 0 {
+				continue
+			}
+			type counters struct {
+				config  *conf.Config
+				metrics manager.TunnelMetrics
+			}
+			fresh := make(map[string]counters, len(started))
+			for _, tunnel := range started {
+				if config, err := tunnel.RuntimeConfig(); err == nil {
+					metrics, _ := tunnel.Metrics()
+					fresh[tunnel.Name] = counters{&config, metrics}
+				}
+			}
+			model.synchronize(func() {
+				for i := range model.entries {
+					entry := &model.entries[i]
+					if update, ok := fresh[entry.tunnel.Name]; ok && entry.state == manager.TunnelStarted {
+						entry.config, entry.metrics = update.config, update.metrics
+					}
+				}
+				model.recordTraffic(time.Now())
+				model.notifyChanged()
 			})
 		}
 	}()
+	// What a notification says is shown at once; a state change is followed by a full reload, which also
+	// picks up the runtime configuration of a tunnel that has just started.
 	model.tunnelChangedCB = manager.IPCClientRegisterTunnelChange(func(tunnel *manager.Tunnel, state, globalState manager.TunnelState, err error) {
+		name := tunnel.Name
+		model.synchronize(func() {
+			model.globalState = globalState
+			if entry := model.entry(name); entry != nil && entry.state != state {
+				entry.state = state
+				if state != manager.TunnelStarted {
+					entry.health, entry.conflictSuspected, entry.unstable = manager.TunnelHealthUnknown, false, false
+				}
+			}
+			model.notifyChanged()
+		})
 		model.refresh()
 	})
 	model.tunnelHealthCB = manager.IPCClientRegisterTunnelHealth(func(tunnel *manager.Tunnel, health manager.TunnelHealth, conflictSuspected, unstable bool) {
-		model.refresh()
+		name := tunnel.Name
+		model.synchronize(func() {
+			if entry := model.entry(name); entry != nil && entry.state == manager.TunnelStarted {
+				entry.health, entry.conflictSuspected, entry.unstable = health, conflictSuspected, unstable
+				model.notifyChanged()
+			}
+		})
 	})
 	model.tunnelsChangedCB = manager.IPCClientRegisterTunnelsChange(model.refresh)
 	model.refresh()
 	return model
 }
 
+// dispose may be called more than once: destroying the window disposes of it a second time.
 func (model *appModel) dispose() {
-	model.tunnelChangedCB.Unregister()
-	model.tunnelHealthCB.Unregister()
-	model.tunnelsChangedCB.Unregister()
-	close(model.refreshRequests)
+	model.disposeOnce.Do(func() {
+		model.tunnelChangedCB.Unregister()
+		model.tunnelHealthCB.Unregister()
+		model.tunnelsChangedCB.Unregister()
+		close(model.refreshRequests)
+	})
 }
 
 // onChanged registers a function that is called on the UI thread whenever the tunnels were reloaded.
@@ -98,8 +163,50 @@ func (model *appModel) onChanged(changed func()) {
 	model.changed = append(model.changed, changed)
 }
 
+// recordTraffic feeds the counters of the started tunnels into their traffic histories and forgets
+// the histories of the others.
+func (model *appModel) recordTraffic(now time.Time) {
+	if model.traffic == nil {
+		model.traffic = make(map[string]*trafficHistory)
+	}
+	started := make(map[string]bool, len(model.entries))
+	for i := range model.entries {
+		entry := &model.entries[i]
+		if entry.state != manager.TunnelStarted || entry.config == nil {
+			continue
+		}
+		name := entry.tunnel.Name
+		started[name] = true
+		history := model.traffic[name]
+		if history == nil {
+			history = new(trafficHistory)
+			model.traffic[name] = history
+		}
+		_, rx, tx := trafficOf(entry.config)
+		history.record(now, rx, tx)
+	}
+	for name := range model.traffic {
+		if !started[name] {
+			delete(model.traffic, name)
+		}
+	}
+}
+
+func (model *appModel) notifyChanged() {
+	for _, changed := range model.changed {
+		changed()
+	}
+}
+
 // refresh asks the worker to reload the tunnels. It never blocks and may be called from any goroutine.
 func (model *appModel) refresh() {
+	atomic.StoreInt32(&model.fullRefreshPending, 1)
+	model.refreshCounters()
+}
+
+// refreshCounters asks the worker to reload only what changes while a tunnel runs: the handshake times
+// and traffic counters of the started tunnels.
+func (model *appModel) refreshCounters() {
 	defer func() { recover() }() // The model may have been disposed of meanwhile.
 	select {
 	case model.refreshRequests <- struct{}{}:
@@ -133,6 +240,7 @@ func (model *appModel) load() (entries []tunnelEntry, globalState manager.Tunnel
 		if entry.state, err = tunnel.State(); err != nil {
 			entry.state = manager.TunnelUnknown
 		}
+		entry.metrics, _ = tunnel.Metrics()
 		if entry.state == manager.TunnelStarted {
 			entry.health, entry.conflictSuspected, entry.unstable, _ = tunnel.Health()
 			if config, err := tunnel.RuntimeConfig(); err == nil {
@@ -161,12 +269,35 @@ func (model *appModel) entry(name string) *tunnelEntry {
 	return nil
 }
 
-// hero is the tunnel that the status screen is about: the first one that is active.
+// severity ranks how much a started tunnel needs attention.
+func (entry *tunnelEntry) severity() int {
+	switch {
+	case entry.health == manager.TunnelHealthNoConnectionNetworkBlocked:
+		return 5
+	case entry.health == manager.TunnelHealthNoConnection:
+		return 4
+	case entry.health == manager.TunnelHealthWaitingForPeer:
+		return 3
+	case entry.conflictSuspected || entry.unstable:
+		return 2
+	case entry.health == manager.TunnelHealthConnected:
+		return 1
+	}
+	return 0
+}
+
+// hero is the tunnel that the status screen is about: of the started ones the one that needs attention
+// most, and the first by name among equals; failing that, one that is starting or stopping.
 func (model *appModel) hero() *tunnelEntry {
+	var hero *tunnelEntry
 	for i := range model.entries {
-		if model.entries[i].state == manager.TunnelStarted {
-			return &model.entries[i]
+		entry := &model.entries[i]
+		if entry.state == manager.TunnelStarted && (hero == nil || entry.severity() > hero.severity()) {
+			hero = entry
 		}
+	}
+	if hero != nil {
+		return hero
 	}
 	for i := range model.entries {
 		if model.entries[i].active() {

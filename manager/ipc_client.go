@@ -57,6 +57,7 @@ const (
 	UpdateStateMethodType
 	UpdateMethodType
 	HealthMethodType
+	MetricsMethodType
 )
 
 var (
@@ -428,6 +429,24 @@ func (t *Tunnel) Health() (health TunnelHealth, conflictSuspected, unstable bool
 		return
 	}
 	err = rpcDecoder.Decode(&unstable)
+	return
+}
+
+// Metrics returns what the manager has observed about the tunnel since the manager started: how
+// long it has been active and connected, when it was last active, and its failure counters.
+func (t *Tunnel) Metrics() (metrics TunnelMetrics, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(MetricsMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&metrics)
 	return
 }
 

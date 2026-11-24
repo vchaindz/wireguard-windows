@@ -47,6 +47,7 @@ func NewTrayPopup(mtw *ManageTunnelsWindow, about func()) (*TrayPopup, error) {
 		tp.Dispose()
 		return nil, err
 	}
+	tp.view.onEscape = tp.hide
 	mtw.model.onChanged(func() {
 		if win.IsWindowVisible(tp.Handle()) {
 			tp.view.Invalidate()
@@ -83,7 +84,7 @@ func (tp *TrayPopup) showAtCursor() {
 	win.SetWindowPos(tp.Handle(), 0, cursor.X-1, cursor.Y-1, 1, 1, win.SWP_NOACTIVATE|win.SWP_NOZORDER)
 
 	tp.mtw.model.refresh()
-	tp.view.resetScroll()
+	tp.view.reset()
 	scale := tp.view.scale()
 	width := int32(trayPopupWidth*scale + 0.5)
 	height := int32(tp.view.contentHeight(trayPopupWidth)*scale + 0.5)
@@ -110,6 +111,7 @@ func (tp *TrayPopup) showAtCursor() {
 	win.SetWindowPos(tp.Handle(), win.HWND_TOPMOST, x, y, width, height, win.SWP_SHOWWINDOW)
 	tp.view.Invalidate()
 	win.SetForegroundWindow(tp.Handle())
+	tp.view.SetFocus()
 }
 
 // build draws the popup. It reports the height it needs through the scene.
@@ -211,6 +213,7 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 			rowY += rowHeight
 		}
 		s.clearClip()
+		s.scrollThumb(width-7, y, viewport)
 		y += viewport + 6
 	}
 

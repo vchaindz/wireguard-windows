@@ -15,7 +15,8 @@ import (
 
 const (
 	// Without routes nothing enters the tunnel, so nothing would ever start a handshake. Turning persistent
-	// keepalive on makes the driver send a keepalive at once, which starts one.
+	// keepalive on makes the driver send a keepalive at once, which starts one. This is the value used for
+	// peers that have no keepalive configured.
 	peerWaitProbeKeepalive = 25
 
 	// The driver retries a handshake every 5 seconds for 90 seconds (REKEY_ATTEMPT_TIME) and then gives up until
@@ -33,35 +34,92 @@ type peerWaiter struct {
 	done     chan struct{}
 }
 
+// A peerProbeTarget is what the waiter needs from the adapter. Tests supply a fake one.
+type peerProbeTarget interface {
+	// setKeepalives changes only the persistent keepalive of the given peers.
+	setKeepalives(peers []driver.Peer) error
+	anyPeerHasHandshake() bool
+}
+
+type keepaliveStep int
+
+const (
+	// keepaliveOff and keepaliveProbe together make the driver start a handshake: it sends a keepalive only
+	// when persistent keepalive goes from off to on.
+	keepaliveOff keepaliveStep = iota
+	keepaliveProbe
+	// keepaliveRestore puts back the configuration of the peers that have no keepalive configured.
+	keepaliveRestore
+)
+
+// keepalivePeers returns the keepalive updates of one step for the peers that have an endpoint. Peers without
+// one cannot be contacted first, so they are left alone.
+func keepalivePeers(config *conf.Config, step keepaliveStep) []driver.Peer {
+	var peers []driver.Peer
+	for i := range config.Peers {
+		peer := &config.Peers[i]
+		if peer.Endpoint.IsEmpty() {
+			continue
+		}
+		var keepalive uint16
+		switch step {
+		case keepaliveProbe:
+			keepalive = peer.PersistentKeepalive
+			if keepalive == 0 {
+				keepalive = peerWaitProbeKeepalive
+			}
+		case keepaliveRestore:
+			if peer.PersistentKeepalive != 0 {
+				continue
+			}
+		}
+		peers = append(peers, driver.Peer{
+			Flags:               driver.PeerHasPublicKey | driver.PeerHasPersistentKeepalive | driver.PeerUpdateOnly,
+			PublicKey:           peer.PublicKey,
+			PersistentKeepalive: keepalive,
+		})
+	}
+	return peers
+}
+
 func waitForPeer(adapter *driver.Adapter, config *conf.Config) *peerWaiter {
+	return startPeerWaiter(adapterProbeTarget{adapter}, config, peerWaitProbeInterval, peerWaitPollInterval)
+}
+
+func startPeerWaiter(target peerProbeTarget, config *conf.Config, probeInterval, pollInterval time.Duration) *peerWaiter {
 	pw := &peerWaiter{
 		answered: make(chan struct{}, 1),
 		stop:     make(chan struct{}),
 		done:     make(chan struct{}),
 	}
+	probePeers := func() {
+		err := target.setKeepalives(keepalivePeers(config, keepaliveOff))
+		if err == nil {
+			err = target.setKeepalives(keepalivePeers(config, keepaliveProbe))
+		}
+		if err != nil {
+			log.Printf("Warning: unable to probe peers: %v", err)
+		}
+	}
 	go func() {
 		defer close(pw.done)
-		probe := time.NewTicker(peerWaitProbeInterval)
+		probe := time.NewTicker(probeInterval)
 		defer probe.Stop()
-		poll := time.NewTicker(peerWaitPollInterval)
+		poll := time.NewTicker(pollInterval)
 		defer poll.Stop()
-		probePeers(adapter, config)
+		probePeers()
 		for {
 			select {
 			case <-pw.stop:
 				return
 			case <-probe.C:
-				probePeers(adapter, config)
+				probePeers()
 			case <-poll.C:
-				if !anyPeerHasHandshake(adapter) {
+				if !target.anyPeerHasHandshake() {
 					continue
 				}
-				// Put back the configured keepalive of the peers that have none of their own.
-				err := setPeerKeepalives(adapter, config, func(peer *conf.Peer) (uint16, bool) {
-					return 0, peer.PersistentKeepalive == 0
-				})
-				if err != nil {
-					log.Printf("Unable to restore persistent keepalive after probing: %v", err)
+				if err := target.setKeepalives(keepalivePeers(config, keepaliveRestore)); err != nil {
+					log.Printf("Warning: unable to restore persistent keepalive after probing: %v", err)
 				}
 				pw.answered <- struct{}{}
 				return
@@ -77,44 +135,12 @@ func (pw *peerWaiter) cancel() {
 	<-pw.done
 }
 
-// probePeers makes the driver start a handshake with every peer that has an endpoint. The driver sends a
-// keepalive only when persistent keepalive goes from off to on, hence the two steps.
-func probePeers(adapter *driver.Adapter, config *conf.Config) {
-	err := setPeerKeepalives(adapter, config, func(peer *conf.Peer) (uint16, bool) {
-		return 0, true
-	})
-	if err == nil {
-		err = setPeerKeepalives(adapter, config, func(peer *conf.Peer) (uint16, bool) {
-			if peer.PersistentKeepalive != 0 {
-				return peer.PersistentKeepalive, true
-			}
-			return peerWaitProbeKeepalive, true
-		})
-	}
-	if err != nil {
-		log.Printf("Unable to probe peers: %v", err)
-	}
+type adapterProbeTarget struct {
+	adapter *driver.Adapter
 }
 
-// setPeerKeepalives changes only the persistent keepalive of the peers that have an endpoint and that the given
-// function selects, leaving keys, endpoints and allowed IPs as they are.
-func setPeerKeepalives(adapter *driver.Adapter, config *conf.Config, keepalive func(peer *conf.Peer) (uint16, bool)) error {
-	var peers []driver.Peer
-	for i := range config.Peers {
-		peer := &config.Peers[i]
-		if peer.Endpoint.IsEmpty() {
-			continue
-		}
-		value, ok := keepalive(peer)
-		if !ok {
-			continue
-		}
-		peers = append(peers, driver.Peer{
-			Flags:               driver.PeerHasPublicKey | driver.PeerHasPersistentKeepalive | driver.PeerUpdateOnly,
-			PublicKey:           peer.PublicKey,
-			PersistentKeepalive: value,
-		})
-	}
+// setKeepalives leaves keys, endpoints and allowed IPs of the peers as they are.
+func (target adapterProbeTarget) setKeepalives(peers []driver.Peer) error {
 	if len(peers) == 0 {
 		return nil
 	}
@@ -123,11 +149,11 @@ func setPeerKeepalives(adapter *driver.Adapter, config *conf.Config, keepalive f
 	for i := range peers {
 		builder.AppendPeer(&peers[i])
 	}
-	return adapter.SetConfiguration(builder.Interface())
+	return target.adapter.SetConfiguration(builder.Interface())
 }
 
-func anyPeerHasHandshake(adapter *driver.Adapter) bool {
-	config, err := adapter.Configuration()
+func (target adapterProbeTarget) anyPeerHasHandshake() bool {
+	config, err := target.adapter.Configuration()
 	if err != nil {
 		return false
 	}

@@ -44,7 +44,7 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 		svcSpecificEC, exitCode = services.DetermineErrorCode(err, serviceError)
 		logErr := services.CombineErrors(err, serviceError)
 		if logErr != nil {
-			log.Println(logErr)
+			log.Printf("Error: %v", logErr)
 		}
 		serviceState = svc.StopPending
 		changes <- svc.Status{State: serviceState}
@@ -66,7 +66,7 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 						buf = make([]byte, 2*len(buf))
 					}
 					lines := bytes.Split(buf, []byte{'\n'})
-					log.Println("Failed to shutdown after 30 seconds. Probably dead locked. Printing stack and killing.")
+					log.Println("Error: failed to shutdown after 30 seconds. Probably dead locked. Printing stack and killing.")
 					for _, line := range lines {
 						if len(bytes.TrimSpace(line)) > 0 {
 							log.Println(string(line))
@@ -159,7 +159,7 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 	for i := range 15 {
 		if i > 0 {
 			time.Sleep(time.Second)
-			log.Printf("Retrying adapter creation after failure because system just booted (T+%v): %v", windows.DurationSinceBoot(), err)
+			log.Printf("Warning: retrying adapter creation after failure because system just booted (T+%v): %v", windows.DurationSinceBoot(), err)
 		}
 		adapter, err = driver.CreateAdapter(config.Name, "WireGuard", deterministicGUID(config))
 		if err == nil || !services.StartedAtBoot() {
@@ -263,7 +263,7 @@ func (service *tunnelService) Execute(args []string, r <-chan svc.ChangeRequest,
 			case svc.Interrogate:
 				changes <- c.CurrentStatus
 			default:
-				log.Printf("Unexpected service control request #%d\n", c)
+				log.Printf("Warning: unexpected service control request #%d\n", c)
 			}
 		case <-watcher.started:
 			if !started {

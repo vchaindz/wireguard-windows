@@ -50,7 +50,7 @@ func configureInterface(family winipcfg.AddressFamily, conf *conf.Config, luid w
 	var err error
 startOver:
 	if tryTimes > 0 {
-		log.Printf("Retrying interface configuration after failure because system just booted (T+%v): %v", windows.DurationSinceBoot(), err)
+		log.Printf("Warning: retrying interface configuration after failure because system just booted (T+%v): %v", windows.DurationSinceBoot(), err)
 		time.Sleep(time.Second)
 		retryOnFailure = retryOnFailure && tryTimes < 15
 	}

@@ -26,7 +26,7 @@ func WireGuardTunnelService(confFile16 *uint16) bool {
 	tunnel.UseFixedGUIDInsteadOfDeterministic = true
 	err := tunnel.Run(confFile)
 	if err != nil {
-		log.Printf("Service run error: %v", err)
+		log.Printf("Error: service run error: %v", err)
 	}
 	return err == nil
 }

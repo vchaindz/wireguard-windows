@@ -93,6 +93,8 @@ type scene struct {
 	height float64
 
 	measure func(text string, font themeFont, width float64) float64
+	// lineWidth measures a single line of text.
+	lineWidth func(text string, font themeFont) float64
 }
 
 func (s *scene) setClip(x, y, w, h float64) {
@@ -158,6 +160,14 @@ func (s *scene) wrappedHeight(text string, font themeFont, width float64) float6
 	return s.measure(text, font, width)
 }
 
+// widthOf is the width of a single line of text.
+func (s *scene) widthOf(text string, font themeFont) float64 {
+	if s.lineWidth == nil {
+		return float64(len(text)) * 7
+	}
+	return s.lineWidth(text, font)
+}
+
 // hit makes a region react to the mouse and reports whether the mouse is over it.
 func (s *scene) hit(id string, x, y, w, h float64, action func()) bool {
 	s.hits = append(s.hits, sceneHit{id, sceneRect{x, y, w, h}, action, s.clip, s.clipped})
@@ -172,6 +182,51 @@ func (s *scene) hitAt(x, y float64) *sceneHit {
 		}
 	}
 	return nil
+}
+
+func (s *scene) hitByID(id string) *sceneHit {
+	for i := len(s.hits) - 1; i >= 0; i-- {
+		if s.hits[i].id == id {
+			return &s.hits[i]
+		}
+	}
+	return nil
+}
+
+// focusOrder lists the regions that can be operated, in the order they were drawn.
+func (s *scene) focusOrder() []string {
+	var ids []string
+	seen := make(map[string]bool)
+	for i := range s.hits {
+		if hit := &s.hits[i]; hit.action != nil && !seen[hit.id] {
+			seen[hit.id] = true
+			ids = append(ids, hit.id)
+		}
+	}
+	return ids
+}
+
+// focusRing outlines the region that keys act on.
+func (s *scene) focusRing(id string) {
+	hit := s.hitByID(id)
+	if hit == nil {
+		return
+	}
+	s.clip, s.clipped = hit.clip, hit.clipped
+	s.stroke(hit.rect.x-3, hit.rect.y-3, hit.rect.w+6, hit.rect.h+6, 10, 2, themeText)
+	s.clearClip()
+}
+
+// scrollThumb shows how far the scrolling part of the view is scrolled, at its right edge.
+func (s *scene) scrollThumb(x, y, height float64) {
+	if s.maxScroll <= 0 || height <= 0 {
+		return
+	}
+	length := height * height / (height + s.maxScroll)
+	if length < 24 {
+		length = 24
+	}
+	s.fill(x, y+(height-length)*s.scroll/s.maxScroll, 3, length, 1.5, themeBorder)
 }
 
 // Painting
@@ -276,28 +331,43 @@ func (shape *sceneShape) bounds(scale float64, width, height int) image.Rectangl
 // rasterize draws the shapes of the scene into an opaque image of the given size in pixels.
 func (s *scene) rasterize(width, height int, scale float64, background rgb) *image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	for i := 0; i < len(img.Pix); i += 4 {
-		img.Pix[i], img.Pix[i+1], img.Pix[i+2], img.Pix[i+3] = byte(background>>16), byte(background>>8), byte(background), 0xff
+	s.rasterizeRegion(img.Pix, width, height, img.Rect, scale, background, false)
+	return img
+}
+
+// rasterizeRegion draws the part of the shapes that lies in a region into a buffer of 4-byte pixels
+// that holds a whole frame of the given size. The pixels are RGBA, or BGRA as Windows wants them.
+func (s *scene) rasterizeRegion(pix []byte, width, height int, region image.Rectangle, scale float64, background rgb, bgra bool) {
+	region = region.Intersect(image.Rect(0, 0, width, height))
+	stride := width * 4
+	red, blue := 0, 2
+	if bgra {
+		red, blue = 2, 0
+	}
+	for y := region.Min.Y; y < region.Max.Y; y++ {
+		row := pix[y*stride:]
+		for x := region.Min.X; x < region.Max.X; x++ {
+			row[x*4+red], row[x*4+1], row[x*4+blue], row[x*4+3] = byte(background>>16), byte(background>>8), byte(background), 0xff
+		}
 	}
 	for i := range s.shapes {
 		shape := &s.shapes[i]
-		bounds := shape.bounds(scale, width, height)
+		bounds := shape.bounds(scale, width, height).Intersect(region)
 		r, g, b := float64(byte(shape.color>>16)), float64(byte(shape.color>>8)), float64(byte(shape.color))
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-			row := img.Pix[y*img.Stride:]
+			row := pix[y*stride:]
 			for x := bounds.Min.X; x < bounds.Max.X; x++ {
 				cover := shape.coverage(float64(x)+0.5, float64(y)+0.5, scale)
 				if cover <= 0 {
 					continue
 				}
-				pix := row[x*4 : x*4+3 : x*4+3]
-				pix[0] = byte(float64(pix[0]) + (r-float64(pix[0]))*cover + 0.5)
-				pix[1] = byte(float64(pix[1]) + (g-float64(pix[1]))*cover + 0.5)
-				pix[2] = byte(float64(pix[2]) + (b-float64(pix[2]))*cover + 0.5)
+				pixel := row[x*4 : x*4+3 : x*4+3]
+				pixel[red] = byte(float64(pixel[red]) + (r-float64(pixel[red]))*cover + 0.5)
+				pixel[1] = byte(float64(pixel[1]) + (g-float64(pixel[1]))*cover + 0.5)
+				pixel[blue] = byte(float64(pixel[blue]) + (b-float64(pixel[blue]))*cover + 0.5)
 			}
 		}
 	}
-	return img
 }
 
 // drawTexts draws the texts of the scene onto a device context that already shows the shapes.
@@ -327,4 +397,15 @@ func measureWrapped(hdc win.HDC, dpi int, text string, font themeFont, width flo
 	win.DrawTextEx(hdc, windows.StringToUTF16Ptr(text), -1, &rect, textWrap|textCalcRect|textNoPrefix, nil)
 	win.RestoreDC(hdc, saved)
 	return math.Ceil(float64(rect.Bottom) / scale)
+}
+
+// measureLine returns the width in 1/96" units of a single line of text.
+func measureLine(hdc win.HDC, dpi int, text string, font themeFont) float64 {
+	scale := float64(dpi) / 96
+	saved := win.SaveDC(hdc)
+	win.SelectObject(hdc, win.HGDIOBJ(font.handle(dpi)))
+	var rect win.RECT
+	win.DrawTextEx(hdc, windows.StringToUTF16Ptr(text), -1, &rect, textOneLine|textCalcRect|textNoPrefix, nil)
+	win.RestoreDC(hdc, saved)
+	return math.Ceil(float64(rect.Right) / scale)
 }

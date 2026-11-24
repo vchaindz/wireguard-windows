@@ -35,7 +35,7 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 		svcSpecificEC, exitCode = services.DetermineErrorCode(err, serviceError)
 		logErr := services.CombineErrors(err, serviceError)
 		if logErr != nil {
-			log.Print(logErr)
+			log.Printf("Error: %v", logErr)
 		}
 		changes <- svc.Status{State: svc.StopPending}
 	}()
@@ -110,13 +110,13 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 		}
 		user, err := userToken.GetTokenUser()
 		if err != nil {
-			log.Printf("Unable to lookup user from token: %v", err)
+			log.Printf("Error: unable to lookup user from token: %v", err)
 			userToken.Close()
 			return
 		}
 		username, domain, accType, err := user.User.Sid.LookupAccount("")
 		if err != nil {
-			log.Printf("Unable to lookup username from sid: %v", err)
+			log.Printf("Error: unable to lookup username from sid: %v", err)
 			userToken.Close()
 			return
 		}
@@ -133,12 +133,12 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 				elevatedToken, err = userToken.GetLinkedToken()
 				userToken.Close()
 				if err != nil {
-					log.Printf("Unable to elevate token: %v", err)
+					log.Printf("Error: unable to elevate token: %v", err)
 					return
 				}
 				if !elevatedToken.IsElevated() {
 					elevatedToken.Close()
-					log.Println("Linked token is not elevated")
+					log.Println("Warning: linked token is not elevated")
 					return
 				}
 			}
@@ -169,14 +169,14 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 
 			ourReader, theirWriter, err := os.Pipe()
 			if err != nil {
-				log.Printf("Unable to create pipe: %v", err)
+				log.Printf("Error: unable to create pipe: %v", err)
 				return
 			}
 			theirReader, ourWriter, err := os.Pipe()
 			if err != nil {
 				ourReader.Close()
 				theirWriter.Close()
-				log.Printf("Unable to create pipe: %v", err)
+				log.Printf("Error: unable to create pipe: %v", err)
 				return
 			}
 			theirEvents, ourEvents, err := os.Pipe()
@@ -185,7 +185,7 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 				theirWriter.Close()
 				theirReader.Close()
 				ourWriter.Close()
-				log.Printf("Unable to create pipe: %v", err)
+				log.Printf("Error: unable to create pipe: %v", err)
 				return
 			}
 			IPCServerListen(ourReader, ourWriter, ourEvents, elevatedToken)
@@ -197,7 +197,7 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 				ourWriter.Close()
 				theirEvents.Close()
 				ourEvents.Close()
-				log.Printf("Unable to export inheritable mapping handle for logging: %v", err)
+				log.Printf("Error: unable to export inheritable mapping handle for logging: %v", err)
 				return
 			}
 
@@ -230,7 +230,7 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 				ourReader.Close()
 				ourWriter.Close()
 				ourEvents.Close()
-				log.Printf("Unable to start manager UI process for user '%s@%s' for session %d: %v", username, domain, session, err)
+				log.Printf("Error: unable to start manager UI process for user '%s@%s' for session %d: %v", username, domain, session, err)
 				return
 			}
 
@@ -244,7 +244,7 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 				const STATUS_DLL_INIT_FAILED_LOGOFF = 0xC000026B
 				sessionIsDead = exitCode == STATUS_DLL_INIT_FAILED_LOGOFF
 			} else {
-				log.Printf("Unable to wait for UI process for user '%s@%s' for session %d: %v", username, domain, session, err)
+				log.Printf("Error: unable to wait for UI process for user '%s@%s' for session %d: %v", username, domain, session, err)
 			}
 
 			procsLock.Lock()
@@ -311,7 +311,7 @@ loop:
 				}
 				sessionNotification := (*windows.WTSSESSION_NOTIFICATION)(unsafe.Pointer(c.EventData))
 				if uintptr(sessionNotification.Size) != unsafe.Sizeof(*sessionNotification) {
-					log.Printf("Unexpected size of WTSSESSION_NOTIFICATION: %d", sessionNotification.Size)
+					log.Printf("Warning: unexpected size of WTSSESSION_NOTIFICATION: %d", sessionNotification.Size)
 					continue
 				}
 				if c.EventType == windows.WTS_SESSION_LOGOFF {
@@ -333,7 +333,7 @@ loop:
 				}
 
 			default:
-				log.Printf("Unexpected service control request #%d", c)
+				log.Printf("Warning: unexpected service control request #%d", c)
 			}
 		}
 	}
@@ -350,7 +350,7 @@ loop:
 	if uninstall {
 		err = UninstallManager()
 		if err != nil {
-			log.Printf("Unable to uninstall manager when quitting: %v", err)
+			log.Printf("Error: unable to uninstall manager when quitting: %v", err)
 		}
 	}
 	return

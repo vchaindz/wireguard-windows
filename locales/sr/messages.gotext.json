@@ -853,6 +853,16 @@
             "translatorComment": "Copied from source."
         },
         {
+            "id": "All",
+            "message": "All",
+            "translation": ""
+        },
+        {
+            "id": "Warnings and errors",
+            "message": "Warnings and errors",
+            "translation": ""
+        },
+        {
             "id": "Tunnel Error",
             "message": "Tunnel Error",
             "translation": "Грешка тунела",
@@ -1327,6 +1337,11 @@
             "translation": ""
         },
         {
+            "id": "Connected for",
+            "message": "Connected for",
+            "translation": ""
+        },
+        {
             "id": "Received",
             "message": "Received",
             "translation": ""
@@ -1523,6 +1538,11 @@
             "translation": ""
         },
         {
+            "id": "CONNECTION",
+            "message": "CONNECTION",
+            "translation": ""
+        },
+        {
             "id": "INTERFACE",
             "message": "INTERFACE",
             "translation": ""
@@ -1546,6 +1566,243 @@
             "id": "Remove",
             "message": "Remove",
             "translation": ""
+        },
+        {
+            "id": "{String}/s",
+            "message": "{String}/s",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "String",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "conf.Bytes(bytesPerSecond + 0.5).String()"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds} s",
+            "message": "{Seconds} s",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds__60} min",
+            "message": "{Seconds__60} min",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds__60",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 60"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds__3600} h {Seconds__3600__60} min",
+            "message": "{Seconds__3600} h {Seconds__3600__60} min",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds__3600",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 3600"
+                },
+                {
+                    "id": "Seconds__3600__60",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 3600 / 60"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "message": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds__86400",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 86400"
+                },
+                {
+                    "id": "Seconds__86400__3600",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 86400 / 3600"
+                }
+            ]
+        },
+        {
+            "id": "last active {LastActiveEnd} ago for {LastActiveDuration}",
+            "message": "last active {LastActiveEnd} ago for {LastActiveDuration}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "LastActiveEnd",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatDuration(now.Sub(metrics.LastActiveEnd))"
+                },
+                {
+                    "id": "LastActiveDuration",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(metrics.LastActiveDuration)"
+                }
+            ]
+        },
+        {
+            "id": "Active for",
+            "message": "Active for",
+            "translation": ""
+        },
+        {
+            "id": "not connected",
+            "message": "not connected",
+            "translation": ""
+        },
+        {
+            "id": "Receiving",
+            "message": "Receiving",
+            "translation": ""
+        },
+        {
+            "id": "Sending",
+            "message": "Sending",
+            "translation": ""
+        },
+        {
+            "id": "Interface errors",
+            "message": "Interface errors",
+            "translation": ""
+        },
+        {
+            "id": "{InErrors} in, {OutErrors} out",
+            "message": "{InErrors} in, {OutErrors} out",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "InErrors",
+                    "string": "%[1]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 1,
+                    "expr": "metrics.InErrors"
+                },
+                {
+                    "id": "OutErrors",
+                    "string": "%[2]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 2,
+                    "expr": "metrics.OutErrors"
+                }
+            ]
+        },
+        {
+            "id": "Dropped packets",
+            "message": "Dropped packets",
+            "translation": ""
+        },
+        {
+            "id": "Connection failures",
+            "message": "Connection failures",
+            "translation": ""
+        },
+        {
+            "id": "{ConnectionFailures}",
+            "message": "{ConnectionFailures}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "ConnectionFailures",
+                    "string": "%[1]d",
+                    "type": "uint32",
+                    "underlyingType": "uint32",
+                    "argNum": 1,
+                    "expr": "metrics.ConnectionFailures"
+                }
+            ]
+        },
+        {
+            "id": "Reconnects",
+            "message": "Reconnects",
+            "translation": ""
+        },
+        {
+            "id": "Last active",
+            "message": "Last active",
+            "translation": ""
+        },
+        {
+            "id": "Last active for",
+            "message": "Last active for",
+            "translation": ""
+        },
+        {
+            "id": "Last 60 seconds",
+            "message": "Last 60 seconds",
+            "translation": ""
+        },
+        {
+            "id": "In {Rx}",
+            "message": "In {Rx}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Rx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatRate(rate.rx)"
+                }
+            ]
+        },
+        {
+            "id": "Out {Tx}",
+            "message": "Out {Tx}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Tx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatRate(rate.tx)"
+                }
+            ]
         },
         {
             "id": "WireGuard: Deactivated",

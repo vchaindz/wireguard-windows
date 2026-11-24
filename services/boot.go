@@ -26,7 +26,7 @@ func StartedAtBoot() bool {
 		if reason, err := svc.DynamicStartReason(); err == nil {
 			startedAtBoot = (reason&svc.StartReasonAuto) != 0 || (reason&svc.StartReasonDelayedAuto) != 0
 		} else {
-			log.Printf("Unable to determine service start reason: %v", err)
+			log.Printf("Warning: unable to determine service start reason: %v", err)
 		}
 	})
 	return startedAtBoot
