@@ -73,3 +73,24 @@ func TestMetricsSession(t *testing.T) {
 		t.Fatalf("second session: %+v", r.metrics)
 	}
 }
+
+func TestMetricsReplacedListenPort(t *testing.T) {
+	var r metricsRecorder
+	r.listenPort(51820, 40000)
+	if r.metrics.ReplacedListenPort != 0 {
+		t.Fatal("a port was noted for a tunnel that is not active")
+	}
+	r.started(time.Unix(1700000000, 0))
+	for _, c := range []struct{ configured, actual, want uint16 }{
+		{51820, 51820, 0},
+		{0, 40000, 0},
+		{51820, 0, 0},
+		{51820, 40000, 51820},
+		{51820, 51820, 0},
+	} {
+		r.listenPort(c.configured, c.actual)
+		if got := r.metrics.ReplacedListenPort; got != c.want {
+			t.Errorf("configured %d, actual %d: got %d, want %d", c.configured, c.actual, got, c.want)
+		}
+	}
+}

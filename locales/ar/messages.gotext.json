@@ -2427,6 +2427,36 @@
             "translation": ""
         },
         {
+            "id": "Listen port {Port} does not work here",
+            "message": "Listen port {Port} does not work here",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Port",
+                    "string": "%[1]d",
+                    "type": "uint16",
+                    "underlyingType": "uint16",
+                    "argNum": 1,
+                    "expr": "port"
+                }
+            ]
+        },
+        {
+            "id": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "message": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Port",
+                    "string": "%[1]d",
+                    "type": "uint16",
+                    "underlyingType": "uint16",
+                    "argNum": 1,
+                    "expr": "port"
+                }
+            ]
+        },
+        {
             "id": "No tunnels yet",
             "message": "No tunnels yet",
             "translation": ""

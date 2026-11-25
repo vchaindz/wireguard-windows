@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"golang.zx2c4.com/wireguard/windows/conf"
+	"golang.zx2c4.com/wireguard/windows/driver"
 	"golang.zx2c4.com/wireguard/windows/tunnel/winipcfg"
 )
 
@@ -337,7 +338,9 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 	evaluator := newHealthEvaluator()
 	var waitsForPeerBeforeRouting, routesAllTraffic bool
 	var endpoint string
+	var configuredListenPort uint16
 	if config, err := conf.LoadFromName(tunnelName); err == nil {
+		configuredListenPort = config.Interface.ListenPort
 		waitsForPeerBeforeRouting = config.WaitsForPeerBeforeRouting()
 		routesAllTraffic = config.RoutesAllTraffic()
 		if len(config.Peers) > 0 && !config.Peers[0].Endpoint.IsEmpty() {
@@ -354,7 +357,7 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 		default:
 		}
 		probe.update(tunnelName)
-		if samples, counters, luid, err := sampleTunnelPeers(tunnelName); err == nil {
+		if samples, counters, luid, listenPort, err := sampleTunnelPeers(tunnelName); err == nil {
 			var status tunnelHealthStatus
 			now := time.Now()
 			status.health, status.conflictSuspected, status.unstable = evaluator.observe(now, samples)
@@ -366,7 +369,10 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 				}
 			}
 			status.health = refineTunnelHealth(status.health, everHandshake, waitsForPeerBeforeRouting, routesAllTraffic)
-			withTunnelMetrics(tunnelName, func(r *metricsRecorder) { r.observed(now, status.health, counters) })
+			withTunnelMetrics(tunnelName, func(r *metricsRecorder) {
+				r.observed(now, status.health, counters)
+				r.listenPort(configuredListenPort, listenPort)
+			})
 
 			// Each sample carries the probes that finished since the previous one, and then the next probe is
 			// sent, so that it has until the next sample to be answered.
@@ -441,18 +447,18 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 	}
 }
 
-// sampleTunnelPeers reads the state of the peers of a started tunnel, the LUID of its network interface and, if
-// they can be had, the error counters of that interface.
-func sampleTunnelPeers(tunnelName string) ([]peerSample, *interfaceCounters, winipcfg.LUID, error) {
+// sampleTunnelPeers reads the state of the peers of a started tunnel, the LUID of its network interface, the port
+// it listens on and, if they can be had, the error counters of that interface.
+func sampleTunnelPeers(tunnelName string) ([]peerSample, *interfaceCounters, winipcfg.LUID, uint16, error) {
 	driverAdapter, err := findDriverAdapter(tunnelName)
 	if err != nil {
-		return nil, nil, 0, err
+		return nil, nil, 0, 0, err
 	}
 	config, err := driverAdapter.Configuration()
 	if err != nil {
 		driverAdapter.Unlock()
 		releaseDriverAdapter(tunnelName)
-		return nil, nil, 0, err
+		return nil, nil, 0, 0, err
 	}
 	luid := driverAdapter.LUID()
 	driverAdapter.Unlock()
@@ -473,5 +479,9 @@ func sampleTunnelPeers(tunnelName string) ([]peerSample, *interfaceCounters, win
 		}
 		samples = append(samples, sample)
 	}
-	return samples, counters, luid, nil
+	var listenPort uint16
+	if config.Flags&driver.InterfaceHasListenPort != 0 {
+		listenPort = config.ListenPort
+	}
+	return samples, counters, luid, listenPort, nil
 }

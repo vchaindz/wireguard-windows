@@ -24,6 +24,11 @@ const (
 	peerWaitProbeInterval = 95 * time.Second
 
 	peerWaitPollInterval = time.Second
+
+	// A fixed listen port can be one that replies never arrive on, for instance because the router or another
+	// device behind it uses the same port for its own WireGuard. After this long without an answer the waiter
+	// tries from a port that the system picks.
+	peerWaitPortFallbackAfter = 15 * time.Second
 )
 
 // peerWaiter watches a freshly started adapter until some peer completes a handshake, so that routes, DNS and
@@ -34,11 +39,22 @@ type peerWaiter struct {
 	done     chan struct{}
 }
 
+// portFallbackDelay returns how long to wait for an answer on the configured listen port before trying another
+// one, or zero if the port is to be kept: none is configured, or the administrator wants it kept.
+func portFallbackDelay(config *conf.Config) time.Duration {
+	if config.Interface.ListenPort == 0 || conf.AdminBool("DisableListenPortFallback") {
+		return 0
+	}
+	return peerWaitPortFallbackAfter
+}
+
 // A peerProbeTarget is what the waiter needs from the adapter. Tests supply a fake one.
 type peerProbeTarget interface {
 	// setKeepalives changes only the persistent keepalive of the given peers.
 	setKeepalives(peers []driver.Peer) error
 	anyPeerHasHandshake() bool
+	// useRandomPort makes the adapter listen on a port that the system picks.
+	useRandomPort() error
 }
 
 type keepaliveStep int
@@ -83,10 +99,14 @@ func keepalivePeers(config *conf.Config, step keepaliveStep) []driver.Peer {
 }
 
 func waitForPeer(adapter *driver.Adapter, config *conf.Config) *peerWaiter {
-	return startPeerWaiter(adapterProbeTarget{adapter}, config, peerWaitProbeInterval, peerWaitPollInterval)
+	return startPeerWaiter(adapterProbeTarget{adapter}, config, peerWaitProbeInterval, peerWaitPollInterval, portFallbackDelay(config))
 }
 
-func startPeerWaiter(target peerProbeTarget, config *conf.Config, probeInterval, pollInterval time.Duration) *peerWaiter {
+// startPeerWaiter probes the peers until one answers. If portFallbackAfter is not zero and nobody has answered on
+// the configured listen port by then, it switches to a random port and clears the port in config, so that
+// whatever applies the configuration again later does not go back to the port that did not work. The caller must
+// not use config until the waiter has answered or has been cancelled.
+func startPeerWaiter(target peerProbeTarget, config *conf.Config, probeInterval, pollInterval, portFallbackAfter time.Duration) *peerWaiter {
 	pw := &peerWaiter{
 		answered: make(chan struct{}, 1),
 		stop:     make(chan struct{}),
@@ -107,6 +127,13 @@ func startPeerWaiter(target peerProbeTarget, config *conf.Config, probeInterval,
 		defer probe.Stop()
 		poll := time.NewTicker(pollInterval)
 		defer poll.Stop()
+		var portFallback <-chan time.Time
+		if portFallbackAfter > 0 && config.Interface.ListenPort != 0 {
+			timer := time.NewTimer(portFallbackAfter)
+			defer timer.Stop()
+			portFallback = timer.C
+		}
+		var replacedPort uint16
 		probePeers()
 		for {
 			select {
@@ -114,9 +141,26 @@ func startPeerWaiter(target peerProbeTarget, config *conf.Config, probeInterval,
 				return
 			case <-probe.C:
 				probePeers()
+			case <-portFallback:
+				portFallback = nil
+				if target.anyPeerHasHandshake() {
+					continue
+				}
+				port := config.Interface.ListenPort
+				if err := target.useRandomPort(); err != nil {
+					log.Printf("Warning: no reply has arrived on listen port %d, and switching to a random port failed: %v", port, err)
+					continue
+				}
+				log.Printf("Warning: no reply has arrived on listen port %d after %v, trying from a random port instead", port, portFallbackAfter)
+				replacedPort = port
+				config.Interface.ListenPort = 0
+				probePeers()
 			case <-poll.C:
 				if !target.anyPeerHasHandshake() {
 					continue
+				}
+				if replacedPort != 0 {
+					log.Printf("Warning: the peer answered once a random port was used instead of listen port %d. That port does not seem to work on this network: the router or another device may be using it. Remove ListenPort from the configuration or choose another port.", replacedPort)
 				}
 				if err := target.setKeepalives(keepalivePeers(config, keepaliveRestore)); err != nil {
 					log.Printf("Warning: unable to restore persistent keepalive after probing: %v", err)
@@ -149,6 +193,13 @@ func (target adapterProbeTarget) setKeepalives(peers []driver.Peer) error {
 	for i := range peers {
 		builder.AppendPeer(&peers[i])
 	}
+	return target.adapter.SetConfiguration(builder.Interface())
+}
+
+// useRandomPort leaves the key and the peers as they are. The driver takes a listen port of zero to mean any.
+func (target adapterProbeTarget) useRandomPort() error {
+	var builder driver.ConfigBuilder
+	builder.AppendInterface(&driver.Interface{Flags: driver.InterfaceHasListenPort})
 	return target.adapter.SetConfiguration(builder.Interface())
 }
 

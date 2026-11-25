@@ -45,14 +45,20 @@ func cleanupAddressesOnDisconnectedInterfaces(family winipcfg.AddressFamily, add
 }
 
 func configureInterface(family winipcfg.AddressFamily, conf *conf.Config, luid winipcfg.LUID) error {
-	retryOnFailure := services.StartedAtBoot()
+	// The TCP/IP interface of the adapter can be missing for a moment: right after boot, and right after the
+	// adapter changed its listen port while waiting for a peer. So a "not found" is tried again a few times.
+	retryOnFailure := true
+	maxTries := 5
+	if services.StartedAtBoot() {
+		maxTries = 15
+	}
 	tryTimes := 0
 	var err error
 startOver:
 	if tryTimes > 0 {
-		log.Printf("Warning: retrying interface configuration after failure because system just booted (T+%v): %v", windows.DurationSinceBoot(), err)
+		log.Printf("Warning: retrying interface configuration after failure (try %d of %d): %v", tryTimes+1, maxTries+1, err)
 		time.Sleep(time.Second)
-		retryOnFailure = retryOnFailure && tryTimes < 15
+		retryOnFailure = tryTimes < maxTries
 	}
 	tryTimes++
 

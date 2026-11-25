@@ -18,6 +18,23 @@ type fakeProbeTarget struct {
 	sync.Mutex
 	calls     [][]driver.Peer
 	handshake bool
+	// randomPortAt is how many keepalive updates had been made when the port was switched, or -1.
+	randomPortAt int
+	randomPorts  int
+}
+
+func (target *fakeProbeTarget) useRandomPort() error {
+	target.Lock()
+	defer target.Unlock()
+	target.randomPortAt = len(target.calls)
+	target.randomPorts++
+	return nil
+}
+
+func (target *fakeProbeTarget) randomPortCount() int {
+	target.Lock()
+	defer target.Unlock()
+	return target.randomPorts
 }
 
 func (target *fakeProbeTarget) setKeepalives(peers []driver.Peer) error {
@@ -113,7 +130,7 @@ func waitUntil(t *testing.T, what string, condition func() bool) {
 
 func TestPeerWaiterProbesUntilAnswered(t *testing.T) {
 	target := &fakeProbeTarget{}
-	pw := startPeerWaiter(target, peerWaitTestConfig(), 40*time.Millisecond, 2*time.Millisecond)
+	pw := startPeerWaiter(target, peerWaitTestConfig(), 40*time.Millisecond, 2*time.Millisecond, 0)
 
 	// The first probe happens at once: keepalive off, then on.
 	waitUntil(t, "the first probe", func() bool { return target.callCount() >= 2 })
@@ -154,7 +171,7 @@ func TestPeerWaiterProbesUntilAnswered(t *testing.T) {
 
 func TestPeerWaiterCancel(t *testing.T) {
 	target := &fakeProbeTarget{}
-	pw := startPeerWaiter(target, peerWaitTestConfig(), 5*time.Millisecond, time.Millisecond)
+	pw := startPeerWaiter(target, peerWaitTestConfig(), 5*time.Millisecond, time.Millisecond, 0)
 	waitUntil(t, "the first probe", func() bool { return target.callCount() >= 2 })
 	pw.cancel()
 	calls := target.callCount()
@@ -166,5 +183,61 @@ func TestPeerWaiterCancel(t *testing.T) {
 	case <-pw.answered:
 		t.Fatal("answered after cancel")
 	default:
+	}
+}
+
+func TestPeerWaiterPortFallback(t *testing.T) {
+	// A long probe interval, so that the only second probe is the one that follows the change of port.
+	config := peerWaitTestConfig()
+	config.Interface.ListenPort = 51820
+	target := &fakeProbeTarget{}
+	pw := startPeerWaiter(target, config, time.Hour, time.Millisecond, 20*time.Millisecond)
+	waitUntil(t, "the probe from the random port", func() bool { return target.callCount() >= 4 })
+	target.Lock()
+	switched, at := target.randomPorts, target.randomPortAt
+	target.Unlock()
+	if switched != 1 || at != 2 {
+		t.Fatalf("port switched %d times, after %d keepalive updates; want once, after the first probe", switched, at)
+	}
+	target.setHandshake()
+	select {
+	case <-pw.answered:
+	case <-time.After(5 * time.Second):
+		t.Fatal("not answered after a handshake")
+	}
+	pw.cancel()
+	if config.Interface.ListenPort != 0 {
+		t.Fatalf("listen port is still %d in the configuration", config.Interface.ListenPort)
+	}
+	if n := target.randomPortCount(); n != 1 {
+		t.Fatalf("port switched %d times", n)
+	}
+}
+
+func TestPeerWaiterKeepsPort(t *testing.T) {
+	for name, c := range map[string]struct {
+		port     uint16
+		fallback time.Duration
+		answers  bool
+	}{
+		"no port configured":      {0, 5 * time.Millisecond, false},
+		"fallback switched off":   {51820, 0, false},
+		"answered before the end": {51820, 40 * time.Millisecond, true},
+	} {
+		config := peerWaitTestConfig()
+		config.Interface.ListenPort = c.port
+		target := &fakeProbeTarget{}
+		if c.answers {
+			target.setHandshake()
+		}
+		pw := startPeerWaiter(target, config, time.Hour, time.Millisecond, c.fallback)
+		time.Sleep(80 * time.Millisecond)
+		pw.cancel()
+		if n := target.randomPortCount(); n != 0 {
+			t.Errorf("%s: port switched %d times", name, n)
+		}
+		if config.Interface.ListenPort != c.port {
+			t.Errorf("%s: listen port changed to %d", name, config.Interface.ListenPort)
+		}
 	}
 }

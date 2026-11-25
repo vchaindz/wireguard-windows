@@ -100,6 +100,9 @@ func connectionWarning(entry *tunnelEntry) (title, text string) {
 	if entry.unstable {
 		return "", l18n.Sprintf("The connection is unstable: it was lost and re-established recently.")
 	}
+	if port := entry.metrics.ReplacedListenPort; port != 0 {
+		return l18n.Sprintf("Listen port %d does not work here", port), l18n.Sprintf("No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port %d. Remove ListenPort from the configuration or choose another port.", port)
+	}
 	return "", ""
 }
 

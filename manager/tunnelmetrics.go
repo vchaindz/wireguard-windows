@@ -25,6 +25,9 @@ type TunnelMetrics struct {
 	Reconnects uint32
 	// The counters of the network interface of the tunnel, for the time it has been active.
 	InErrors, OutErrors, InDiscards, OutDiscards uint64
+	// ReplacedListenPort is the listen port of the configuration if the tunnel is using another one, because no
+	// reply arrived on it; otherwise zero.
+	ReplacedListenPort uint16
 }
 
 // interfaceCounters are the error counters of a network interface.
@@ -46,6 +49,7 @@ func (r *metricsRecorder) started(now time.Time) {
 	r.metrics.ActiveSince = now
 	r.metrics.ConnectedSince = time.Time{}
 	r.metrics.InErrors, r.metrics.OutErrors, r.metrics.InDiscards, r.metrics.OutDiscards = 0, 0, 0, 0
+	r.metrics.ReplacedListenPort = 0
 	r.everConnected, r.failing = false, false
 }
 
@@ -61,6 +65,17 @@ func (r *metricsRecorder) stopped(now time.Time) {
 
 // observed records one sample of the connection check. A tunnel that is merely idle, so that its
 // connection cannot be verified, counts neither as connected nor as failing.
+// listenPort notes the port the tunnel listens on and the one its configuration asks for.
+func (r *metricsRecorder) listenPort(configured, actual uint16) {
+	if r.metrics.ActiveSince.IsZero() {
+		return
+	}
+	r.metrics.ReplacedListenPort = 0
+	if configured != 0 && actual != 0 && actual != configured {
+		r.metrics.ReplacedListenPort = configured
+	}
+}
+
 func (r *metricsRecorder) observed(now time.Time, health TunnelHealth, counters *interfaceCounters) {
 	if r.metrics.ActiveSince.IsZero() {
 		return

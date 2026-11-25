@@ -52,6 +52,20 @@ once, before any peer has answered, as in the official client.
 > reg add HKLM\Software\WireGuard /v ApplyRoutesImmediately /t REG_DWORD /d 1 /f
 ```
 
+#### `HKLM\Software\WireGuard\DisableListenPortFallback`
+
+When a configuration sets `ListenPort` and no peer has answered 15 seconds
+after activation, the tunnel service switches to a port picked by the system
+and tries again, because replies sometimes never arrive on a fixed port (for
+instance when the router uses the same port for its own WireGuard). The
+configuration file is not changed, and the UI says so when the tunnel is
+connected from another port. When this key is set to `DWORD(1)`, the
+configured port is always kept.
+
+```
+> reg add HKLM\Software\WireGuard /v DisableListenPortFallback /t REG_DWORD /d 1 /f
+```
+
 #### `HKLM\Software\WireGuard\DisableConnectionProbing`
 
 Measuring a tunnel's connection quality is off by default and can be switched
