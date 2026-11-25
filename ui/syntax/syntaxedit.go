@@ -137,6 +137,13 @@ func (se *SyntaxEdit) SetDarkColors(background, text win.COLORREF) {
 	se.highlightText()
 }
 
+// SetSystemColors makes the editor use the system colors and the highlighting palette made for them again, as it
+// does when it is created.
+func (se *SyntaxEdit) SetSystemColors() {
+	se.dark = false
+	se.highlightText()
+}
+
 func (se *SyntaxEdit) evaluateUntunneledBlocking(cfg string, spans []highlightSpan) {
 	state := InevaluableBlockingUntunneledTraffic
 	var onAllowedIPs,

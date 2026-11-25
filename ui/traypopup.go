@@ -133,7 +133,11 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 	look := lookFor(hero)
 	const headerHeight = 76
 	s.fill(0, 0, width, headerHeight, 0, look.background)
-	s.fill(16, 33, 10, 10, 5, look.accent)
+	dotColor := look.accent
+	if look.glyph == glyphBusy {
+		dotColor = mix(look.accent, look.background, 0.7*s.pulse(busyPulsePeriod))
+	}
+	s.fill(16, 33, 10, 10, 5, dotColor)
 	textWidth := width - 38 - 16
 	if hero != nil {
 		textWidth -= 108
@@ -142,25 +146,22 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 		if hero.config != nil && len(hero.config.Interface.Addresses) > 0 {
 			subtitle = l18n.Sprintf("%s · %s", name, joinAddresses(hero.config.Interface.Addresses))
 		}
-		s.label(subtitle, fontSmall, themeTextDim, 38, 40, textWidth, 20, textLeft)
+		s.label(subtitle, fontSmall, theme.textDim, 38, 40, textWidth, 20, textLeft)
 		if model.canToggle() {
-			if s.hit("turn-off", width-16-96, 18, 96, 40, act(func() { model.toggle(mtw, name) })) {
-				s.fill(width-16-96, 18, 96, 40, 8, themePanelHot)
-			}
+			hover := s.hoverAmount("turn-off", s.hit("turn-off", width-16-96, 18, 96, 40, act(func() { model.toggle(mtw, name) })))
+			s.fillFaded(width-16-96, 18, 96, 40, 8, theme.panelHot, hover)
 			s.stroke(width-16-96, 18, 96, 40, 8, 1, look.accent)
 			s.label(l18n.Sprintf("Turn off"), fontBodyBold, look.accent, width-16-96+8, 18, 80, 40, textCenter)
 		}
 	} else {
-		s.label(look.short, fontSmall, themeTextDim, 38, 40, textWidth, 20, textLeft)
+		s.label(look.short, fontSmall, theme.textDim, 38, 40, textWidth, 20, textLeft)
 	}
-	s.label(look.title, fontHeading, themeText, 38, 15, textWidth, 26, textLeft)
+	s.label(look.title, fontHeading, theme.text, 38, 15, textWidth, 26, textLeft)
 	y := float64(headerHeight)
 
 	if model.updateAvailable && IsAdmin {
-		if s.hit("update", 6, y+6, width-12, 36, manage) {
-			s.fill(6, y+6, width-12, 36, 6, themeAmberBg)
-		}
-		s.label(l18n.Sprintf("An Update is Available!"), fontBodyBold, themeAmberSoft, 16, y+6, width-32, 36, textLeft)
+		s.fillFaded(6, y+6, width-12, 36, 6, theme.amberBg, s.hoverAmount("update", s.hit("update", 6, y+6, width-12, 36, manage)))
+		s.label(l18n.Sprintf("An Update is Available!"), fontBodyBold, theme.amberSoft, 16, y+6, width-32, 36, textLeft)
 		y += 42
 	}
 
@@ -176,7 +177,7 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 		if hero == nil {
 			caption = l18n.Sprintf("TUNNELS")
 		}
-		s.label(caption, fontCaps, themeTextDim, 16, y+10, width-32, 20, textLeft)
+		s.label(caption, fontCaps, theme.textDim, 16, y+10, width-32, 20, textLeft)
 		y += 34
 
 		const rowHeight = 40
@@ -196,19 +197,21 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 			if model.canToggle() {
 				action = act(func() { model.toggle(mtw, name) })
 			}
-			if s.hit("row:"+name, 6, rowY, width-12, rowHeight, action) && action != nil {
-				s.fill(6, rowY, width-12, rowHeight, 6, themePanel)
+			hot := s.hit("row:"+name, 6, rowY, width-12, rowHeight, action) && action != nil
+			s.fillFaded(6, rowY, width-12, rowHeight, 6, theme.panel, s.hoverAmount("row:"+name, hot))
+			if hot {
 				if entry.state == manager.TunnelStopped {
-					status, statusColor = l18n.Sprintf("Activate"), themeText
+					status, statusColor = l18n.Sprintf("Activate"), theme.text
 				} else if entry.state == manager.TunnelStarted {
-					status, statusColor = l18n.Sprintf("Deactivate"), themeText
+					status, statusColor = l18n.Sprintf("Deactivate"), theme.text
 				}
 			}
 			if entry.state == manager.TunnelStopped && status == rowLook.short {
 				status = ""
 			}
+			s.tunnelMark(entry, 8, rowY+10, rowHeight-20)
 			s.glyph(rowLook.glyph, 16, rowY+14)
-			s.label(name, fontBody, themeText, 38, rowY, width*0.5-38, rowHeight, textLeft)
+			s.label(name, fontBody, theme.text, 38, rowY, width*0.5-38, rowHeight, textLeft)
 			s.label(status, fontSmall, statusColor, width*0.5, rowY, width*0.5-16, rowHeight, textRight)
 			rowY += rowHeight
 		}
@@ -218,7 +221,7 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 	}
 
 	// Everything else
-	s.fill(0, y, width, 1, 0, themeLine)
+	s.fill(0, y, width, 1, 0, theme.line)
 	y += 1
 	type item struct {
 		id, label string
@@ -250,5 +253,5 @@ func (tp *TrayPopup) build(s *scene, width, height float64) {
 	y += 10 + rowsOfItems*(itemHeight+gap) - gap + 10
 
 	s.height = y
-	s.stroke(0, 0, width, y, 0, 1, themeBorder)
+	s.stroke(0, 0, width, y, 0, 1, theme.border)
 }

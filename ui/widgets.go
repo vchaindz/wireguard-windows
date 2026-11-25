@@ -5,6 +5,8 @@
 
 package ui
 
+import "math"
+
 // Building blocks that the screens are drawn from.
 
 type buttonStyle int
@@ -20,41 +22,38 @@ const (
 )
 
 func (s *scene) button(id string, x, y, w, h float64, label string, style buttonStyle, action func()) {
-	hot := false
+	// How far the hover look has faded in. Every style draws the same shapes hovered or not, so that a
+	// fading button redraws only itself.
+	hover := 0.0
 	if style != buttonDisabled {
-		hot = s.hit(id, x, y, w, h, action)
+		hover = s.hoverAmount(id, s.hit(id, x, y, w, h, action))
 	}
 	pick := func(normal, hovered rgb) rgb {
-		if hot {
-			return hovered
-		}
-		return normal
+		return mix(normal, hovered, hover)
 	}
-	font, ink := fontBodyBold, themeText
+	font, ink := fontBodyBold, theme.text
 	switch style {
 	case buttonGreen:
-		s.fill(x, y, w, h, 8, pick(themeGreen, themeGreenHot))
-		ink = themeGreenInk
+		s.fill(x, y, w, h, 8, pick(theme.green, theme.greenHot))
+		ink = theme.greenInk
 	case buttonAmber:
-		s.fill(x, y, w, h, 8, pick(themeAmber, themeAmberHot))
-		ink = themeAmberInk
+		s.fill(x, y, w, h, 8, pick(theme.amber, theme.amberHot))
+		ink = theme.amberInk
 	case buttonRed:
-		s.fill(x, y, w, h, 8, pick(themeRed, themeRedHot))
-		ink = themeRedInk
+		s.fill(x, y, w, h, 8, pick(theme.red, theme.redHot))
+		ink = theme.redInk
 	case buttonOutline, buttonDanger:
-		if hot {
-			s.fill(x, y, w, h, 8, themePanelHot)
-		}
-		s.stroke(x, y, w, h, 8, 1, themeBorder)
+		s.fillFaded(x, y, w, h, 8, theme.panelHot, hover)
+		s.stroke(x, y, w, h, 8, 1, theme.border)
 		font = fontBody
 		if style == buttonDanger {
-			ink = themeRedSoft
+			ink = theme.redSoft
 		}
 	case buttonDisabled:
-		s.fill(x, y, w, h, 8, themePanel)
-		ink = themeMuted
+		s.fill(x, y, w, h, 8, theme.panel)
+		ink = theme.muted
 	case buttonFlat:
-		s.fill(x, y, w, h, 6, pick(themePanel, themePanelHot))
+		s.fill(x, y, w, h, 6, pick(theme.panel, theme.panelHot))
 		font = fontBody
 	}
 	s.label(label, font, ink, x+8, y, w-16, h, textCenter)
@@ -65,22 +64,26 @@ const (
 	toggleHeight = 24
 )
 
-// toggle draws a switch. Its clickable region is larger than what is drawn.
+// toggle draws a switch. Its clickable region is larger than what is drawn. When it is switched, the knob slides
+// across and grows a little while the outline of the track fades into its fill.
 func (s *scene) toggle(id string, x, y float64, on, enabled bool, action func()) {
 	if enabled {
 		s.hit(id, x-8, y-10, toggleWidth+16, toggleHeight+20, action)
 	}
+	target := 0.0
 	if on {
-		color := themeGreen
-		if !enabled {
-			color = themeMuted
-		}
-		s.fill(x, y, toggleWidth, toggleHeight, toggleHeight/2, color)
-		s.fill(x+toggleWidth-21, y+3, 18, 18, 9, themeGreenInk)
-	} else {
-		s.stroke(x, y, toggleWidth, toggleHeight, toggleHeight/2, 1, themeMuted)
-		s.fill(x+4, y+4, 16, 16, 8, themeTextDim)
+		target = 1
 	}
+	t := s.animate("toggle:"+id, target)
+	color := theme.green
+	if !enabled {
+		color = theme.muted
+	}
+	s.strokeFaded(x, y, toggleWidth, toggleHeight, toggleHeight/2, 1, theme.muted, 1-t)
+	s.fillFaded(x, y, toggleWidth, toggleHeight, toggleHeight/2, color, t)
+	knob := lerp(16, 18, t)
+	knobX, knobY := lerp(x+4, x+toggleWidth-21, t), y+(toggleHeight-knob)/2
+	s.fill(knobX, knobY, knob, knob, knob/2, mix(theme.textDim, theme.greenInk, t))
 }
 
 // path draws a polyline given in the coordinates of a 44x44 icon box, scaled to size.
@@ -147,15 +150,15 @@ const (
 func (s *scene) glyph(kind glyphKind, x, y float64) {
 	switch kind {
 	case glyphOn:
-		s.fill(x+1, y+1, 10, 10, 5, themeGreen)
+		s.fill(x+1, y+1, 10, 10, 5, theme.green)
 	case glyphBusy:
-		s.fill(x+1, y+1, 10, 10, 5, themeTextDim)
+		s.fill(x+1, y+1, 10, 10, 5, theme.textDim)
 	case glyphWarning:
-		s.warningSign(x, y, 12, themeAmber, themeAmberInk)
+		s.warningSign(x, y, 12, theme.amber, theme.amberInk)
 	case glyphAlert:
-		s.warningSign(x, y, 12, themeRed, themeRedInk)
+		s.warningSign(x, y, 12, theme.red, theme.redInk)
 	default:
-		s.stroke(x+1, y+1, 10, 10, 5, 2, themeMuted)
+		s.stroke(x+1, y+1, 10, 10, 5, 2, theme.muted)
 	}
 }
 
@@ -168,9 +171,9 @@ const (
 
 // notice draws a message box with wrapped text and returns its height.
 func (s *scene) notice(x, y, w float64, kind noticeKind, title, text string) float64 {
-	bg, border, ink, heading, sign, signInk := themeAmberBg, themeAmberBorder, themeAmberText, themeAmberSoft, themeAmber, themeAmberBg
+	bg, border, ink, heading, sign, signInk := theme.amberBg, theme.amberBorder, theme.amberText, theme.amberSoft, theme.amber, theme.amberBg
 	if kind == noticeRed {
-		bg, border, ink, heading, sign, signInk = themeRedBg, themeRedBorder, themeRedText, themeRedSoft, themeRed, themeRedBg
+		bg, border, ink, heading, sign, signInk = theme.redBg, theme.redBorder, theme.redText, theme.redSoft, theme.red, theme.redBg
 	}
 	const textX = 42
 	textWidth := w - textX - 14
@@ -193,29 +196,100 @@ func (s *scene) notice(x, y, w float64, kind noticeKind, title, text string) flo
 
 // backButton draws the arrow that leads back to the previous screen, in the top left corner.
 func (s *scene) backButton(action func()) {
-	if s.hit("back", 4, 4, 44, 44, action) {
-		s.fill(4, 4, 44, 44, 6, themePanelHot)
-	}
-	s.line(1.8, themeText, 29, 19, 23, 26, 29, 33)
+	s.fillFaded(4, 4, 44, 44, 6, theme.panelHot, s.hoverAmount("back", s.hit("back", 4, 4, 44, 44, action)))
+	s.line(1.8, theme.text, 29, 19, 23, 26, 29, 33)
 }
 
 // chip draws a pill that filters a list and returns its width. A selected chip is filled.
 func (s *scene) chip(id string, x, y float64, label string, selected bool, accent rgb, action func()) float64 {
 	const height = 30
 	width := s.widthOf(label, fontSmall) + 26
-	hot := s.hit(id, x, y, width, height, action)
-	ink := accent
-	switch {
-	case selected:
-		s.fill(x, y, width, height, height/2, accent)
-		ink = themeBackdrop
-	case hot:
-		s.fill(x, y, width, height, height/2, themePanelHot)
-		s.stroke(x, y, width, height, height/2, 1, themeBorder)
-	default:
-		s.stroke(x, y, width, height, height/2, 1, themeBorder)
+	hover := s.hoverAmount(id, s.hit(id, x, y, width, height, action))
+	// Selecting a chip fills it with its accent; the outline fades out as the fill comes in.
+	target := 0.0
+	if selected {
+		target = 1
 	}
-	font := fontSmall
-	s.label(label, font, ink, x, y, width, height, textCenter)
+	chosen := s.animate("chip:"+id, target)
+	s.fillFaded(x, y, width, height, height/2, mix(theme.panelHot, accent, chosen), math.Max(hover, chosen))
+	s.strokeFaded(x, y, width, height, height/2, 1, theme.border, 1-chosen)
+	ink := accent
+	if chosen >= 0.5 {
+		ink = theme.backdrop
+	}
+	s.label(label, fontSmall, ink, x, y, width, height, textCenter)
 	return width
+}
+
+// star draws a filled five-pointed star of a size, centered on a point. As shapes can only be convex, it is made of
+// the pentagon in its middle and a triangle for each point.
+func (s *scene) star(cx, cy, size float64, color rgb) {
+	outer, inner := size/2, size/2*0.42
+	point := func(i int, radius float64) (float64, float64) {
+		angle := -math.Pi/2 + float64(i)*math.Pi/5
+		return cx + radius*math.Cos(angle), cy + radius*math.Sin(angle)
+	}
+	var pentagon []float64
+	for i := 0; i < 5; i++ {
+		tipX, tipY := point(2*i, outer)
+		leftX, leftY := point(2*i-1, inner)
+		rightX, rightY := point(2*i+1, inner)
+		s.poly(color, leftX, leftY, tipX, tipY, rightX, rightY)
+		pentagon = append(pentagon, rightX, rightY)
+	}
+	s.poly(color, pentagon...)
+}
+
+// tunnelMark draws the color of a tunnel as a short upright bar, if it has a color.
+func (s *scene) tunnelMark(entry *tunnelEntry, x, y, height float64) {
+	if color, ok := tunnelColor(entry.settings.Color); ok {
+		s.fill(x, y, 4, height, 2, color)
+	}
+}
+
+// textField draws a field that text is typed into, with a placeholder while it is empty and a caret while it has
+// the focus, and a button that empties it while it is not. It returns its height.
+func (s *scene) textField(id string, x, y, w float64, text, placeholder string, action, clear func()) float64 {
+	const height, pad = 36, 12
+	s.hits = append(s.hits, sceneHit{id: id, rect: sceneRect{x, y, w, height}, action: action, clip: s.clip, clipped: s.clipped, textField: true})
+	hover := s.hoverAmount(id, s.hot == id)
+	active := s.focused && (s.focus == id || len(text) > 0)
+	s.fill(x, y, w, height, 8, mix(theme.panel, theme.panelHot, hover))
+	border := theme.border
+	if active {
+		border = theme.textDim
+	}
+	s.stroke(x, y, w, height, 8, 1, border)
+
+	// A magnifying glass, then the text or the placeholder.
+	s.stroke(x+pad, y+11, 11, 11, 5.5, 1.6, theme.textDim)
+	s.line(1.6, theme.textDim, x+pad+9.5, y+20.5, x+pad+13, y+24)
+	textX := x + pad + 22
+	room := w - (textX - x) - pad
+	if len(text) > 0 {
+		room -= 28
+	}
+	if len(text) == 0 {
+		s.label(placeholder, fontBody, theme.textDim, textX, y, room, height, textLeft)
+	} else {
+		// While the text is longer than the field, its end is shown, as that is where typing goes on.
+		shown := []rune(text)
+		for len(shown) > 1 && s.widthOf(string(shown), fontBody) > room-2 {
+			shown = shown[1:]
+		}
+		s.label(string(shown), fontBody, theme.text, textX, y, room, height, textLeft)
+		if active {
+			s.fill(textX+math.Min(s.widthOf(string(shown), fontBody), room-2)+1, y+9, 1.5, height-18, 0, theme.text)
+		}
+	}
+	if len(text) == 0 && active {
+		s.fill(textX, y+9, 1.5, height-18, 0, theme.text)
+	}
+	if len(text) > 0 {
+		clearX := x + w - 32
+		s.fillFaded(clearX, y+4, 28, 28, 6, theme.panelHot, s.hoverAmount(id+"-clear", s.hit(id+"-clear", clearX, y+4, 28, 28, clear)))
+		s.line(1.6, theme.textDim, clearX+9, y+13, clearX+19, y+23)
+		s.line(1.6, theme.textDim, clearX+19, y+13, clearX+9, y+23)
+	}
+	return height
 }

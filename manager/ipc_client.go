@@ -10,6 +10,7 @@ import (
 	"errors"
 	"os"
 	"sync"
+	"time"
 
 	"golang.zx2c4.com/wireguard/windows/conf"
 	"golang.zx2c4.com/wireguard/windows/updater"
@@ -58,6 +59,15 @@ const (
 	UpdateMethodType
 	HealthMethodType
 	MetricsMethodType
+	WatchMethodType
+	SamplesMethodType
+	SettingsMethodType
+	SetSettingsMethodType
+	HistoryMethodType
+	ClearHistoryMethodType
+	PathMethodType
+	StartDiagnosisMethodType
+	DiagnosisMethodType
 )
 
 var (
@@ -450,6 +460,224 @@ func (t *Tunnel) Metrics() (metrics TunnelMetrics, err error) {
 	return
 }
 
+// Samples returns the tunnel's samples newer than since, oldest first, at the given resolution; a zero since
+// returns all that are kept. A tunnel that is not started has none. The minute that is still running is only in
+// the per-second samples.
+func (t *Tunnel) Samples(resolution SampleResolution, since time.Time) (samples []TunnelSample, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(SamplesMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(resolution)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(since)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&samples)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+// Settings returns the tunnel's settings, and whether policy allows measuring connection quality at all.
+func (t *Tunnel) Settings() (settings TunnelSettings, probingAllowed bool, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(SettingsMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&settings)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&probingAllowed)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+// SetSettings stores the tunnel's settings. It takes effect on a running tunnel at its next sample. Only
+// administrators may change settings.
+func (t *Tunnel) SetSettings(settings TunnelSettings) (err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(SetSettingsMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(settings)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+// History returns the tunnel's past sessions, with the current one last if it is active, and its usage per day.
+// enabled is false, and the history empty, when policy disables connection history.
+func (t *Tunnel) History() (history TunnelHistory, enabled bool, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(HistoryMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&history)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&enabled)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+// ClearHistory deletes the tunnel's history, and with it when it was last active. Only administrators may clear
+// history.
+func (t *Tunnel) ClearHistory() (err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(ClearHistoryMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+// Path describes how the started tunnel reaches its peers: the endpoint addresses in use, the interfaces that
+// carry them, and the MTUs. It is empty for a tunnel that is not started.
+func (t *Tunnel) Path() (path TunnelPath, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(PathMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&path)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+// diagnosisPollInterval is how often a running test is asked for its progress.
+const diagnosisPollInterval = 300 * time.Millisecond
+
+// Diagnose tests the started tunnel step by step and returns the result of each step. It takes seconds. Only one
+// test of a tunnel runs at a time, and another may start only a few seconds after the last one ended.
+func (t *Tunnel) Diagnose() (steps []DiagnosisStep, err error) {
+	return t.DiagnoseWithProgress(nil)
+}
+
+// DiagnoseWithProgress is Diagnose, calling progress with the steps finished so far whenever it learns of more.
+// The test runs in the manager, and is polled for, so that the connection to the manager is not held for the
+// seconds it takes and other requests go on meanwhile.
+func (t *Tunnel) DiagnoseWithProgress(progress func(steps []DiagnosisStep)) (steps []DiagnosisStep, err error) {
+	if err = t.startDiagnosis(); err != nil {
+		return
+	}
+	reported := 0
+	for {
+		time.Sleep(diagnosisPollInterval)
+		var running bool
+		steps, running, err = t.diagnosis()
+		if err != nil {
+			return
+		}
+		if progress != nil && len(steps) != reported {
+			reported = len(steps)
+			progress(steps)
+		}
+		if !running {
+			return
+		}
+	}
+}
+
+func (t *Tunnel) startDiagnosis() (err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(StartDiagnosisMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
+func (t *Tunnel) diagnosis() (steps []DiagnosisStep, running bool, err error) {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err = rpcEncoder.Encode(DiagnosisMethodType)
+	if err != nil {
+		return
+	}
+	err = rpcEncoder.Encode(t.Name)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&steps)
+	if err != nil {
+		return
+	}
+	err = rpcDecoder.Decode(&running)
+	if err != nil {
+		return
+	}
+	err = rpcDecodeError()
+	return
+}
+
 func IPCClientGlobalState() (tunnelState TunnelState, err error) {
 	rpcMutex.Lock()
 	defer rpcMutex.Unlock()
@@ -534,6 +762,19 @@ func IPCClientUpdateState() (updateState UpdateState, err error) {
 		return
 	}
 	return
+}
+
+// IPCClientWatch tells the manager whether this UI is showing live data, so that it samples tunnels every
+// second while it does. The manager forgets the hint when the connection ends.
+func IPCClientWatch(watching bool) error {
+	rpcMutex.Lock()
+	defer rpcMutex.Unlock()
+
+	err := rpcEncoder.Encode(WatchMethodType)
+	if err != nil {
+		return err
+	}
+	return rpcEncoder.Encode(watching)
 }
 
 func IPCClientUpdate() error {

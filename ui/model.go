@@ -36,6 +36,18 @@ type tunnelEntry struct {
 	config *conf.Config
 	// metrics is what the manager has observed about the tunnel since the manager started.
 	metrics manager.TunnelMetrics
+	// settings are loaded for every tunnel on full reloads, as the lists show their colors and favorites.
+	settings       manager.TunnelSettings
+	probingAllowed bool
+	settingsLoaded bool
+	// history is loaded for the tunnel whose details are shown only, as the other screens do not show it.
+	// historyEnabled is false when policy disables connection history.
+	history        manager.TunnelHistory
+	historyEnabled bool
+	historyLoaded  bool
+	// path is how the tunnel whose details are shown reaches its peers, loaded while it is started.
+	path       manager.TunnelPath
+	pathLoaded bool
 }
 
 func (entry *tunnelEntry) active() bool {
@@ -50,8 +62,19 @@ type appModel struct {
 	updateAvailable bool
 	// lastUsed is the tunnel that was most recently toggled, offered for activation when none is active.
 	lastUsed string
-	// traffic holds the traffic rates of the started tunnels, by name.
-	traffic map[string]*trafficHistory
+	// samples holds what the manager sampled of the started tunnels, by name.
+	samples map[string]tunnelSamples
+	// wantMinutes is set while a screen shows a range that needs the per-minute samples. The worker reads it.
+	wantMinutes int32
+	// diagnoses holds the latest test of each tunnel that was tested since the window opened, by name.
+	diagnoses map[string]*tunnelDiagnosis
+
+	// The manager is told whether the window is watching from a goroutine, as the call may have to wait for
+	// the worker; watchWanted is what it should be told and watchSent what it was told last.
+	watchLock   sync.Mutex
+	watchSend   sync.Mutex
+	watchWanted bool
+	watchSent   bool
 
 	synchronize func(func())
 	changed     []func()
@@ -74,46 +97,102 @@ func newAppModel(synchronize func(func())) *appModel {
 		refreshRequests: make(chan struct{}, 1),
 	}
 	go func() {
-		// The tunnels that the last full load found started; only these have counters worth updating.
+		// The tunnels that the last full load found started; only these have counters and samples worth updating.
 		var started []manager.Tunnel
+		stores := make(map[string]*sampleStore)
+		// The history of the tunnel whose details are shown changes only while it is active, and the manager
+		// writes it once a minute, so it is fetched again at about that rate.
+		var historyName string
+		var historyFetched time.Time
+		// The path changes when the computer changes networks, which a person may do while looking at it, and
+		// reading it costs only a look at the routing tables, so it is fetched more often.
+		var pathName string
+		var pathFetched time.Time
 		for range model.refreshRequests {
-			if atomic.SwapInt32(&model.fullRefreshPending, 0) != 0 {
-				entries, globalState := model.load()
+			full := atomic.SwapInt32(&model.fullRefreshPending, 0) != 0
+			var (
+				entries     []tunnelEntry
+				globalState manager.TunnelState
+			)
+			if full {
+				entries, globalState = model.load()
 				started = started[:0]
+				historyName, pathName = "", ""
 				for i := range entries {
 					if entries[i].state == manager.TunnelStarted {
 						started = append(started, entries[i].tunnel)
 					}
+					if entries[i].historyLoaded {
+						historyName, historyFetched = entries[i].tunnel.Name, time.Now()
+					}
+					if entries[i].pathLoaded {
+						pathName, pathFetched = entries[i].tunnel.Name, time.Now()
+					}
 				}
-				model.synchronize(func() {
-					model.entries, model.globalState = entries, globalState
-					model.recordTraffic(time.Now())
-					model.notifyChanged()
-				})
+			} else if len(started) == 0 {
 				continue
 			}
-			if len(started) == 0 {
-				continue
+			type historyUpdate struct {
+				history manager.TunnelHistory
+				enabled bool
+			}
+			var freshHistory *historyUpdate
+			if !full && len(historyName) > 0 && time.Since(historyFetched) >= historyRefreshInterval {
+				historyFetched = time.Now()
+				for _, tunnel := range started {
+					if tunnel.Name != historyName {
+						continue
+					}
+					if history, enabled, err := tunnel.History(); err == nil {
+						freshHistory = &historyUpdate{history, enabled}
+					}
+				}
+			}
+			var freshPath *manager.TunnelPath
+			if !full && len(pathName) > 0 && time.Since(pathFetched) >= pathRefreshInterval {
+				pathFetched = time.Now()
+				for _, tunnel := range started {
+					if tunnel.Name != pathName {
+						continue
+					}
+					if path, err := tunnel.Path(); err == nil {
+						freshPath = &path
+					}
+				}
 			}
 			type counters struct {
 				config  *conf.Config
 				metrics manager.TunnelMetrics
 			}
-			fresh := make(map[string]counters, len(started))
-			for _, tunnel := range started {
-				if config, err := tunnel.RuntimeConfig(); err == nil {
-					metrics, _ := tunnel.Metrics()
-					fresh[tunnel.Name] = counters{&config, metrics}
-				}
-			}
-			model.synchronize(func() {
-				for i := range model.entries {
-					entry := &model.entries[i]
-					if update, ok := fresh[entry.tunnel.Name]; ok && entry.state == manager.TunnelStarted {
-						entry.config, entry.metrics = update.config, update.metrics
+			var fresh map[string]counters
+			if !full {
+				fresh = make(map[string]counters, len(started))
+				for _, tunnel := range started {
+					if config, err := tunnel.RuntimeConfig(); err == nil {
+						metrics, _ := tunnel.Metrics()
+						fresh[tunnel.Name] = counters{&config, metrics}
 					}
 				}
-				model.recordTraffic(time.Now())
+			}
+			samples := fetchSamples(started, stores, atomic.LoadInt32(&model.wantMinutes) != 0, time.Now())
+			model.synchronize(func() {
+				if full {
+					model.entries, model.globalState = entries, globalState
+				} else {
+					for i := range model.entries {
+						entry := &model.entries[i]
+						if update, ok := fresh[entry.tunnel.Name]; ok && entry.state == manager.TunnelStarted {
+							entry.config, entry.metrics = update.config, update.metrics
+						}
+						if freshHistory != nil && entry.tunnel.Name == historyName && entry.historyLoaded {
+							entry.history, entry.historyEnabled = freshHistory.history, freshHistory.enabled
+						}
+						if freshPath != nil && entry.tunnel.Name == pathName && entry.pathLoaded {
+							entry.path = *freshPath
+						}
+					}
+				}
+				model.samples = samples
 				model.notifyChanged()
 			})
 		}
@@ -163,33 +242,80 @@ func (model *appModel) onChanged(changed func()) {
 	model.changed = append(model.changed, changed)
 }
 
-// recordTraffic feeds the counters of the started tunnels into their traffic histories and forgets
-// the histories of the others.
-func (model *appModel) recordTraffic(now time.Time) {
-	if model.traffic == nil {
-		model.traffic = make(map[string]*trafficHistory)
-	}
-	started := make(map[string]bool, len(model.entries))
-	for i := range model.entries {
-		entry := &model.entries[i]
-		if entry.state != manager.TunnelStarted || entry.config == nil {
-			continue
+// A sampleStore is what the worker keeps of the samples of one started tunnel.
+type sampleStore struct {
+	tunnelSamples
+	minutesFetched time.Time
+}
+
+// fetchSamples brings the stores of the started tunnels up to date with the manager and returns what the UI
+// thread is to see. Only samples newer than those held are asked for, so that every refresh transfers little.
+// The per-minute samples are fetched only if wanted and then at most every minuteSampleRefresh.
+func fetchSamples(started []manager.Tunnel, stores map[string]*sampleStore, wantMinutes bool, now time.Time) map[string]tunnelSamples {
+	result := make(map[string]tunnelSamples, len(started))
+	for _, tunnel := range started {
+		store := stores[tunnel.Name]
+		if store == nil {
+			store = new(sampleStore)
+			stores[tunnel.Name] = store
 		}
-		name := entry.tunnel.Name
-		started[name] = true
-		history := model.traffic[name]
-		if history == nil {
-			history = new(trafficHistory)
-			model.traffic[name] = history
+		var since time.Time
+		if n := len(store.seconds); n > 0 {
+			since = store.seconds[n-1].Time
 		}
-		_, rx, tx := trafficOf(entry.config)
-		history.record(now, rx, tx)
+		if newer, err := tunnel.Samples(manager.SampleResolutionSecond, since); err == nil {
+			store.seconds = appendSamples(store.seconds, newer, secondSampleCapacity)
+		}
+		switch {
+		case !wantMinutes:
+			store.minutes, store.minutesFetched = nil, time.Time{}
+		case now.Sub(store.minutesFetched) >= minuteSampleRefresh || now.Before(store.minutesFetched):
+			since = time.Time{}
+			if n := len(store.minutes); n > 0 {
+				since = store.minutes[n-1].Time
+			}
+			if newer, err := tunnel.Samples(manager.SampleResolutionMinute, since); err == nil {
+				store.minutes = appendSamples(store.minutes, newer, minuteSampleCapacity)
+				store.minutesFetched = now
+			}
+		}
+		result[tunnel.Name] = store.tunnelSamples
 	}
-	for name := range model.traffic {
-		if !started[name] {
-			delete(model.traffic, name)
+	for name := range stores {
+		if _, ok := result[name]; !ok {
+			delete(stores, name)
 		}
 	}
+	return result
+}
+
+// useMinuteSamples tells the worker whether a screen shows a range that needs the per-minute samples.
+func (model *appModel) useMinuteSamples(use bool) {
+	value := int32(0)
+	if use {
+		value = 1
+	}
+	if atomic.SwapInt32(&model.wantMinutes, value) != value && use {
+		model.refreshCounters()
+	}
+}
+
+// watch tells the manager whether the window is shown, so that it samples every second while it is. The
+// call is made from a goroutine; whichever runs last sends what was wanted last.
+func (model *appModel) watch(watching bool) {
+	model.watchLock.Lock()
+	model.watchWanted = watching
+	model.watchLock.Unlock()
+	go func() {
+		model.watchSend.Lock()
+		defer model.watchSend.Unlock()
+		model.watchLock.Lock()
+		wanted := model.watchWanted
+		model.watchLock.Unlock()
+		if wanted != model.watchSent && manager.IPCClientWatch(wanted) == nil {
+			model.watchSent = wanted
+		}
+	}()
 }
 
 func (model *appModel) notifyChanged() {
@@ -204,8 +330,8 @@ func (model *appModel) refresh() {
 	model.refreshCounters()
 }
 
-// refreshCounters asks the worker to reload only what changes while a tunnel runs: the handshake times
-// and traffic counters of the started tunnels.
+// refreshCounters asks the worker to reload only what changes while a tunnel runs: the handshake times,
+// traffic counters and samples of the started tunnels.
 func (model *appModel) refreshCounters() {
 	defer func() { recover() }() // The model may have been disposed of meanwhile.
 	select {
@@ -231,9 +357,6 @@ func (model *appModel) load() (entries []tunnelEntry, globalState manager.Tunnel
 	if err != nil {
 		return nil, manager.TunnelUnknown
 	}
-	sort.SliceStable(tunnels, func(i, j int) bool {
-		return conf.TunnelNameIsLess(tunnels[i].Name, tunnels[j].Name)
-	})
 	entries = make([]tunnelEntry, 0, len(tunnels))
 	for _, tunnel := range tunnels {
 		entry := tunnelEntry{tunnel: tunnel}
@@ -252,12 +375,38 @@ func (model *appModel) load() (entries []tunnelEntry, globalState manager.Tunnel
 				entry.config = &config
 			}
 		}
+		if tunnel.Name == detailsName && entry.state == manager.TunnelStarted {
+			if path, err := tunnel.Path(); err == nil {
+				entry.path, entry.pathLoaded = path, true
+			}
+		}
+		if tunnel.Name == detailsName {
+			if history, enabled, err := tunnel.History(); err == nil {
+				entry.history, entry.historyEnabled, entry.historyLoaded = history, enabled, true
+			}
+		}
+		// Settings change rarely and only through this UI, which reloads in full after changing them, so they are
+		// not part of the frequent counter updates.
+		if settings, allowed, err := tunnel.Settings(); err == nil {
+			entry.settings, entry.probingAllowed, entry.settingsLoaded = settings, allowed, true
+		}
 		entries = append(entries, entry)
 	}
+	sortEntries(entries)
 	if globalState, err = manager.IPCClientGlobalState(); err != nil {
 		globalState = manager.TunnelUnknown
 	}
 	return entries, globalState
+}
+
+// sortEntries puts favorites first and sorts by name within favorites and the rest.
+func sortEntries(entries []tunnelEntry) {
+	sort.SliceStable(entries, func(i, j int) bool {
+		if entries[i].settings.Favorite != entries[j].settings.Favorite {
+			return entries[i].settings.Favorite
+		}
+		return conf.TunnelNameIsLess(entries[i].tunnel.Name, entries[j].tunnel.Name)
+	})
 }
 
 func (model *appModel) entry(name string) *tunnelEntry {
@@ -349,6 +498,82 @@ func (model *appModel) toggle(owner walk.Form, name string) {
 	}()
 }
 
+// changeSettings changes a setting of a tunnel. What is shown changes at once and changes back, with an error
+// titled failure, if the manager refuses.
+func (model *appModel) changeSettings(owner walk.Form, name string, change func(*manager.TunnelSettings), failure string) {
+	entry := model.entry(name)
+	if entry == nil || !entry.settingsLoaded {
+		return
+	}
+	previous := entry.settings
+	settings := previous
+	change(&settings)
+	if settings == previous {
+		return
+	}
+	// Sorting moves the entries, so the tunnel is taken before.
+	tunnel := entry.tunnel
+	entry.settings = settings
+	sortEntries(model.entries)
+	model.notifyChanged()
+	go func() {
+		err := tunnel.SetSettings(settings)
+		model.synchronize(func() {
+			if err != nil {
+				if entry := model.entry(name); entry != nil && entry.settings == settings {
+					entry.settings = previous
+					sortEntries(model.entries)
+					model.notifyChanged()
+				}
+				showErrorCustom(owner, failure, err.Error())
+				return
+			}
+			model.refresh()
+		})
+	}()
+}
+
+// setProbing switches measuring the connection quality of a tunnel on or off.
+func (model *appModel) setProbing(owner walk.Form, name string, probe bool) {
+	model.changeSettings(owner, name, func(settings *manager.TunnelSettings) { settings.Probe = probe }, l18n.Sprintf("Unable to change the measurement"))
+}
+
+// setFavorite makes a tunnel a favorite, which lists it first, or an ordinary tunnel again.
+func (model *appModel) setFavorite(owner walk.Form, name string, favorite bool) {
+	model.changeSettings(owner, name, func(settings *manager.TunnelSettings) { settings.Favorite = favorite }, l18n.Sprintf("Unable to change the favorite"))
+}
+
+// setColor marks a tunnel with one of manager.TunnelColors, or with none if the name is empty.
+func (model *appModel) setColor(owner walk.Form, name, color string) {
+	model.changeSettings(owner, name, func(settings *manager.TunnelSettings) { settings.Color = color }, l18n.Sprintf("Unable to change the color"))
+}
+
+// changeProbeTarget asks for the address that the connection quality of a tunnel is measured with.
+func (model *appModel) changeProbeTarget(owner walk.Form, name string) {
+	entry := model.entry(name)
+	if entry == nil || !entry.settingsLoaded {
+		return
+	}
+	tunnel := entry.tunnel
+	settings := entry.settings
+	if runProbeTargetDialog(owner, settings.ProbeTarget, func(target string) error {
+		changed := settings
+		changed.ProbeTarget = target
+		if err := tunnel.SetSettings(changed); err != nil {
+			return err
+		}
+		settings = changed
+		return nil
+	}) {
+		// The manager stores the address in its own spelling, which the next load shows.
+		if entry := model.entry(name); entry != nil {
+			entry.settings.ProbeTarget = settings.ProbeTarget
+			model.notifyChanged()
+		}
+		model.refresh()
+	}
+}
+
 func (model *appModel) addTunnel(owner walk.Form) {
 	if config := runEditDialog(owner, nil); config != nil {
 		if _, err := manager.IPCClientNewTunnel(config); err != nil {
@@ -396,6 +621,61 @@ func (model *appModel) deleteTunnel(owner walk.Form, name string) bool {
 		}
 	}()
 	return true
+}
+
+// clearHistory asks for confirmation and deletes the connection history of a tunnel.
+func (model *appModel) clearHistory(owner walk.Form, name string) {
+	entry := model.entry(name)
+	if entry == nil {
+		return
+	}
+	question := l18n.Sprintf("Are you sure you would like to clear the connection history of tunnel ‘%s’?", name)
+	if walk.DlgCmdNo == walk.MsgBox(owner, l18n.Sprintf("Clear history of ‘%s’", name), l18n.Sprintf("%s You cannot undo this action.", question), walk.MsgBoxYesNo|walk.MsgBoxIconWarning) {
+		return
+	}
+	tunnel := entry.tunnel
+	go func() {
+		err := tunnel.ClearHistory()
+		model.synchronize(func() {
+			if err != nil {
+				showErrorCustom(owner, l18n.Sprintf("Unable to clear history"), err.Error())
+				return
+			}
+			model.refresh()
+		})
+	}()
+}
+
+// saveHistory writes the sessions and the usage per day of a tunnel to a CSV file that the user chooses. The
+// history is read again first, so that the file has the latest minute too.
+func (model *appModel) saveHistory(owner walk.Form, name string) {
+	entry := model.entry(name)
+	if entry == nil {
+		return
+	}
+	tunnel := entry.tunnel
+	dlg := walk.FileDialog{
+		Filter:   l18n.Sprintf("CSV Files (*.csv)|*.csv|All Files (*.*)|*.*"),
+		FilePath: fmt.Sprintf("wireguard-history-%s-%s.csv", name, time.Now().Format("2006-01-02")),
+		Title:    l18n.Sprintf("Save connection history to file"),
+	}
+	if ok, _ := dlg.ShowSave(owner); !ok {
+		return
+	}
+	if dlg.FilterIndex == 1 && !strings.HasSuffix(strings.ToLower(dlg.FilePath), ".csv") {
+		dlg.FilePath += ".csv"
+	}
+	history, enabled, err := tunnel.History()
+	if err == nil && !enabled {
+		err = errors.New(l18n.Sprintf("Connection history is disabled by policy."))
+	}
+	if err != nil {
+		showErrorCustom(owner, l18n.Sprintf("Unable to read connection history"), err.Error())
+		return
+	}
+	writeFileWithOverwriteHandling(owner, dlg.FilePath, func(file *os.File) error {
+		return writeHistoryCSV(file, history)
+	})
 }
 
 func (model *appModel) importTunnels(owner walk.Form) {

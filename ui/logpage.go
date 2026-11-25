@@ -53,11 +53,7 @@ func NewLogPage(parent walk.Container) (*LogPage, error) {
 	lp.logView.SetLastColumnStretched(true)
 	lp.logView.SetHeaderHidden(true)
 	lp.logView.SetCellStyler(lp)
-	lp.logView.SetBackground(themeBrush(themeBackdrop))
-	for child := win.GetWindow(lp.logView.Handle(), win.GW_CHILD); child != 0; child = win.GetWindow(child, win.GW_HWNDNEXT) {
-		useDarkControlTheme(child)
-		win.SendMessage(child, win.LVM_SETBKCOLOR, 0, uintptr(themeBackdrop.walk()))
-	}
+	lp.applyTheme()
 
 	contextMenu, err := walk.NewMenu()
 	if err != nil {
@@ -111,20 +107,32 @@ func NewLogPage(parent walk.Container) (*LogPage, error) {
 	return lp, nil
 }
 
-// StyleCell colors the log for the dark window and marks warnings and errors.
+// applyTheme gives the table the background and scroll bars of the palette. The rows take their colors from
+// StyleCell when they are drawn, so they only need to be drawn again.
+func (lp *LogPage) applyTheme() {
+	lp.logView.SetBackground(themeBrush(theme.backdrop))
+	// The table is made of list views, one for the rows that scroll and one for those that do not.
+	for child := win.GetWindow(lp.logView.Handle(), win.GW_CHILD); child != 0; child = win.GetWindow(child, win.GW_HWNDNEXT) {
+		useControlTheme(child, theme.dark)
+		win.SendMessage(child, win.LVM_SETBKCOLOR, 0, uintptr(theme.backdrop.walk()))
+		win.InvalidateRect(child, nil, true)
+	}
+}
+
+// StyleCell colors the log in the palette and marks warnings and errors.
 func (lp *LogPage) StyleCell(style *walk.CellStyle) {
-	style.BackgroundColor = themeBackdrop.walk()
-	style.TextColor = themeText.walk()
+	style.BackgroundColor = theme.backdrop.walk()
+	style.TextColor = theme.text.walk()
 	row := style.Row()
 	if style.Col() == 0 || row < 0 || row >= len(lp.model.items) {
-		style.TextColor = themeTextDim.walk()
+		style.TextColor = theme.textDim.walk()
 		return
 	}
 	switch ringlogger.ParseLine(lp.model.items[row].Line).Level {
 	case ringlogger.LevelWarning:
-		style.TextColor = themeAmberSoft.walk()
+		style.TextColor = theme.amberSoft.walk()
 	case ringlogger.LevelError:
-		style.TextColor = themeRedSoft.walk()
+		style.TextColor = theme.redSoft.walk()
 	}
 }
 

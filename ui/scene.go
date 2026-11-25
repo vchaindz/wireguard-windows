@@ -55,6 +55,9 @@ type sceneShape struct {
 	points  [16][2]float64
 	nPoints int
 	color   rgb
+	// fade makes the shape see-through: 0 draws it fully, 1 not at all. A shape that fades in or out keeps its
+	// place in the scene while invisible, so that the frames around it can still be compared shape by shape.
+	fade    float64
 	clip    sceneRect
 	clipped bool
 }
@@ -75,6 +78,10 @@ type sceneHit struct {
 	action  func()
 	clip    sceneRect
 	clipped bool
+	// tracksMouse makes the view repaint while the mouse moves inside the region, not only when it enters or leaves.
+	tracksMouse bool
+	// textField marks a region that takes typed text, where Space types a space instead of operating it.
+	textField bool
 }
 
 type scene struct {
@@ -87,10 +94,20 @@ type scene struct {
 
 	// hot is the id of the region under the mouse, set before the scene is built.
 	hot string
+	// focus is the id of the region that keys act on, and focused is set while the view has the keyboard focus.
+	focus   string
+	focused bool
+	// mouseX and mouseY are where the mouse is, valid while mouseIn is set. Only regions made with hover are
+	// repainted as it moves, so other regions should not depend on it.
+	mouseX, mouseY float64
+	mouseIn        bool
 	// scroll is how far the scrolling part of the view is scrolled, and maxScroll how far it can be.
 	scroll, maxScroll float64
 	// height is the height the content would like to have, for views that size themselves.
 	height float64
+
+	// anim keeps animated values between the frames of a view. Without it every value is at its target.
+	anim *animator
 
 	measure func(text string, font themeFont, width float64) float64
 	// lineWidth measures a single line of text.
@@ -112,6 +129,16 @@ func (s *scene) add(shape sceneShape) {
 
 func (s *scene) fill(x, y, w, h, radius float64, color rgb) {
 	s.add(sceneShape{kind: shapeFill, rect: sceneRect{x, y, w, h}, radius: radius, color: color})
+}
+
+// fillFaded is a fill that is drawn only partly, from not at all at opacity 0 to fully at 1.
+func (s *scene) fillFaded(x, y, w, h, radius float64, color rgb, opacity float64) {
+	s.add(sceneShape{kind: shapeFill, rect: sceneRect{x, y, w, h}, radius: radius, color: color, fade: 1 - clamp01(opacity)})
+}
+
+// strokeFaded is an outline that is drawn only partly, like fillFaded.
+func (s *scene) strokeFaded(x, y, w, h, radius, width float64, color rgb, opacity float64) {
+	s.add(sceneShape{kind: shapeStroke, rect: sceneRect{x, y, w, h}, radius: radius, width: width, color: color, fade: 1 - clamp01(opacity)})
 }
 
 func (s *scene) stroke(x, y, w, h, radius, width float64, color rgb) {
@@ -170,8 +197,14 @@ func (s *scene) widthOf(text string, font themeFont) float64 {
 
 // hit makes a region react to the mouse and reports whether the mouse is over it.
 func (s *scene) hit(id string, x, y, w, h float64, action func()) bool {
-	s.hits = append(s.hits, sceneHit{id, sceneRect{x, y, w, h}, action, s.clip, s.clipped})
+	s.hits = append(s.hits, sceneHit{id: id, rect: sceneRect{x, y, w, h}, action: action, clip: s.clip, clipped: s.clipped})
 	return s.hot == id
+}
+
+// hover makes a region follow the mouse without making it clickable, and reports whether the mouse is over it.
+func (s *scene) hover(id string, x, y, w, h float64) bool {
+	s.hits = append(s.hits, sceneHit{id: id, rect: sceneRect{x, y, w, h}, clip: s.clip, clipped: s.clipped, tracksMouse: true})
+	return s.hot == id && s.mouseIn
 }
 
 func (s *scene) hitAt(x, y float64) *sceneHit {
@@ -213,7 +246,7 @@ func (s *scene) focusRing(id string) {
 		return
 	}
 	s.clip, s.clipped = hit.clip, hit.clipped
-	s.stroke(hit.rect.x-3, hit.rect.y-3, hit.rect.w+6, hit.rect.h+6, 10, 2, themeText)
+	s.stroke(hit.rect.x-3, hit.rect.y-3, hit.rect.w+6, hit.rect.h+6, 10, 2, theme.text)
 	s.clearClip()
 }
 
@@ -226,7 +259,37 @@ func (s *scene) scrollThumb(x, y, height float64) {
 	if length < 24 {
 		length = 24
 	}
-	s.fill(x, y+(height-length)*s.scroll/s.maxScroll, 3, length, 1.5, themeBorder)
+	s.fill(x, y+(height-length)*s.scroll/s.maxScroll, 3, length, 1.5, theme.border)
+}
+
+// A sceneMark is how much a scene held at some point, so that what was drawn after it can be changed.
+type sceneMark struct {
+	shapes, texts, hits int
+}
+
+func (s *scene) mark() sceneMark {
+	return sceneMark{len(s.shapes), len(s.texts), len(s.hits)}
+}
+
+// moveSince moves what was drawn after the mark down by dy and clips it to a region. It is for content that
+// turns out to need scrolling only once it has been drawn and measured.
+func (s *scene) moveSince(mark sceneMark, dy float64, clip sceneRect) {
+	for i := mark.shapes; i < len(s.shapes); i++ {
+		shape := &s.shapes[i]
+		shape.rect.y += dy
+		for j := 0; j < shape.nPoints; j++ {
+			shape.points[j][1] += dy
+		}
+		shape.clip, shape.clipped = clip, true
+	}
+	for i := mark.texts; i < len(s.texts); i++ {
+		s.texts[i].rect.y += dy
+		s.texts[i].clip, s.texts[i].clipped = clip, true
+	}
+	for i := mark.hits; i < len(s.hits); i++ {
+		s.hits[i].rect.y += dy
+		s.hits[i].clip, s.hits[i].clipped = clip, true
+	}
 }
 
 // Painting
@@ -352,12 +415,16 @@ func (s *scene) rasterizeRegion(pix []byte, width, height int, region image.Rect
 	}
 	for i := range s.shapes {
 		shape := &s.shapes[i]
+		opacity := 1 - shape.fade
+		if opacity <= 0 {
+			continue
+		}
 		bounds := shape.bounds(scale, width, height).Intersect(region)
 		r, g, b := float64(byte(shape.color>>16)), float64(byte(shape.color>>8)), float64(byte(shape.color))
 		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 			row := pix[y*stride:]
 			for x := bounds.Min.X; x < bounds.Max.X; x++ {
-				cover := shape.coverage(float64(x)+0.5, float64(y)+0.5, scale)
+				cover := shape.coverage(float64(x)+0.5, float64(y)+0.5, scale) * opacity
 				if cover <= 0 {
 					continue
 				}

@@ -33,9 +33,14 @@ type Tray struct {
 
 	tunnelChangedCB *manager.TunnelChangeCallback
 	tunnelHealthCB  *manager.TunnelHealthCallback
+	quitTicker      chan struct{}
 
 	clicked func()
 }
+
+// trayRefreshInterval is how often the tooltip is brought up to date while the window is hidden, when nothing
+// else asks the model for fresh counters.
+const trayRefreshInterval = 10 * time.Second
 
 func NewTray(mtw *ManageTunnelsWindow) (*Tray, error) {
 	var err error
@@ -63,7 +68,9 @@ func (tray *Tray) setup() error {
 
 	tray.SetToolTip(l18n.Sprintf("WireGuard: Deactivated"))
 	tray.SetVisible(true)
-	if icon, err := loadLogoIcon(16); err == nil {
+	if icon, err := stateIcon(trayOff, 16, tray.DPI()); err == nil {
+		tray.SetIcon(icon)
+	} else if icon, err := loadLogoIcon(16); err == nil {
 		tray.SetIcon(icon)
 	}
 
@@ -84,8 +91,29 @@ func (tray *Tray) setup() error {
 
 	tray.tunnelChangedCB = manager.IPCClientRegisterTunnelChange(tray.onTunnelChange)
 	tray.tunnelHealthCB = manager.IPCClientRegisterTunnelHealth(tray.onTunnelHealth)
-	globalState, _ := manager.IPCClientGlobalState()
-	tray.updateGlobalState(globalState)
+	tray.mtw.model.onChanged(tray.updateState)
+	tray.updateState()
+
+	// The time connected and the rates in the tooltip age while the window is hidden, as the model then only
+	// hears of changes of state. A slow tick keeps them current for whoever points at the icon.
+	tray.quitTicker = make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(trayRefreshInterval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				tray.mtw.Synchronize(func() {
+					if !tray.mtw.Visible() && tray.mtw.model.activeCount() > 0 {
+						tray.mtw.model.refreshCounters()
+					}
+					tray.updateState()
+				})
+			case <-tray.quitTicker:
+				return
+			}
+		}
+	}()
 	go func() {
 		tunnels, err := manager.IPCClientTunnels()
 		if err != nil {
@@ -113,6 +141,10 @@ func (tray *Tray) Dispose() error {
 		tray.tunnelHealthCB.Unregister()
 		tray.tunnelHealthCB = nil
 	}
+	if tray.quitTicker != nil {
+		close(tray.quitTicker)
+		tray.quitTicker = nil
+	}
 	if tray.popup != nil {
 		tray.popup.Dispose()
 		tray.popup = nil
@@ -122,20 +154,20 @@ func (tray *Tray) Dispose() error {
 
 func (tray *Tray) onTunnelChange(tunnel *manager.Tunnel, state, globalState manager.TunnelState, err error) {
 	tray.mtw.Synchronize(func() {
-		tray.updateGlobalState(globalState)
+		tray.updateState()
 		if err == nil {
 			wasActive := tray.activeTunnels[tunnel.Name]
 			switch state {
 			case manager.TunnelStarted:
 				if !wasActive {
-					icon, _ := iconWithOverlayForState(state, 128)
+					icon, _ := stateIcon(trayConnected, balloonIconSize, tray.DPI())
 					tray.ShowCustom(l18n.Sprintf("WireGuard Activated"), l18n.Sprintf("The %s tunnel has been activated.", tunnel.Name), icon)
 				}
 				tray.activeTunnels[tunnel.Name] = true
 
 			case manager.TunnelStopped:
 				if wasActive {
-					icon, _ := loadSystemIcon("imageres", -31, 128) // TODO: this icon isn't very good...
+					icon, _ := stateIcon(trayOff, balloonIconSize, tray.DPI())
 					tray.ShowCustom(l18n.Sprintf("WireGuard Deactivated"), l18n.Sprintf("The %s tunnel has been deactivated.", tunnel.Name), icon)
 				}
 				delete(tray.activeTunnels, tunnel.Name)
@@ -172,11 +204,17 @@ func (tray *Tray) onTunnelHealth(tunnel *manager.Tunnel, health manager.TunnelHe
 	})
 }
 
-func (tray *Tray) updateGlobalState(globalState manager.TunnelState) {
-	if icon, err := iconWithOverlayForState(globalState, 16); err == nil {
+// balloonIconSize is the size of the icon in notifications, which Windows shows larger than in the tray.
+const balloonIconSize = 32
+
+// updateState shows the worst state among the tunnels in the icon and tells about it in the tooltip.
+func (tray *Tray) updateState() {
+	model := tray.mtw.model
+	state, _ := model.trayState()
+	if icon, err := stateIcon(state, 16, tray.DPI()); err == nil {
 		tray.SetIcon(icon)
 	}
-	tray.SetToolTip(l18n.Sprintf("WireGuard: %s", textForState(globalState, true)))
+	tray.SetToolTip(model.trayToolTip(time.Now()))
 }
 
 func (tray *Tray) UpdateFound() {

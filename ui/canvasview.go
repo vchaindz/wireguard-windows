@@ -7,6 +7,8 @@ package ui
 
 import (
 	"image"
+	"time"
+	"unicode/utf16"
 	"unsafe"
 
 	"github.com/lxn/walk"
@@ -22,11 +24,20 @@ type canvasView struct {
 	build func(s *scene, width, height float64)
 	// onEscape, if set, is called when Escape is pressed while the view has the focus.
 	onEscape func()
+	// input, if set, receives what is typed while the view has the focus.
+	input *textInput
+	// swallowChar drops the character that follows a key which already operated a region, as Space does.
+	swallowChar bool
+	// highSurrogate is the first half of a character outside the basic plane, which arrives in two messages.
+	highSurrogate uint16
 
 	last    *scene
 	hot     string
 	pressed string
 	scroll  float64
+	// mouseX and mouseY are where the mouse was last seen over the view, in pixels.
+	mouseX, mouseY int
+	mouseIn        bool
 
 	// focus is the id of the region that keys act on; its ring is drawn only after a key was used.
 	focus         string
@@ -38,6 +49,12 @@ type canvasView struct {
 	frameWidth, frameHeight int
 	frameScale              float64
 	frameShapes             []sceneShape
+	// framePalette is the palette the kept frame was drawn with; another one makes the next frame a full one.
+	framePalette *palette
+
+	// anim keeps the animated values between frames; animating is set while the frame timer runs.
+	anim      *animator
+	animating bool
 
 	bufferDC     win.HDC
 	bufferBitmap win.HBITMAP
@@ -49,6 +66,8 @@ type canvasView struct {
 const (
 	canvasViewWindowClass = "WireGuard UI - Canvas"
 	canvasViewWheelStep   = 56
+	// canvasViewFrameTimer is the id of the timer that repaints the view while something moves.
+	canvasViewFrameTimer = 1
 )
 
 var (
@@ -56,18 +75,53 @@ var (
 	procSetDIBitsToDevice = gdi32.NewProc("SetDIBitsToDevice")
 )
 
+// A textInput is a line of text that a view lets be typed into.
+type textInput struct {
+	// active reports whether the view shows the field now; typing is ignored while it does not.
+	active  func() bool
+	text    func() string
+	setText func(text string)
+}
+
+// canvasViews are the views that exist, so that all of them can be drawn anew when the palette changes.
+var canvasViews = make(map[*canvasView]bool)
+
+// redrawCanvasViews repaints every view in full. Hidden views find out by themselves when they are shown again, as
+// their kept frames remember the palette they were drawn with.
+func redrawCanvasViews() {
+	for cv := range canvasViews {
+		cv.Invalidate()
+	}
+}
+
 func newCanvasView(parent walk.Container, build func(s *scene, width, height float64)) (*canvasView, error) {
 	cv := &canvasView{build: build}
 	if err := walk.InitWidget(cv, parent, canvasViewWindowClass, win.WS_VISIBLE|win.WS_TABSTOP, 0); err != nil {
 		return nil, err
 	}
+	canvasViews[cv] = true
 	cv.MouseMove().Attach(func(x, y int, button walk.MouseButton) {
-		cv.setHot(cv.hitID(x, y))
+		moved := !cv.mouseIn || x != cv.mouseX || y != cv.mouseY
+		cv.mouseX, cv.mouseY, cv.mouseIn = x, y, true
+		hit := cv.hitAt(x, y)
+		id := ""
+		if hit != nil {
+			id = hit.id
+		}
+		if id != cv.hot {
+			cv.setHot(id)
+		} else if moved && hit != nil && hit.tracksMouse {
+			cv.Invalidate()
+		}
 	})
 	cv.MouseDown().Attach(func(x, y int, button walk.MouseButton) {
 		if button == walk.LeftButton {
 			cv.setHot(cv.hitID(x, y))
 			cv.pressed = cv.hot
+			// Clicking a field that takes text means to type into it, which needs the keyboard focus.
+			if hit := cv.hitAt(x, y); hit != nil && hit.textField && win.GetFocus() != cv.Handle() {
+				cv.SetFocus()
+			}
 			if cv.focusVisible {
 				cv.focusVisible = false
 				cv.Invalidate()
@@ -89,6 +143,8 @@ func newCanvasView(parent walk.Container, build func(s *scene, width, height flo
 		cv.scrollBy(-float64(walk.MouseWheelEventDelta(button)) / 120 * canvasViewWheelStep)
 	})
 	cv.Disposing().Attach(func() {
+		delete(canvasViews, cv)
+		cv.setAnimating(false)
 		cv.releaseBuffer()
 		if cv.measureHDC != 0 {
 			win.DeleteDC(cv.measureHDC)
@@ -137,12 +193,19 @@ func (cv *canvasView) setHot(id string) {
 		return
 	}
 	cv.hot = id
-	if len(id) > 0 {
+	if hit := cv.hitByIDInLast(id); hit != nil && hit.action != nil {
 		cv.SetCursor(walk.CursorHand())
 	} else {
 		cv.SetCursor(walk.CursorArrow())
 	}
 	cv.Invalidate()
+}
+
+func (cv *canvasView) hitByIDInLast(id string) *sceneHit {
+	if cv.last == nil || len(id) == 0 {
+		return nil
+	}
+	return cv.last.hitByID(id)
 }
 
 func (cv *canvasView) scrollBy(delta float64) {
@@ -169,13 +232,19 @@ func (cv *canvasView) reset() {
 	cv.focus = ""
 }
 
-func (cv *canvasView) buildScene(width, height float64) *scene {
+// buildScene builds a frame. Only frames that are painted take part in animation; anim is nil for frames that
+// are built only to be measured.
+func (cv *canvasView) buildScene(width, height float64, anim *animator) *scene {
 	dpi := cv.DPI()
 	if cv.measureHDC == 0 {
 		cv.measureHDC = win.CreateCompatibleDC(0)
 	}
 	for {
-		s := &scene{hot: cv.hot, scroll: cv.scroll}
+		s := &scene{hot: cv.hot, scroll: cv.scroll, anim: anim, focus: cv.focus, focused: win.GetFocus() == cv.Handle()}
+		if cv.mouseIn {
+			scale := cv.scale()
+			s.mouseX, s.mouseY, s.mouseIn = float64(cv.mouseX)/scale, float64(cv.mouseY)/scale, true
+		}
 		s.measure = func(text string, font themeFont, width float64) float64 {
 			return measureWrapped(cv.measureHDC, dpi, text, font, width)
 		}
@@ -198,7 +267,7 @@ func (cv *canvasView) buildScene(width, height float64) *scene {
 
 // contentHeight is the height in 1/96" units that the view would like to have at a width.
 func (cv *canvasView) contentHeight(width float64) float64 {
-	return cv.buildScene(width, 0).height
+	return cv.buildScene(width, 0, nil).height
 }
 
 // Keyboard
@@ -279,6 +348,71 @@ func (cv *canvasView) activateFocus() {
 	}
 }
 
+// focusIsTextField reports whether the region that keys act on takes typed text, so that Space types a space.
+func (cv *canvasView) focusIsTextField() bool {
+	if cv.last == nil || cv.input == nil {
+		return false
+	}
+	hit := cv.last.hitByID(cv.focus)
+	return hit != nil && hit.textField
+}
+
+// inputActive reports whether typing goes into the text input of the view.
+func (cv *canvasView) inputActive() bool {
+	return cv.input != nil && cv.input.active()
+}
+
+// clearInput empties the text input and reports whether there was anything to clear.
+func (cv *canvasView) clearInput() bool {
+	if !cv.inputActive() || len(cv.input.text()) == 0 {
+		return false
+	}
+	cv.input.setText("")
+	cv.Invalidate()
+	return true
+}
+
+// typeChar edits the text input with a character as WM_CHAR gives it, and reports whether it was taken.
+func (cv *canvasView) typeChar(unit uint16) bool {
+	if !cv.inputActive() {
+		return false
+	}
+	text, changed, taken := editTyped(cv.input.text(), unit, &cv.highSurrogate)
+	if changed {
+		cv.input.setText(text)
+		cv.Invalidate()
+	}
+	return taken
+}
+
+// editTyped applies a UTF-16 unit as WM_CHAR gives it to a text: Backspace deletes the last character, and other
+// control characters, as Enter and Tab give, are left to the keys they belong to. A character outside the basic
+// plane arrives in two halves, the first of which is kept in pending. It returns the text, whether it changed and
+// whether the unit was taken.
+func editTyped(text string, unit uint16, pending *uint16) (edited string, changed, taken bool) {
+	switch {
+	case unit == '\b':
+		if len(text) == 0 {
+			return text, false, true
+		}
+		runes := []rune(text)
+		return string(runes[:len(runes)-1]), true, true
+	case utf16.IsSurrogate(rune(unit)) && unit < 0xDC00:
+		*pending = unit
+		return text, false, true
+	case utf16.IsSurrogate(rune(unit)):
+		high := *pending
+		*pending = 0
+		if high == 0 {
+			return text, false, true
+		}
+		return text + string(utf16.DecodeRune(rune(high), rune(unit))), true, true
+	case unit < 0x20 || unit == 0x7F:
+		return text, false, false
+	}
+	return text + string(rune(unit)), true, true
+}
+
 func shiftIsDown() bool {
 	return win.GetKeyState(win.VK_SHIFT) < 0
 }
@@ -301,6 +435,18 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 	case win.WM_SIZE:
 		cv.Invalidate()
 
+	case win.WM_TIMER:
+		if wParam == canvasViewFrameTimer {
+			// A hidden view gets no paint, so the timer would only spin; showing the view paints it again, which
+			// starts the timer anew if something still moves.
+			if !win.IsWindowVisible(hwnd) {
+				cv.setAnimating(false)
+			} else {
+				cv.Invalidate()
+			}
+			return 0
+		}
+
 	case win.WM_GETDLGCODE:
 		// Tab is kept only while there is another region to go to, so that it still leaves the view at its ends.
 		code := uintptr(win.DLGC_WANTARROWS)
@@ -316,15 +462,29 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 						code |= win.DLGC_WANTMESSAGE
 					}
 				case win.VK_ESCAPE:
-					if cv.onEscape != nil {
+					if cv.onEscape != nil || cv.inputActive() && len(cv.input.text()) > 0 {
 						code |= win.DLGC_WANTMESSAGE
 					}
 				}
 			}
 		}
+		if cv.input != nil {
+			// Without this, the dialog manager would take typed letters for mnemonics.
+			code |= win.DLGC_WANTCHARS
+		}
 		return code
 
+	case win.WM_CHAR:
+		if cv.swallowChar {
+			cv.swallowChar = false
+			return 0
+		}
+		if cv.typeChar(uint16(wParam)) {
+			return 0
+		}
+
 	case win.WM_KEYDOWN:
+		cv.swallowChar = false
 		switch wParam {
 		case win.VK_TAB:
 			if cv.moveFocus(!shiftIsDown()) {
@@ -337,11 +497,19 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 			cv.moveFocus(false)
 			return 0
 		case win.VK_RETURN, win.VK_SPACE:
+			if wParam == win.VK_SPACE && cv.focusIsTextField() {
+				break
+			}
 			if cv.focusVisible {
 				cv.activateFocus()
+				cv.swallowChar = true
 				return 0
 			}
 		case win.VK_ESCAPE:
+			// Escape first empties what was typed, and only when there is nothing does what it did before.
+			if cv.clearInput() {
+				return 0
+			}
 			if cv.onEscape != nil {
 				cv.onEscape()
 				return 0
@@ -349,6 +517,10 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 		}
 
 	case win.WM_SETFOCUS:
+		// A caret is drawn only while the view has the focus.
+		if cv.input != nil {
+			cv.Invalidate()
+		}
 		// Arriving by Tab shows the ring at once, on the first region or, going backwards, on the last.
 		if win.GetKeyState(win.VK_TAB) < 0 && !cv.focusVisible {
 			cv.focus = ""
@@ -356,6 +528,9 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 		}
 
 	case win.WM_KILLFOCUS:
+		if cv.input != nil {
+			cv.Invalidate()
+		}
 		if cv.focusVisible {
 			cv.focusVisible = false
 			cv.Invalidate()
@@ -371,6 +546,7 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 	case win.WM_MOUSELEAVE:
 		cv.trackingLeave = false
 		cv.pressed = ""
+		cv.mouseIn = false
 		cv.setHot("")
 	}
 
@@ -379,14 +555,27 @@ func (cv *canvasView) WndProc(hwnd win.HWND, msg uint32, wParam, lParam uintptr)
 
 // Painting
 
+// setAnimating starts or stops the timer that repaints the view about sixty times a second.
+func (cv *canvasView) setAnimating(on bool) {
+	if on == cv.animating || cv.Handle() == 0 {
+		return
+	}
+	if on {
+		cv.animating = win.SetTimer(cv.Handle(), canvasViewFrameTimer, uint32(animationFrame/time.Millisecond), 0) != 0
+	} else {
+		win.KillTimer(cv.Handle(), canvasViewFrameTimer)
+		cv.animating = false
+	}
+}
+
 // updateFrame brings the kept frame of shapes up to date with the scene, drawing again only the
-// part that differs from the last frame when the size is the same.
-func (cv *canvasView) updateFrame(s *scene, width, height int, scale float64) {
-	full := width != cv.frameWidth || height != cv.frameHeight || scale != cv.frameScale || len(s.shapes) != len(cv.frameShapes)
+// part that differs from the last frame when the size is the same. It returns the part it drew.
+func (cv *canvasView) updateFrame(s *scene, width, height int, scale float64) image.Rectangle {
+	full := width != cv.frameWidth || height != cv.frameHeight || scale != cv.frameScale || len(s.shapes) != len(cv.frameShapes) || cv.framePalette != theme
 	dirty := image.Rect(0, 0, width, height)
 	if full {
 		cv.frame = make([]byte, width*height*4)
-		cv.frameWidth, cv.frameHeight, cv.frameScale = width, height, scale
+		cv.frameWidth, cv.frameHeight, cv.frameScale, cv.framePalette = width, height, scale, theme
 	} else {
 		dirty = image.Rectangle{}
 		for i := range s.shapes {
@@ -396,9 +585,10 @@ func (cv *canvasView) updateFrame(s *scene, width, height int, scale float64) {
 		}
 	}
 	if !dirty.Empty() {
-		s.rasterizeRegion(cv.frame, width, height, dirty, scale, themeBackdrop, true)
+		s.rasterizeRegion(cv.frame, width, height, dirty, scale, theme.backdrop, true)
 	}
 	cv.frameShapes = s.shapes
+	return dirty
 }
 
 func (cv *canvasView) paint(hdc win.HDC) {
@@ -408,7 +598,13 @@ func (cv *canvasView) paint(hdc win.HDC) {
 	}
 	width, height := int(client.Right), int(client.Bottom)
 	scale := cv.scale()
-	s := cv.buildScene(float64(width)/scale, float64(height)/scale)
+	if cv.anim == nil {
+		cv.anim = newAnimator()
+	}
+	cv.anim.beginFrame(time.Now(), animationsEnabled())
+	s := cv.buildScene(float64(width)/scale, float64(height)/scale, cv.anim)
+	cv.anim.endFrame()
+	cv.setAnimating(cv.anim.moving)
 	cv.last = s
 	cv.updateFrame(s, width, height, scale)
 

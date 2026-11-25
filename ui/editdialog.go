@@ -30,6 +30,8 @@ type EditDialog struct {
 	config                          conf.Config
 	lastPrivateKey                  string
 	blockUntunneledTraficCheckGuard bool
+	// restyle colors the dialog in the current palette.
+	restyle func()
 }
 
 func runEditDialog(owner walk.Form, tunnel *manager.Tunnel) *conf.Config {
@@ -38,6 +40,7 @@ func runEditDialog(owner walk.Form, tunnel *manager.Tunnel) *conf.Config {
 		return nil
 	}
 
+	defer watchTheme(dlg.restyle)()
 	if dlg.Run() == walk.DlgCmdOK {
 		return &dlg.config
 	}
@@ -166,14 +169,23 @@ func newEditDialog(owner walk.Form, tunnel *manager.Tunnel) (*EditDialog, error)
 	dlg.SetCancelButton(cancelButton)
 	dlg.SetDefaultButton(dlg.saveButton)
 
-	darkenDialog(dlg.Dialog)
-	buttonsContainer.SetBackground(themeBrush(themeBackdrop))
-	darkenLabels(themeTextDim, nameLabel, pubkeyLabel)
-	darkenLabels(themeText, dlg.blockUntunneledTrafficLabel)
-	darkenEdits(dlg.nameEdit, dlg.pubkeyEdit)
-	darkenButtons(dlg.saveButton, cancelButton, dlg.blockUntunneledTrafficCB)
-	useDarkControlTheme(dlg.syntaxEdit.Handle())
-	dlg.syntaxEdit.SetDarkColors(win.COLORREF(themePanel.walk()), win.COLORREF(themeText.walk()))
+	dlg.restyle = func() {
+		styleDialog(dlg.Dialog)
+		buttonsContainer.SetBackground(themeBrush(theme.backdrop))
+		styleLabels(theme.textDim, nameLabel, pubkeyLabel)
+		styleLabels(theme.text, dlg.blockUntunneledTrafficLabel)
+		styleEdits(dlg.nameEdit, dlg.pubkeyEdit)
+		styleButtons(dlg.saveButton, cancelButton, dlg.blockUntunneledTrafficCB)
+		useControlTheme(dlg.syntaxEdit.Handle(), theme.dark)
+		// The editor has highlighting colors for a dark background and for the system colors, which also serve the
+		// light palette and follow a high-contrast scheme.
+		if theme.dark {
+			dlg.syntaxEdit.SetDarkColors(win.COLORREF(theme.panel.walk()), win.COLORREF(theme.text.walk()))
+		} else {
+			dlg.syntaxEdit.SetSystemColors()
+		}
+	}
+	dlg.restyle()
 
 	dlg.syntaxEdit.PrivateKeyChanged().Attach(dlg.onSyntaxEditPrivateKeyChanged)
 	dlg.syntaxEdit.BlockUntunneledTrafficStateChanged().Attach(dlg.onBlockUntunneledTrafficStateChanged)

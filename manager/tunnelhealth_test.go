@@ -169,3 +169,107 @@ func TestHealthNormalRekeyIsNoConflict(t *testing.T) {
 		}
 	}
 }
+
+// At one sample per second, as while a window is open, the evaluator must reach the same verdicts at the same
+// times: its rules are in terms of elapsed time, and a counter that did not grow since the last sample must not
+// be taken as the peer having answered.
+func TestHealthOneSecondSamplesNoConnection(t *testing.T) {
+	e := newHealthEvaluator()
+	initiations := 0
+	for s := 0; s <= 60; s++ {
+		// Handshake initiations every 5 seconds, starting at 1 s, so most samples see no new bytes.
+		if s%5 == 1 {
+			initiations++
+		}
+		health, conflict, unstable := e.observe(at(s), one(time.Time{}, uint64(initiations)*148, 0))
+		want := TunnelHealthUnverified
+		if s >= 21 {
+			want = TunnelHealthNoConnection
+		}
+		if health != want || conflict || unstable {
+			t.Fatalf("at %ds: got %v, %v, %v, want %v", s, health, conflict, unstable, want)
+		}
+	}
+	if health, _, _ := e.observe(at(61), one(at(61), uint64(initiations)*148+148, 92)); health != TunnelHealthConnected {
+		t.Fatalf("after handshake: got %v", health)
+	}
+}
+
+func TestHealthOneSecondSamplesConflict(t *testing.T) {
+	e := newHealthEvaluator()
+	handshake := at(0)
+	flaggedAt, unstableAt := -1, -1
+	for s := 0; s <= 120; s++ {
+		if s%20 == 0 {
+			handshake = at(s)
+		}
+		_, conflict, unstable := e.observe(at(s), one(handshake, uint64(s)*100, uint64(s)*50))
+		if unstable && unstableAt < 0 {
+			unstableAt = s
+		}
+		if conflict && flaggedAt < 0 {
+			flaggedAt = s
+		}
+	}
+	if unstableAt != 20 || flaggedAt != 60 {
+		t.Fatalf("unstable at %ds, flagged at %ds; want 20s and 60s as at five-second samples", unstableAt, flaggedAt)
+	}
+}
+
+func TestHealthOneSecondSamplesNormalRekey(t *testing.T) {
+	e := newHealthEvaluator()
+	handshake := at(0)
+	for s := 0; s <= 1800; s++ {
+		if s%120 == 0 {
+			handshake = at(s)
+		}
+		if health, conflict, unstable := e.observe(at(s), one(handshake, uint64(s)*100, uint64(s)*50)); conflict || unstable || health != TunnelHealthConnected {
+			t.Fatalf("at %ds: got %v, %v, %v", s, health, conflict, unstable)
+		}
+	}
+}
+
+// A window opening and closing switches the rate in the middle of a stall; the verdict must not move.
+func TestHealthMixedSampleRates(t *testing.T) {
+	e := newHealthEvaluator()
+	s, tx := 0, uint64(0)
+	for s < 60 {
+		step := 5
+		if s >= 10 && s < 30 {
+			step = 1
+		}
+		if s%5 == 0 {
+			tx += 148
+		}
+		health, _, _ := e.observe(at(s), one(time.Time{}, tx, 0))
+		want := TunnelHealthUnverified
+		if s >= 20 {
+			want = TunnelHealthNoConnection
+		}
+		if health != want {
+			t.Fatalf("at %ds: got %v, want %v", s, health, want)
+		}
+		s += step
+	}
+}
+
+func TestHealthCountsNewHandshakes(t *testing.T) {
+	e := newHealthEvaluator()
+	// A handshake the peer already had when first seen happened at some unknown time, so it is not counted.
+	e.observe(at(0), one(at(-30), 100, 100))
+	if e.newHandshakes != 0 {
+		t.Fatalf("first sample: %d", e.newHandshakes)
+	}
+	e.observe(at(5), one(at(-30), 200, 200))
+	if e.newHandshakes != 0 {
+		t.Fatalf("same handshake: %d", e.newHandshakes)
+	}
+	e.observe(at(10), one(at(8), 300, 300))
+	if e.newHandshakes != 1 {
+		t.Fatalf("renewed: %d", e.newHandshakes)
+	}
+	e.observe(at(15), one(at(8), 400, 400))
+	if e.newHandshakes != 0 {
+		t.Fatalf("after renewal: %d", e.newHandshakes)
+	}
+}

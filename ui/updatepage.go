@@ -15,6 +15,13 @@ import (
 
 type UpdatePage struct {
 	*walk.Composite
+	instructions, status *walk.TextLabel
+}
+
+// applyTheme colors the labels in the palette.
+func (up *UpdatePage) applyTheme() {
+	styleLabels(theme.text, up.instructions)
+	styleLabels(theme.textDim, up.status)
 }
 
 func NewUpdatePage(parent walk.Container) (*UpdatePage, error) {
@@ -39,7 +46,6 @@ func NewUpdatePage(parent walk.Container) (*UpdatePage, error) {
 	}
 	instructions.SetText(l18n.Sprintf("An update to WireGuard is available. It is highly advisable to update without delay."))
 	instructions.SetMinMaxSize(walk.Size{1, 0}, walk.Size{0, 0})
-	instructions.SetTextColor(themeText.walk())
 
 	status, err := walk.NewTextLabel(up)
 	if err != nil {
@@ -47,7 +53,8 @@ func NewUpdatePage(parent walk.Container) (*UpdatePage, error) {
 	}
 	status.SetText(l18n.Sprintf("Status: Waiting for user"))
 	status.SetMinMaxSize(walk.Size{1, 0}, walk.Size{0, 0})
-	status.SetTextColor(themeTextDim.walk())
+	up.instructions, up.status = instructions, status
+	up.applyTheme()
 
 	bar, err := walk.NewProgressBar(up)
 	if err != nil {

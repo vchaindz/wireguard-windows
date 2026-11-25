@@ -60,11 +60,17 @@ func (service *managerService) Execute(args []string, r <-chan svc.ChangeRequest
 		return
 	}
 
+	// History is loaded before any tunnel is tracked, so that when each tunnel was last active is known from the
+	// first time the UI asks.
+	loadTunnelHistories()
+
 	err = watchNewTunnelServices()
 	if err != nil {
 		serviceError = services.ErrorTrackTunnels
 		return
 	}
+
+	removeOrphanedTunnelSettings()
 
 	conf.RegisterStoreChangeCallback(func() { conf.MigrateUnencryptedConfigs(changeTunnelServiceConfigFilePath) })
 	conf.RegisterStoreChangeCallback(IPCServerNotifyTunnelsChange)
@@ -339,6 +345,7 @@ loop:
 	}
 
 	changes <- svc.Status{State: svc.StopPending}
+	flushTunnelHistories()
 	procsLock.Lock()
 	stoppingManager = true
 	IPCServerNotifyManagerStopping()

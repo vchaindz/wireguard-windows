@@ -7,9 +7,12 @@ package manager
 
 import (
 	"log"
+	"net/netip"
+	"sync"
 	"time"
 
 	"golang.zx2c4.com/wireguard/windows/conf"
+	"golang.zx2c4.com/wireguard/windows/tunnel/winipcfg"
 )
 
 // TunnelHealth says whether a started tunnel actually has a working WireGuard session, which the service state alone
@@ -58,7 +61,11 @@ func refineTunnelHealth(health TunnelHealth, everHandshake, waitsForPeerBeforeRo
 }
 
 const (
-	healthSampleInterval = 5 * time.Second
+	// Samples are taken every second while a window shows them, so that graphs move smoothly, and every five
+	// seconds otherwise, which is enough for the connection check. The evaluator's rules are in terms of time,
+	// not of samples, so they hold at either rate.
+	healthSampleIntervalIdle    = 5 * time.Second
+	healthSampleIntervalWatched = time.Second
 
 	// A session is unusable 180 seconds after its handshake (REJECT_AFTER_TIME), so a younger handshake proves a live peer.
 	healthHandshakeFresh = 180 * time.Second
@@ -98,6 +105,9 @@ type peerHealthState struct {
 // duplicate-key suspicion. It keeps no reference to the driver, so that it can be tested with synthetic samples.
 type healthEvaluator struct {
 	peers map[[32]byte]*peerHealthState
+	// newHandshakes is how many handshakes completed between the last two calls of observe. A handshake that a peer
+	// already had when it was first seen is not counted, as it happened at some unknown time before.
+	newHandshakes int
 }
 
 func newHealthEvaluator() *healthEvaluator {
@@ -109,6 +119,7 @@ func newHealthEvaluator() *healthEvaluator {
 func (e *healthEvaluator) observe(now time.Time, samples []peerSample) (health TunnelHealth, conflictSuspected, unstable bool) {
 	present := make(map[[32]byte]bool, len(samples))
 	anyConnected, anyNoConnection := false, false
+	e.newHandshakes = 0
 	for i := range samples {
 		sample := &samples[i]
 		present[sample.publicKey] = true
@@ -120,6 +131,9 @@ func (e *healthEvaluator) observe(now time.Time, samples []peerSample) (health T
 
 		if !sample.lastHandshake.IsZero() && sample.lastHandshake.After(state.lastHandshake) {
 			state.handshakes = append(state.handshakes, sample.lastHandshake)
+			if state.seen {
+				e.newHandshakes++
+			}
 		}
 		for len(state.handshakes) > 0 && now.Sub(state.handshakes[0]) > healthConflictWindow {
 			state.handshakes = state.handshakes[1:]
@@ -215,6 +229,7 @@ func startTunnelHealthMonitor(tunnelName string) {
 		return
 	}
 	tunnelHealthMonitors[tunnelName] = monitor
+	trackedTunnelsSamples[tunnelName] = newSampleHistory()
 	trackedTunnelsLock.Unlock()
 	withTunnelMetrics(tunnelName, func(r *metricsRecorder) { r.started(time.Now()) })
 	go monitor.run(tunnelName)
@@ -227,25 +242,110 @@ func stopTunnelHealthMonitor(tunnelName string) {
 	monitor := tunnelHealthMonitors[tunnelName]
 	delete(tunnelHealthMonitors, tunnelName)
 	delete(trackedTunnelsHealth, tunnelName)
+	delete(trackedTunnelsSamples, tunnelName)
 	trackedTunnelsLock.Unlock()
 	if monitor == nil {
 		return
 	}
 	close(monitor.stop)
 	<-monitor.done
-	withTunnelMetrics(tunnelName, func(r *metricsRecorder) { r.stopped(time.Now()) })
+	now := time.Now()
+	withTunnelMetrics(tunnelName, func(r *metricsRecorder) { r.stopped(now) })
+	historyStopped(tunnelName, now)
+}
+
+// Watchers are the connected UIs that currently show live data. While there is one, tunnels are sampled every
+// second. sampleWatchersChanged is closed and replaced whenever that switches, so that waiting monitors pick up
+// the new rate at once instead of after their current five seconds.
+var (
+	sampleWatchersLock    sync.Mutex
+	sampleWatchers        int
+	sampleWatchersChanged = make(chan struct{})
+)
+
+func addSampleWatcher(delta int) {
+	sampleWatchersLock.Lock()
+	defer sampleWatchersLock.Unlock()
+	before := sampleWatchers > 0
+	sampleWatchers = max(sampleWatchers+delta, 0)
+	if (sampleWatchers > 0) != before {
+		close(sampleWatchersChanged)
+		sampleWatchersChanged = make(chan struct{})
+	}
+}
+
+func sampleInterval() (time.Duration, <-chan struct{}) {
+	sampleWatchersLock.Lock()
+	defer sampleWatchersLock.Unlock()
+	if sampleWatchers > 0 {
+		return healthSampleIntervalWatched, sampleWatchersChanged
+	}
+	return healthSampleIntervalIdle, sampleWatchersChanged
+}
+
+// probeState is what a monitor knows about measuring its tunnel's connection quality.
+type probeState struct {
+	initialized bool
+	settings    TunnelSettings
+	allowed     bool
+	target      netip.Addr
+	prober      *tunnelProber
+}
+
+// update starts or stops the prober when the settings or the policy changed since the last sample, so that
+// switching measurement on or off takes effect on a running tunnel.
+func (p *probeState) update(tunnelName string) {
+	settings, allowed := loadTunnelSettings(tunnelName), probingAllowed()
+	if p.initialized && settings == p.settings && allowed == p.allowed {
+		return
+	}
+	wasProbing, oldTarget := p.prober != nil, p.target
+	p.initialized, p.settings, p.allowed = true, settings, allowed
+	p.target = netip.Addr{}
+	if settings.Probe && allowed {
+		// The configuration is read again, so that a tunnel edited while running uses its new addresses.
+		config, _ := conf.LoadFromName(tunnelName)
+		p.target = probeTarget(config, settings.ProbeTarget)
+	}
+	if p.prober != nil && p.target != oldTarget {
+		p.prober.close()
+		p.prober = nil
+	}
+	switch {
+	case p.target.IsValid() && p.prober == nil:
+		p.prober = startTunnelProber(tunnelName)
+		log.Printf("[%s] Connection quality: measuring latency and loss to %v", tunnelName, p.target)
+	case p.target.IsValid():
+	case settings.Probe && !allowed:
+		log.Printf("[%s] Connection quality: measuring is disabled by policy", tunnelName)
+	case settings.Probe:
+		log.Printf("[%s] Warning: connection quality: there is no address to measure; set one in the tunnel settings", tunnelName)
+	case wasProbing:
+		log.Printf("[%s] Connection quality: measuring stopped", tunnelName)
+	}
+}
+
+func (p *probeState) close() {
+	if p.prober != nil {
+		p.prober.close()
+		p.prober = nil
+	}
 }
 
 func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 	defer close(monitor.done)
 	evaluator := newHealthEvaluator()
 	var waitsForPeerBeforeRouting, routesAllTraffic bool
+	var endpoint string
 	if config, err := conf.LoadFromName(tunnelName); err == nil {
 		waitsForPeerBeforeRouting = config.WaitsForPeerBeforeRouting()
 		routesAllTraffic = config.RoutesAllTraffic()
+		if len(config.Peers) > 0 && !config.Peers[0].Endpoint.IsEmpty() {
+			endpoint = config.Peers[0].Endpoint.String()
+		}
 	}
-	ticker := time.NewTicker(healthSampleInterval)
-	defer ticker.Stop()
+	var probe probeState
+	defer probe.close()
 	var last tunnelHealthStatus
 	for {
 		select {
@@ -253,7 +353,8 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 			return
 		default:
 		}
-		if samples, counters, err := sampleTunnelPeers(tunnelName); err == nil {
+		probe.update(tunnelName)
+		if samples, counters, luid, err := sampleTunnelPeers(tunnelName); err == nil {
 			var status tunnelHealthStatus
 			now := time.Now()
 			status.health, status.conflictSuspected, status.unstable = evaluator.observe(now, samples)
@@ -266,16 +367,39 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 			}
 			status.health = refineTunnelHealth(status.health, everHandshake, waitsForPeerBeforeRouting, routesAllTraffic)
 			withTunnelMetrics(tunnelName, func(r *metricsRecorder) { r.observed(now, status.health, counters) })
-			if status != last {
-				trackedTunnelsLock.Lock()
-				current := tunnelHealthMonitors[tunnelName] == monitor
-				if current {
+
+			// Each sample carries the probes that finished since the previous one, and then the next probe is
+			// sent, so that it has until the next sample to be answered.
+			tunnelSample := TunnelSample{Time: now, Health: status.health, Handshakes: uint8(min(evaluator.newHandshakes, 0xff)),
+				ConflictSuspected: status.conflictSuspected, Unstable: status.unstable}
+			for i := range samples {
+				tunnelSample.RxBytes += samples[i].rxBytes
+				tunnelSample.TxBytes += samples[i].txBytes
+			}
+			if probe.prober != nil {
+				probe.prober.take().fill(&tunnelSample)
+			}
+			trackedTunnelsLock.Lock()
+			current := tunnelHealthMonitors[tunnelName] == monitor
+			if current {
+				if history := trackedTunnelsSamples[tunnelName]; history != nil {
+					history.add(tunnelSample)
+				}
+				if status != last {
 					trackedTunnelsHealth[tunnelName] = status
 				}
-				trackedTunnelsLock.Unlock()
-				if !current {
-					return
-				}
+			}
+			trackedTunnelsLock.Unlock()
+			if !current {
+				return
+			}
+			if probe.prober != nil {
+				probe.prober.request(probe.target, luid)
+			}
+			// After the probe is sent, so that writing the history once a minute does not delay it.
+			historyObserve(tunnelName, endpoint, now, tunnelSample.RxBytes, tunnelSample.TxBytes, status.health)
+
+			if status != last {
 				if status.health != last.health {
 					switch status.health {
 					case TunnelHealthConnected:
@@ -304,26 +428,31 @@ func (monitor *tunnelHealthMonitor) run(tunnelName string) {
 				last = status
 			}
 		}
+		interval, changed := sampleInterval()
+		timer := time.NewTimer(interval)
 		select {
 		case <-monitor.stop:
+			timer.Stop()
 			return
-		case <-ticker.C:
+		case <-changed:
+			timer.Stop()
+		case <-timer.C:
 		}
 	}
 }
 
-// sampleTunnelPeers reads the state of the peers of a started tunnel and, if they can be had, the error
-// counters of its network interface.
-func sampleTunnelPeers(tunnelName string) ([]peerSample, *interfaceCounters, error) {
+// sampleTunnelPeers reads the state of the peers of a started tunnel, the LUID of its network interface and, if
+// they can be had, the error counters of that interface.
+func sampleTunnelPeers(tunnelName string) ([]peerSample, *interfaceCounters, winipcfg.LUID, error) {
 	driverAdapter, err := findDriverAdapter(tunnelName)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, 0, err
 	}
 	config, err := driverAdapter.Configuration()
 	if err != nil {
 		driverAdapter.Unlock()
 		releaseDriverAdapter(tunnelName)
-		return nil, nil, err
+		return nil, nil, 0, err
 	}
 	luid := driverAdapter.LUID()
 	driverAdapter.Unlock()
@@ -344,5 +473,5 @@ func sampleTunnelPeers(tunnelName string) ([]peerSample, *interfaceCounters, err
 		}
 		samples = append(samples, sample)
 	}
-	return samples, counters, nil
+	return samples, counters, luid, nil
 }

@@ -51,3 +51,32 @@ once, before any peer has answered, as in the official client.
 ```
 > reg add HKLM\Software\WireGuard /v ApplyRoutesImmediately /t REG_DWORD /d 1 /f
 ```
+
+#### `HKLM\Software\WireGuard\DisableConnectionProbing`
+
+Measuring a tunnel's connection quality is off by default and can be switched
+on per tunnel by an administrator. While it is on, the manager service sends
+one ICMP echo request ("ping") through the tunnel with every sample: once per
+second while a WireGuard window is open, and once every five seconds
+otherwise. When this key is set to `DWORD(1)`, no tunnel sends these probes,
+whatever its settings say, and the UI shows the measurement as disabled by
+policy. The change applies to running tunnels within a few seconds.
+
+```
+> reg add HKLM\Software\WireGuard /v DisableConnectionProbing /t REG_DWORD /d 1 /f
+```
+
+#### `HKLM\Software\WireGuard\DisableConnectionHistory`
+
+By default, the manager service keeps a history of each tunnel: when it was
+active, for how long, how much data it moved, and how much of each day it was
+in use. The history is described in [`netquirk.md`](netquirk.md#connection-history).
+When this key is set to `DWORD(1)`, nothing is recorded or written any more,
+existing history is no longer shown, and the UI says that history is disabled by
+policy. Files that already exist are left in place; delete the `History`
+directory to remove them. The change applies to running tunnels within a few
+seconds.
+
+```
+> reg add HKLM\Software\WireGuard /v DisableConnectionHistory /t REG_DWORD /d 1 /f
+```

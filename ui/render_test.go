@@ -11,8 +11,11 @@ import (
 	"net/netip"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
+	"unicode/utf16"
 
 	"github.com/lxn/walk"
 	"github.com/lxn/win"
@@ -29,11 +32,24 @@ func renderScene(t *testing.T, width, height, scale float64, build func(s *scene
 
 // renderSceneWith also scrolls the scene and shows the focus ring on a region.
 func renderSceneWith(t *testing.T, width, height, scale, scroll float64, focus string, build func(s *scene, width, height float64)) (*scene, image.Image) {
+	return renderSceneMouse(t, width, height, scale, scroll, focus, nil, build)
+}
+
+// renderSceneMouse also puts the mouse at a point, if one is given. As in a view, the region under it is found
+// in a first frame and is hot in the second.
+func renderSceneMouse(t *testing.T, width, height, scale, scroll float64, focus string, mouse *[2]float64, build func(s *scene, width, height float64)) (*scene, image.Image) {
 	dpi := int(96*scale + 0.5)
 	measureHDC := win.CreateCompatibleDC(0)
 	defer win.DeleteDC(measureHDC)
 
 	s := &scene{scroll: scroll}
+	if mouse != nil {
+		first, _ := renderSceneMouse(t, width, height, scale, scroll, "", nil, build)
+		s.mouseX, s.mouseY, s.mouseIn = mouse[0], mouse[1], true
+		if hit := first.hitAt(mouse[0], mouse[1]); hit != nil {
+			s.hot = hit.id
+		}
+	}
 	s.measure = func(text string, font themeFont, width float64) float64 {
 		return measureWrapped(measureHDC, dpi, text, font, width)
 	}
@@ -53,7 +69,7 @@ func renderSceneWith(t *testing.T, width, height, scale, scroll float64, focus s
 		s.focusRing(focus)
 	}
 
-	bitmap, err := walk.NewBitmapFromImageForDPI(s.rasterize(int(width*scale+0.5), int(height*scale+0.5), scale, themeBackdrop), dpi)
+	bitmap, err := walk.NewBitmapFromImageForDPI(s.rasterize(int(width*scale+0.5), int(height*scale+0.5), scale, theme.backdrop), dpi)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -96,9 +112,29 @@ func sampleConfig(name, address string, handshakeAgo time.Duration, rx, tx conf.
 	return config
 }
 
+// renderPalettes are the palettes that every render is made in, with the suffix of their file names.
+var renderPalettes = []struct {
+	suffix  string
+	palette *palette
+}{{"", &darkPalette}, {"-light", &lightPalette}}
+
+// inEachPalette runs a render once per palette, with theme set to it.
+func inEachPalette(t *testing.T, render func(t *testing.T, suffix string)) {
+	saved := theme
+	defer func() { theme = saved }()
+	for _, p := range renderPalettes {
+		theme = p.palette
+		render(t, p.suffix)
+	}
+}
+
 // TestRenderScreens draws every screen with sample tunnels in several states. Set WG_UI_RENDER_DIR
 // to a directory to have the results written there as PNG files for looking at.
 func TestRenderScreens(t *testing.T) {
+	inEachPalette(t, renderScreens)
+}
+
+func renderScreens(t *testing.T, suffix string) {
 	wasAdmin := IsAdmin
 	IsAdmin = true
 	defer func() { IsAdmin = wasAdmin }()
@@ -117,11 +153,8 @@ func TestRenderScreens(t *testing.T) {
 		Reconnects:         1,
 		InDiscards:         3,
 	}
-	officeTraffic := &trafficHistory{}
-	for i := 0; i < trafficHistoryLength; i++ {
-		wave := float64((i*37)%23) / 23
-		officeTraffic.samples = append(officeTraffic.samples, trafficSample{rx: 200000 + 900000*wave*wave, tx: 40000 + 250000*(1-wave)})
-	}
+	connected.settings, connected.settingsLoaded, connected.probingAllowed = manager.TunnelSettings{Color: "blue", Favorite: true}, true, true
+	officeSamples := tunnelSamples{seconds: sampleSeries(time.Now(), 120, time.Second, nil)}
 	unstable := connected
 	unstable.unstable = true
 	conflict := connected
@@ -132,8 +165,12 @@ func TestRenderScreens(t *testing.T) {
 	blocked.config = sampleConfig("customer-vpn", "172.16.4.9/32", 6*time.Minute, 52428800, 9437184)
 	stopped := func(name string) tunnelEntry {
 		e := entry(name, manager.TunnelStopped, manager.TunnelHealthUnknown)
-		if name == "backup-site" {
+		switch name {
+		case "backup-site":
 			e.metrics = manager.TunnelMetrics{LastActiveEnd: time.Now().Add(-2 * time.Hour), LastActiveDuration: 35 * time.Minute}
+			e.settings = manager.TunnelSettings{Color: "violet", Favorite: true}
+		case "customer-vpn":
+			e.settings = manager.TunnelSettings{Color: "amber"}
 		}
 		return e
 	}
@@ -151,9 +188,11 @@ func TestRenderScreens(t *testing.T) {
 		{"cutoff", []tunnelEntry{stopped("backup-site"), blocked, stopped("office")}, manager.TunnelStarted, "", false},
 		{"activating", []tunnelEntry{stopped("backup-site"), entry("office", manager.TunnelStarting, manager.TunnelHealthUnknown)}, manager.TunnelStarting, "", false},
 		{"empty", nil, manager.TunnelStopped, "", false},
+		{"empty-operator", nil, manager.TunnelStopped, "", false},
 		{"details", []tunnelEntry{stopped("backup-site"), conflict}, manager.TunnelStarted, "office", false},
 	} {
-		mtw := &ManageTunnelsWindow{model: &appModel{entries: c.entries, globalState: c.global, updateAvailable: c.update, traffic: map[string]*trafficHistory{"office": officeTraffic}}}
+		IsAdmin = c.name != "empty-operator"
+		mtw := &ManageTunnelsWindow{model: &appModel{entries: c.entries, globalState: c.global, updateAvailable: c.update, samples: map[string]tunnelSamples{"office": officeSamples}}}
 		build := mtw.buildStatus
 		if len(c.details) > 0 {
 			mtw.screen, mtw.detailsName = screenDetails, c.details
@@ -175,7 +214,7 @@ func TestRenderScreens(t *testing.T) {
 					}
 				}
 				if dir := os.Getenv("WG_UI_RENDER_DIR"); len(dir) > 0 && (scale == 1 || c.name == "connected") {
-					file, err := os.Create(filepath.Join(dir, c.name+"-"+kind+map[float64]string{1: "", 1.5: "@150"}[scale]+".png"))
+					file, err := os.Create(filepath.Join(dir, c.name+"-"+kind+suffix+map[float64]string{1: "", 1.5: "@150"}[scale]+".png"))
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -261,6 +300,10 @@ func writePNG(t *testing.T, name string, img image.Image) {
 
 // TestRenderKeyboardAndScrolling draws the focus ring, a scrolled list with its thumb, and the log filters.
 func TestRenderKeyboardAndScrolling(t *testing.T) {
+	inEachPalette(t, renderKeyboardAndScrolling)
+}
+
+func renderKeyboardAndScrolling(t *testing.T, suffix string) {
 	wasAdmin := IsAdmin
 	IsAdmin = true
 	defer func() { IsAdmin = wasAdmin }()
@@ -279,26 +322,26 @@ func TestRenderKeyboardAndScrolling(t *testing.T) {
 	if s.maxScroll <= 0 {
 		t.Error("a long list of tunnels does not scroll")
 	}
-	writePNG(t, "focus-button", img)
+	writePNG(t, "focus-button"+suffix, img)
 
-	s, img = renderSceneWith(t, 524, 740, 1, 150, "toggle:site-05", mtw.buildStatus)
+	s, img = renderSceneWith(t, 524, 740, 1, 230, "toggle:site-05", mtw.buildStatus)
 	if hit := s.hitByID("toggle:site-05"); hit == nil || !hit.clipped || hit.rect.y < hit.clip.y || hit.rect.y > hit.clip.y+hit.clip.h {
 		t.Error("the focused switch is not inside the scrolled list")
 	}
-	writePNG(t, "focus-scrolled", img)
+	writePNG(t, "focus-scrolled"+suffix, img)
 
 	s, img = renderSceneWith(t, trayPopupWidth, 0, 1, 0, "row:site-02", popup.build)
 	if s.maxScroll <= 0 {
 		t.Error("a long list of tunnels does not scroll in the tray popup")
 	}
-	writePNG(t, "focus-tray", img)
+	writePNG(t, "focus-tray"+suffix, img)
 
 	s, img = renderScene(t, 524, logFiltersHeight, 1, mtw.buildLogFilters)
 	order := s.focusOrder()
 	if len(order) < 3 || order[0] != "all" || order[1] != "warnings" || order[2] != "tunnel:office" {
 		t.Errorf("log filters: got %v", order)
 	}
-	writePNG(t, "log-filters", img)
+	writePNG(t, "log-filters"+suffix, img)
 }
 
 func TestFocusOrder(t *testing.T) {
@@ -360,45 +403,6 @@ func TestModelDisposeTwice(t *testing.T) {
 	model.refresh()
 }
 
-func TestTrafficHistory(t *testing.T) {
-	start := time.Unix(1700000000, 0)
-	at := func(seconds float64) time.Time { return start.Add(time.Duration(seconds * float64(time.Second))) }
-	var history trafficHistory
-	if rate := history.current(); rate != (trafficSample{}) {
-		t.Fatalf("rate without samples: %+v", rate)
-	}
-	// The first counters only set the baseline.
-	history.record(at(0), 1000, 500)
-	if len(history.samples) != 0 {
-		t.Fatalf("%d samples after the baseline", len(history.samples))
-	}
-	history.record(at(2), 5000, 1500)
-	if rate := history.current(); rate.rx != 2000 || rate.tx != 500 {
-		t.Fatalf("got %+v, want 2000 in and 500 out per second", rate)
-	}
-	// A second reading right after is skipped, and its bytes count towards the next one.
-	history.record(at(2.1), 5100, 1500)
-	history.record(at(3), 6000, 1500)
-	if rate := history.current(); len(history.samples) != 2 || rate.rx != 1000 || rate.tx != 0 {
-		t.Fatalf("got %d samples, last %+v", len(history.samples), rate)
-	}
-	if peak := history.peak(); peak != 2000 {
-		t.Fatalf("peak %v, want 2000", peak)
-	}
-	// Only the last minute is kept.
-	for i := 0; i < 2*trafficHistoryLength; i++ {
-		history.record(at(float64(4+i)), conf.Bytes(6000+100*(i+1)), 1500)
-	}
-	if len(history.samples) != trafficHistoryLength {
-		t.Fatalf("%d samples kept, want %d", len(history.samples), trafficHistoryLength)
-	}
-	// Counters that go backwards mean a restarted tunnel: start over.
-	history.record(at(1000), 10, 10)
-	if len(history.samples) != 0 {
-		t.Fatalf("%d samples after the counters went backwards", len(history.samples))
-	}
-}
-
 func TestFormatDuration(t *testing.T) {
 	for _, c := range []struct {
 		d    time.Duration
@@ -413,5 +417,231 @@ func TestFormatDuration(t *testing.T) {
 		if got := formatDuration(c.d); got != c.want {
 			t.Errorf("%v: got %q, want %q", c.d, got, c.want)
 		}
+	}
+}
+
+// TestRenderTrayIcons draws the tray icon of every state at the sizes of the common DPIs from the logo file, and a
+// contact sheet that shows them enlarged, pixel by pixel, on a dark and on a light taskbar.
+func TestRenderTrayIcons(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("icon", "wireguard.ico"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	frames, err := icoFileFrames(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sizes := []int{16, 20, 24, 28, 32}
+	const zoom, gap = 6, 8
+	taskbars := []rgb{0x202020, 0xEEEEEE}
+	cell := 32*zoom + gap
+	sheet := image.NewRGBA(image.Rect(0, 0, int(trayStateCount)*cell*len(taskbars)+gap, len(sizes)*cell+gap))
+	for i := range sheet.Pix {
+		sheet.Pix[i] = 0x80
+	}
+	for row, size := range sizes {
+		logo, err := logoFromFrames(frames, size)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if logo.Bounds().Dx() != size || logo.Bounds().Dy() != size {
+			t.Fatalf("logo at %d px is %v", size, logo.Bounds())
+		}
+		for state := trayState(0); state < trayStateCount; state++ {
+			img := trayIconImage(state, logo)
+			if size == 16 || size == 24 || size == 32 {
+				writePNG(t, "trayicon-"+strconv.Itoa(int(state))+"-"+strconv.Itoa(size), img)
+			}
+			for b, taskbar := range taskbars {
+				left, top := gap+(b*int(trayStateCount)+int(state))*cell, gap+row*cell
+				for y := 0; y < size*zoom; y++ {
+					for x := 0; x < size*zoom; x++ {
+						pixel := img.Pix[img.PixOffset(x/zoom, y/zoom):]
+						alpha := float64(pixel[3]) / 255
+						out := sheet.Pix[sheet.PixOffset(left+x, top+y):]
+						for c, shift := range []uint{16, 8, 0} {
+							out[c] = byte(float64(pixel[c])*alpha + float64(byte(taskbar>>shift))*(1-alpha) + 0.5)
+						}
+						out[3] = 0xff
+					}
+				}
+			}
+		}
+	}
+	writePNG(t, "trayicons-sheet", sheet)
+	overlays := image.NewRGBA(image.Rect(0, 0, int(trayStateCount)*(16*zoom+gap)+gap, 16*zoom+2*gap))
+	for i := range overlays.Pix {
+		overlays.Pix[i] = 0x80
+	}
+	for state := trayConnected; state < trayStateCount; state++ {
+		img := overlayImage(state, 16)
+		left := gap + int(state-trayConnected)*(16*zoom+gap)
+		for y := 0; y < 16*zoom; y++ {
+			for x := 0; x < 16*zoom; x++ {
+				pixel := img.Pix[img.PixOffset(x/zoom, y/zoom):]
+				alpha := float64(pixel[3]) / 255
+				out := overlays.Pix[overlays.PixOffset(left+x, gap+y):]
+				for c := 0; c < 3; c++ {
+					out[c] = byte(float64(pixel[c])*alpha + 0x80*(1-alpha) + 0.5)
+				}
+				out[3] = 0xff
+			}
+		}
+	}
+	writePNG(t, "trayicons-overlays", overlays)
+
+	// The marks differ in shape as well as in color, and "off" has no color at all.
+	logo, _ := logoFromFrames(frames, 16)
+	off := trayIconImage(trayOff, logo)
+	for i := 0; i < len(off.Pix); i += 4 {
+		if off.Pix[i] != off.Pix[i+1] || off.Pix[i+1] != off.Pix[i+2] {
+			t.Fatal("the icon of no active tunnel is not grey")
+		}
+	}
+}
+
+func TestPickIconFrame(t *testing.T) {
+	frames := []iconFrame{{256, nil}, {16, nil}, {32, nil}, {48, nil}}
+	for _, c := range []struct{ want, got int }{{16, 16}, {32, 32}, {20, 32}, {40, 48}, {64, 256}, {512, 256}, {8, 16}} {
+		if frame, _ := pickIconFrame(frames, c.want); frame.size != c.got {
+			t.Errorf("for %d px: frame of %d, want %d", c.want, frame.size, c.got)
+		}
+	}
+}
+
+func TestTrayState(t *testing.T) {
+	entry := func(name string, state manager.TunnelState, health manager.TunnelHealth) tunnelEntry {
+		return tunnelEntry{tunnel: manager.Tunnel{Name: name}, state: state, health: health}
+	}
+	unstable := entry("u", manager.TunnelStarted, manager.TunnelHealthConnected)
+	unstable.unstable = true
+	for _, c := range []struct {
+		entries []tunnelEntry
+		want    trayState
+		which   string
+	}{
+		{nil, trayOff, ""},
+		{[]tunnelEntry{entry("a", manager.TunnelStopped, 0)}, trayOff, ""},
+		{[]tunnelEntry{entry("a", manager.TunnelStopped, 0), entry("b", manager.TunnelStarted, manager.TunnelHealthConnected)}, trayConnected, "b"},
+		{[]tunnelEntry{entry("a", manager.TunnelStarted, manager.TunnelHealthUnverified)}, trayConnected, "a"},
+		{[]tunnelEntry{entry("a", manager.TunnelStarted, manager.TunnelHealthConnected), entry("b", manager.TunnelStarting, 0)}, trayBusy, "b"},
+		{[]tunnelEntry{entry("a", manager.TunnelStarted, manager.TunnelHealthConnected), unstable}, trayProblem, "u"},
+		{[]tunnelEntry{entry("a", manager.TunnelStarted, manager.TunnelHealthWaitingForPeer), entry("b", manager.TunnelStopping, 0)}, trayProblem, "a"},
+		{[]tunnelEntry{entry("a", manager.TunnelStarted, manager.TunnelHealthNoConnection), entry("b", manager.TunnelStarted, manager.TunnelHealthNoConnectionNetworkBlocked)}, trayCutOff, "b"},
+	} {
+		state, which := (&appModel{entries: c.entries}).trayState()
+		name := ""
+		if which != nil {
+			name = which.tunnel.Name
+		}
+		if state != c.want || name != c.which {
+			t.Errorf("%v: state %d of %q, want %d of %q", c.entries, state, name, c.want, c.which)
+		}
+	}
+}
+
+func TestTrayToolTip(t *testing.T) {
+	now := time.Now()
+	office := tunnelEntry{tunnel: manager.Tunnel{Name: "office"}, state: manager.TunnelStarted, health: manager.TunnelHealthConnected}
+	office.metrics.ConnectedSince = now.Add(-47 * time.Minute)
+	model := &appModel{
+		entries: []tunnelEntry{office, {tunnel: manager.Tunnel{Name: "home"}, state: manager.TunnelStarting}},
+		samples: map[string]tunnelSamples{"office": {seconds: sampleSeries(now, 10, time.Second, nil)}},
+	}
+	// The tunnel being switched is the one that is shown, with the other active one counted.
+	if tip := model.trayToolTip(now); tip != "WireGuard: Activating…\nhome (+1)" {
+		t.Errorf("busy: %q", tip)
+	}
+	model.entries = model.entries[:1]
+	tip := model.trayToolTip(now)
+	lines := strings.Split(tip, "\n")
+	if len(lines) != 3 || lines[0] != "WireGuard: Connected" || lines[1] != "office · connected for 47 min" || !strings.HasPrefix(lines[2], "In ") {
+		t.Errorf("connected: %q", tip)
+	}
+	model.entries[0].tunnel.Name = strings.Repeat("long-name-", 20)
+	if tip := model.trayToolTip(now); len(utf16.Encode([]rune(tip))) > trayToolTipLimit || !strings.HasSuffix(tip, "…") {
+		t.Errorf("long name: %d units: %q", len(utf16.Encode([]rune(tip))), tip)
+	}
+	if tip := (&appModel{}).trayToolTip(now); tip != "WireGuard: Not connected" {
+		t.Errorf("off: %q", tip)
+	}
+}
+
+// TestRenderDetailsInsights draws the whole details screen of a started tunnel with its path, its events and a
+// finished test, and one with a test in progress and a stopped tunnel, tall enough that nothing scrolls away.
+func TestRenderDetailsInsights(t *testing.T) {
+	inEachPalette(t, renderDetailsInsights)
+}
+
+func renderDetailsInsights(t *testing.T, suffix string) {
+	wasAdmin := IsAdmin
+	IsAdmin = true
+	defer func() { IsAdmin = wasAdmin }()
+
+	now := time.Now()
+	office := tunnelEntry{tunnel: manager.Tunnel{Name: "office"}, state: manager.TunnelStarted, health: manager.TunnelHealthConnected}
+	office.config = sampleConfig("office", "10.8.0.2/24", 42*time.Second, 1331439862, 228589568)
+	office.settings, office.settingsLoaded, office.probingAllowed = manager.TunnelSettings{Probe: true}, true, true
+	office.path = manager.TunnelPath{TunnelMTU: 1440, RoutesAllTraffic: true, Peers: []manager.PeerPath{
+		{Endpoint: "vpn.example.com:51820", Address: netip.MustParseAddrPort("[2001:db8::7]:51820"), Carrier: "Wi-Fi", CarrierKind: manager.InterfaceKindWiFi, CarrierMTU: 1500, CoveredByTunnel: true},
+	}}
+	office.pathLoaded = true
+	seconds := sampleSeries(now, 3600, time.Second, goodProbes)
+	for i := range seconds {
+		if i%600 > 560 {
+			seconds[i].Health = manager.TunnelHealthNoConnection
+		}
+		if i%120 == 0 {
+			seconds[i].Handshakes = 1
+		}
+	}
+	finished := &tunnelDiagnosis{finished: now.Add(-20 * time.Second), steps: []manager.DiagnosisStep{
+		{ID: manager.DiagnosisEndpointResolves, Outcome: manager.DiagnosisPassed, Detail: "vpn.example.com: 192.0.2.10 2001:db8::7 in 14.2 ms"},
+		{ID: manager.DiagnosisHandshake, Outcome: manager.DiagnosisPassed, Detail: "latest 2026-03-10T11:59:18Z, 42 s ago"},
+		{ID: manager.DiagnosisPing, Outcome: manager.DiagnosisPassed, Detail: "10.8.0.1: 3 sent, 3 answered, average 21.4 ms"},
+		{ID: manager.DiagnosisDNS, Outcome: manager.DiagnosisFailed, Detail: "10.8.0.1: no answer in 2s"},
+		{ID: manager.DiagnosisEndpointRoute, Outcome: manager.DiagnosisPassed, Detail: "[2001:db8::7]:51820: via Wi-Fi (wifi, MTU 1500), tunnel routes cover it"},
+		{ID: "future-step", Outcome: manager.DiagnosisSkipped, Detail: "raw detail of a step this version does not know"},
+	}}
+	running := &tunnelDiagnosis{running: true, steps: finished.steps[:2]}
+	stopped := tunnelEntry{tunnel: manager.Tunnel{Name: "backup-site"}, state: manager.TunnelStopped}
+	for _, c := range []struct {
+		name      string
+		entry     tunnelEntry
+		diagnosis *tunnelDiagnosis
+		r         chartRange
+	}{
+		{"details-insights", office, finished, rangeHour},
+		{"details-testing", office, running, rangeMinute},
+		{"details-stopped", stopped, nil, rangeMinute},
+	} {
+		mtw := &ManageTunnelsWindow{screen: screenDetails, detailsName: c.entry.tunnel.Name, timeRange: c.r, model: &appModel{
+			entries: []tunnelEntry{c.entry}, globalState: manager.TunnelStarted,
+			samples:   map[string]tunnelSamples{"office": {seconds: seconds}},
+			diagnoses: map[string]*tunnelDiagnosis{c.entry.tunnel.Name: c.diagnosis},
+		}}
+		if c.diagnosis == nil {
+			mtw.model.diagnoses = nil
+		}
+		s, img := renderScene(t, 524, 2600, 1, mtw.buildDetails)
+		seen := make(map[string]bool)
+		for _, hit := range s.hits {
+			if hit.action != nil && seen[hit.id] {
+				t.Errorf("%s: region %q twice", c.name, hit.id)
+			}
+			seen[hit.id] = true
+		}
+		if hit := s.hitByID("diagnostics-save"); hit == nil || hit.action == nil {
+			t.Errorf("%s: no action to save diagnostics", c.name)
+		}
+		// Testing is offered only for an active tunnel that is not being tested already.
+		canTest := c.entry.state == manager.TunnelStarted && (c.diagnosis == nil || !c.diagnosis.running)
+		if hit := s.hitByID("diagnose"); (hit != nil && hit.action != nil) != canTest {
+			t.Errorf("%s: test offered: %v, want %v", c.name, hit != nil, canTest)
+		}
+		if c.entry.state == manager.TunnelStarted && s.hitByID("chart:events") == nil {
+			t.Errorf("%s: no events strip", c.name)
+		}
+		writePNG(t, c.name+suffix, img)
 	}
 }
