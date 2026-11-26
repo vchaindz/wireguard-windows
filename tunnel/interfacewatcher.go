@@ -117,11 +117,11 @@ func watchInterface() (*interfaceWatcher, error) {
 			log.Println("Reinitializing adapter configuration")
 			err = iw.adapter.SetConfiguration(iw.conf.ToDriverConfiguration())
 			if err != nil {
-				log.Println(fmt.Errorf("%v: %w", services.ErrorDeviceSetConfig, err))
+				log.Printf("Error: %v: %v", services.ErrorDeviceSetConfig, err)
 			}
 			err = iw.adapter.SetAdapterState(driver.AdapterStateUp)
 			if err != nil {
-				log.Println(fmt.Errorf("%v: %w", services.ErrorDeviceBringUp, err))
+				log.Printf("Error: %v: %v", services.ErrorDeviceBringUp, err)
 			}
 		}
 	})

@@ -25,6 +25,8 @@ type SyntaxEdit struct {
 	lastBlockState                  BlockState
 	yheight                         int
 	highlightGuard                  uint32
+	dark                            bool
+	darkBackground, darkText        win.COLORREF
 	textChangedPublisher            walk.EventPublisher
 	privateKeyPublisher             walk.StringEventPublisher
 	blockUntunneledTrafficPublisher walk.IntEventPublisher
@@ -106,6 +108,40 @@ var stylemap = map[highlight]spanStyle{
 	highlightDelimiter:    {color: win.RGB(0x00, 0x00, 0x00)},
 	highlightCmd:          {color: win.RGB(0x63, 0x75, 0x89)},
 	highlightError:        {color: win.RGB(0xC4, 0x1A, 0x16), effects: win.CFE_UNDERLINE},
+}
+
+// darkStylemap is used instead of stylemap when the editor is shown on a dark background.
+var darkStylemap = map[highlight]spanStyle{
+	highlightSection:      {color: win.RGB(0x7F, 0xD7, 0xFF), effects: win.CFE_BOLD},
+	highlightField:        {color: win.RGB(0xFF, 0xCB, 0x7A), effects: win.CFE_BOLD},
+	highlightPrivateKey:   {color: win.RGB(0xC7, 0xB8, 0xFF)},
+	highlightPublicKey:    {color: win.RGB(0xC7, 0xB8, 0xFF)},
+	highlightPresharedKey: {color: win.RGB(0xC7, 0xB8, 0xFF)},
+	highlightIP:           {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightCidr:         {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightHost:         {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightPort:         {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightMTU:          {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightTable:        {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightKeepalive:    {color: win.RGB(0x9B, 0xE8, 0xC4)},
+	highlightComment:      {color: win.RGB(0x8E, 0x99, 0xA4), effects: win.CFE_ITALIC},
+	highlightDelimiter:    {color: win.RGB(0xA7, 0xB0, 0xB8)},
+	highlightCmd:          {color: win.RGB(0xA7, 0xB0, 0xB8)},
+	highlightError:        {color: win.RGB(0xFF, 0x7A, 0x7A), effects: win.CFE_UNDERLINE},
+}
+
+// SetDarkColors makes the editor use the given background and text color and a highlighting
+// palette made for dark backgrounds, instead of the system colors.
+func (se *SyntaxEdit) SetDarkColors(background, text win.COLORREF) {
+	se.dark, se.darkBackground, se.darkText = true, background, text
+	se.highlightText()
+}
+
+// SetSystemColors makes the editor use the system colors and the highlighting palette made for them again, as it
+// does when it is created.
+func (se *SyntaxEdit) SetSystemColors() {
+	se.dark = false
+	se.highlightText()
 }
 
 func (se *SyntaxEdit) evaluateUntunneledBlocking(cfg string, spans []highlightSpan) {
@@ -241,9 +277,14 @@ func (se *SyntaxEdit) highlightText() error {
 	if se.yheight != 0 {
 		format.YHeight = 20 * 10
 	}
-	win.SendMessage(hWnd, win.EM_SETCHARFORMAT, win.SCF_ALL, uintptr(unsafe.Pointer(&format)))
+	styles := stylemap
 	bgColor := win.COLORREF(win.GetSysColor(win.COLOR_WINDOW))
 	bgInversion := (bgColor & win.RGB(0xFF, 0xFF, 0xFF)) ^ win.RGB(0xFF, 0xFF, 0xFF)
+	if se.dark {
+		styles, bgColor, bgInversion = darkStylemap, se.darkBackground, 0
+		format.DwEffects, format.CrTextColor = 0, se.darkText
+	}
+	win.SendMessage(hWnd, win.EM_SETCHARFORMAT, win.SCF_ALL, uintptr(unsafe.Pointer(&format)))
 	win.SendMessage(hWnd, win.EM_SETBKGNDCOLOR, 0, uintptr(bgColor))
 	numSpans := len(spans)
 	foundPrivateKey := false
@@ -252,8 +293,8 @@ func (se *SyntaxEdit) highlightText() error {
 		if numSpans <= 2048 {
 			selection := win.CHARRANGE{int32(span.s), int32(span.s + span.len)}
 			win.SendMessage(hWnd, win.EM_EXSETSEL, 0, uintptr(unsafe.Pointer(&selection)))
-			format.CrTextColor = stylemap[span.t].color ^ bgInversion
-			format.DwEffects = stylemap[span.t].effects
+			format.CrTextColor = styles[span.t].color ^ bgInversion
+			format.DwEffects = styles[span.t].effects
 			win.SendMessage(hWnd, win.EM_SETCHARFORMAT, win.SCF_SELECTION, uintptr(unsafe.Pointer(&format)))
 		}
 		if span.t == highlightPrivateKey && !foundPrivateKey {

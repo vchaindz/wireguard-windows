@@ -144,6 +144,7 @@ func trackTunnelService(tunnelName string, service *mgr.Service) {
 		delete(trackedTunnels, tunnelName)
 		trackedTunnelsLock.Unlock()
 	}()
+	defer stopTunnelHealthMonitor(tunnelName)
 
 	for i := range 20 {
 		if i > 0 {
@@ -162,6 +163,7 @@ func trackTunnelService(tunnelName string, service *mgr.Service) {
 			trackedTunnelsLock.Lock()
 			trackedTunnels[tunnelName] = TunnelStopped
 			trackedTunnelsLock.Unlock()
+			stopTunnelHealthMonitor(tunnelName)
 			releaseDriverAdapter(tunnelName)
 			IPCServerNotifyTunnelChange(tunnelName, TunnelStopped, nil)
 			return true
@@ -199,10 +201,16 @@ func trackTunnelService(tunnelName string, service *mgr.Service) {
 			trackedTunnelsLock.Lock()
 			trackedTunnels[tunnelName] = state
 			trackedTunnelsLock.Unlock()
+			if state != TunnelStarted {
+				stopTunnelHealthMonitor(tunnelName)
+			}
 			if state == TunnelStopped {
 				releaseDriverAdapter(tunnelName)
 			}
 			IPCServerNotifyTunnelChange(tunnelName, state, tunnelError)
+			if state == TunnelStarted {
+				startTunnelHealthMonitor(tunnelName)
+			}
 			lastState = state
 		}
 		if state == TunnelUnknown && checkForDisabled() {
@@ -214,6 +222,7 @@ func trackTunnelService(tunnelName string, service *mgr.Service) {
 		trackedTunnelsLock.Lock()
 		trackedTunnels[tunnelName] = TunnelStopped
 		trackedTunnelsLock.Unlock()
+		stopTunnelHealthMonitor(tunnelName)
 		releaseDriverAdapter(tunnelName)
 		IPCServerNotifyTunnelChange(tunnelName, TunnelStopped, fmt.Errorf("Unable to continue monitoring service, so stopping: %w", err))
 		service.Control(svc.Stop)

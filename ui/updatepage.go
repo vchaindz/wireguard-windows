@@ -14,27 +14,31 @@ import (
 )
 
 type UpdatePage struct {
-	*walk.TabPage
+	*walk.Composite
+	instructions, status *walk.TextLabel
 }
 
-func NewUpdatePage() (*UpdatePage, error) {
+// applyTheme colors the labels in the palette.
+func (up *UpdatePage) applyTheme() {
+	styleLabels(theme.text, up.instructions)
+	styleLabels(theme.textDim, up.status)
+}
+
+func NewUpdatePage(parent walk.Container) (*UpdatePage, error) {
 	var err error
 	var disposables walk.Disposables
 	defer disposables.Treat()
 
 	up := &UpdatePage{}
 
-	if up.TabPage, err = walk.NewTabPage(); err != nil {
+	if up.Composite, err = walk.NewComposite(parent); err != nil {
 		return nil, err
 	}
 	disposables.Add(up)
 
-	up.SetTitle(l18n.Sprintf("An Update is Available!"))
-
-	tabIcon, _ := loadShieldIcon(16)
-	up.SetImage(tabIcon)
-
-	up.SetLayout(walk.NewVBoxLayout())
+	layout := walk.NewVBoxLayout()
+	layout.SetMargins(walk.Margins{HNear: 24, VNear: 20, HFar: 24, VFar: 20})
+	up.SetLayout(layout)
 
 	instructions, err := walk.NewTextLabel(up)
 	if err != nil {
@@ -49,6 +53,8 @@ func NewUpdatePage() (*UpdatePage, error) {
 	}
 	status.SetText(l18n.Sprintf("Status: Waiting for user"))
 	status.SetMinMaxSize(walk.Size{1, 0}, walk.Size{0, 0})
+	up.instructions, up.status = instructions, status
+	up.applyTheme()
 
 	bar, err := walk.NewProgressBar(up)
 	if err != nil {

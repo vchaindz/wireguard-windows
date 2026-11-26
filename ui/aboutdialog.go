@@ -142,6 +142,17 @@ func runAboutDialog(owner walk.Form) error {
 	showingAboutDialog.SetDefaultButton(donatePB)
 	showingAboutDialog.SetCancelButton(closePB)
 
+	dlg := showingAboutDialog
+	restyle := func() {
+		styleDialog(dlg)
+		buttonCP.SetBackground(themeBrush(theme.backdrop))
+		styleLabels(theme.text, wgLbl, detailsLbl)
+		styleLabels(theme.textDim, copyrightLbl)
+		styleButtons(closePB, donatePB)
+	}
+	restyle()
+	defer watchTheme(restyle)()
+
 	disposables.Spare()
 
 	showingAboutDialog.Run()

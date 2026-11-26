@@ -118,6 +118,16 @@ func (config *Config) Save(overwrite bool) error {
 	return writeLockedDownFile(filename, overwrite, bytes)
 }
 
+// NameExists reports whether a tunnel of that name is stored, without reading or decrypting it.
+func NameExists(name string) bool {
+	path, err := (&Config{Name: name}).Path()
+	if err != nil {
+		return false
+	}
+	info, err := os.Stat(path)
+	return err == nil && info.Mode().IsRegular()
+}
+
 func (config *Config) Path() (string, error) {
 	if !TunnelNameIsValid(config.Name) {
 		return "", errors.New("Tunnel name is not valid")

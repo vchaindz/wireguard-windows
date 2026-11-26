@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/lxn/walk"
+	"github.com/lxn/win"
 	"golang.zx2c4.com/wireguard/windows/l18n"
 	"golang.zx2c4.com/wireguard/windows/ringlogger"
 )
@@ -21,19 +22,19 @@ const (
 )
 
 type LogPage struct {
-	*walk.TabPage
+	*walk.Composite
 	logView *walk.TableView
 	model   *logModel
 }
 
-func NewLogPage() (*LogPage, error) {
+func NewLogPage(parent walk.Container) (*LogPage, error) {
 	lp := &LogPage{}
 
 	var err error
 	var disposables walk.Disposables
 	defer disposables.Treat()
 
-	if lp.TabPage, err = walk.NewTabPage(); err != nil {
+	if lp.Composite, err = walk.NewComposite(parent); err != nil {
 		return nil, err
 	}
 	disposables.Add(lp)
@@ -42,15 +43,17 @@ func NewLogPage() (*LogPage, error) {
 		close(lp.model.quit)
 	})
 
-	lp.SetTitle(l18n.Sprintf("Log"))
-	lp.SetLayout(walk.NewVBoxLayout())
+	layout := walk.NewVBoxLayout()
+	layout.SetMargins(walk.Margins{HNear: 16, HFar: 16})
+	lp.SetLayout(layout)
 
 	if lp.logView, err = walk.NewTableView(lp); err != nil {
 		return nil, err
 	}
-	lp.logView.SetAlternatingRowBG(true)
 	lp.logView.SetLastColumnStretched(true)
-	lp.logView.SetGridlines(true)
+	lp.logView.SetHeaderHidden(true)
+	lp.logView.SetCellStyler(lp)
+	lp.applyTheme()
 
 	contextMenu, err := walk.NewMenu()
 	if err != nil {
@@ -99,25 +102,62 @@ func NewLogPage() (*LogPage, error) {
 	lp.logView.SetModel(lp.model)
 	setSelectionStatus()
 
-	buttonsContainer, err := walk.NewComposite(lp)
-	if err != nil {
-		return nil, err
-	}
-	buttonsContainer.SetLayout(walk.NewHBoxLayout())
-	buttonsContainer.Layout().SetMargins(walk.Margins{})
-
-	walk.NewHSpacer(buttonsContainer)
-
-	saveButton, err := walk.NewPushButton(buttonsContainer)
-	if err != nil {
-		return nil, err
-	}
-	saveButton.SetText(l18n.Sprintf("&Save"))
-	saveButton.Clicked().Attach(lp.onSave)
-
 	disposables.Spare()
 
 	return lp, nil
+}
+
+// applyTheme gives the table the background and scroll bars of the palette. The rows take their colors from
+// StyleCell when they are drawn, so they only need to be drawn again.
+func (lp *LogPage) applyTheme() {
+	lp.logView.SetBackground(themeBrush(theme.backdrop))
+	// The table is made of list views, one for the rows that scroll and one for those that do not.
+	for child := win.GetWindow(lp.logView.Handle(), win.GW_CHILD); child != 0; child = win.GetWindow(child, win.GW_HWNDNEXT) {
+		useControlTheme(child, theme.dark)
+		win.SendMessage(child, win.LVM_SETBKCOLOR, 0, uintptr(theme.backdrop.walk()))
+		win.InvalidateRect(child, nil, true)
+	}
+}
+
+// StyleCell colors the log in the palette and marks warnings and errors.
+func (lp *LogPage) StyleCell(style *walk.CellStyle) {
+	style.BackgroundColor = theme.backdrop.walk()
+	style.TextColor = theme.text.walk()
+	row := style.Row()
+	if style.Col() == 0 || row < 0 || row >= len(lp.model.items) {
+		style.TextColor = theme.textDim.walk()
+		return
+	}
+	switch ringlogger.ParseLine(lp.model.items[row].Line).Level {
+	case ringlogger.LevelWarning:
+		style.TextColor = theme.amberSoft.walk()
+	case ringlogger.LevelError:
+		style.TextColor = theme.redSoft.walk()
+	}
+}
+
+// setFilter restricts the log to the lines of one tunnel, if a name is given, and to warnings and errors.
+func (lp *LogPage) setFilter(tunnel string, warningsOnly bool) {
+	mdl := lp.model
+	if mdl.filterTunnel == tunnel && mdl.warningsOnly == warningsOnly {
+		return
+	}
+	mdl.filterTunnel, mdl.warningsOnly = tunnel, warningsOnly
+	mdl.applyFilter()
+	mdl.PublishRowsReset()
+	lp.scrollToBottom()
+}
+
+func (lp *LogPage) filter() (tunnel string, warningsOnly bool) {
+	return lp.model.filterTunnel, lp.model.warningsOnly
+}
+
+// copySelectionOrAll copies the selected lines, or the whole log when none is selected.
+func (lp *LogPage) copySelectionOrAll() {
+	if len(lp.logView.SelectedIndexes()) == 0 {
+		lp.onSelectAll()
+	}
+	lp.onCopy()
 }
 
 func (lp *LogPage) isAtBottom() bool {
@@ -173,9 +213,32 @@ func (lp *LogPage) onSave() {
 
 type logModel struct {
 	walk.ReflectTableModelBase
-	lp    *LogPage
-	quit  chan struct{}
+	lp   *LogPage
+	quit chan struct{}
+	// all holds every line; items holds the ones that pass the filter and is what the table shows.
+	all   []ringlogger.FollowLine
 	items []ringlogger.FollowLine
+
+	filterTunnel string
+	warningsOnly bool
+}
+
+func (mdl *logModel) applyFilter() {
+	if len(mdl.filterTunnel) == 0 && !mdl.warningsOnly {
+		mdl.items = mdl.all
+		return
+	}
+	mdl.items = nil
+	for i := range mdl.all {
+		parsed := ringlogger.ParseLine(mdl.all[i].Line)
+		if len(mdl.filterTunnel) > 0 && parsed.Tunnel != mdl.filterTunnel {
+			continue
+		}
+		if mdl.warningsOnly && parsed.Level == ringlogger.LevelInfo {
+			continue
+		}
+		mdl.items = append(mdl.items, mdl.all[i])
+	}
 }
 
 func newLogModel(lp *LogPage) *logModel {
@@ -195,10 +258,11 @@ func newLogModel(lp *LogPage) *logModel {
 				mdl.lp.Synchronize(func() {
 					isAtBottom := mdl.lp.isAtBottom() && len(lp.logView.SelectedIndexes()) <= 1
 
-					mdl.items = append(mdl.items, items...)
-					if len(mdl.items) > maxLogLinesDisplayed {
-						mdl.items = mdl.items[len(mdl.items)-maxLogLinesDisplayed:]
+					mdl.all = append(mdl.all, items...)
+					if len(mdl.all) > maxLogLinesDisplayed {
+						mdl.all = mdl.all[len(mdl.all)-maxLogLinesDisplayed:]
 					}
+					mdl.applyFilter()
 					mdl.PublishRowsReset()
 
 					if isAtBottom {

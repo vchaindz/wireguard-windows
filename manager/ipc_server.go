@@ -34,6 +34,9 @@ type ManagerService struct {
 	events        *os.File
 	eventLock     sync.Mutex
 	elevatedToken windows.Token
+	// watching is whether this connection counts as a sample watcher. It is only used by the goroutine that
+	// serves the connection.
+	watching bool
 }
 
 func (s *ManagerService) StoredConfig(tunnelName string) (*conf.Config, error) {
@@ -105,7 +108,7 @@ func (s *ManagerService) Start(tunnelName string) error {
 		for _, t := range tt {
 			state, err := s.State(t)
 			if err == nil && (state == TunnelStarted || state == TunnelStarting) {
-				log.Printf("[%s] Trying again to stop zombie tunnel", t)
+				log.Printf("[%s] Warning: trying again to stop zombie tunnel", t)
 				s.Stop(t)
 				time.Sleep(time.Millisecond * 100)
 			}
@@ -275,7 +278,82 @@ func (s *ManagerService) Update() {
 	}()
 }
 
+func (s *ManagerService) Watch(watching bool) {
+	if watching == s.watching {
+		return
+	}
+	s.watching = watching
+	if watching {
+		addSampleWatcher(1)
+	} else {
+		addSampleWatcher(-1)
+	}
+}
+
+func (s *ManagerService) Samples(tunnelName string, resolution SampleResolution, since time.Time) ([]TunnelSample, error) {
+	return trackedTunnelSamples(tunnelName, resolution, since)
+}
+
+func (s *ManagerService) Settings(tunnelName string) (TunnelSettings, bool, error) {
+	// Only existing tunnels are looked up, so that a client cannot fill the settings cache with made-up names.
+	// The UI asks for every tunnel on each reload, so this must not decrypt the configuration.
+	if !conf.NameExists(tunnelName) {
+		return TunnelSettings{}, false, os.ErrNotExist
+	}
+	return loadTunnelSettings(tunnelName), probingAllowed(), nil
+}
+
+func (s *ManagerService) SetSettings(tunnelName string, settings TunnelSettings) error {
+	if s.elevatedToken == 0 {
+		return windows.ERROR_ACCESS_DENIED
+	}
+	return setTunnelSettings(tunnelName, settings)
+}
+
+func (s *ManagerService) History(tunnelName string) (TunnelHistory, bool, error) {
+	// Only existing tunnels are looked up, so that a client cannot make the manager keep recorders for made-up
+	// names.
+	if !conf.NameExists(tunnelName) {
+		return TunnelHistory{}, false, os.ErrNotExist
+	}
+	history, enabled := trackedTunnelHistory(tunnelName)
+	return history, enabled, nil
+}
+
+func (s *ManagerService) ClearHistory(tunnelName string) error {
+	if s.elevatedToken == 0 {
+		return windows.ERROR_ACCESS_DENIED
+	}
+	if !conf.NameExists(tunnelName) {
+		return os.ErrNotExist
+	}
+	return clearTunnelHistory(tunnelName)
+}
+
+func (s *ManagerService) Path(tunnelName string) (TunnelPath, error) {
+	// Only existing tunnels are looked at, so that a client cannot make the manager open adapters by made-up names.
+	if !conf.NameExists(tunnelName) {
+		return TunnelPath{}, os.ErrNotExist
+	}
+	return tunnelPath(tunnelName)
+}
+
+// StartDiagnosis is open to the limited-operator UI: a test sends only what the tunnel itself would, to addresses
+// from its stored configuration, changes nothing, and is limited to one at a time per tunnel.
+func (s *ManagerService) StartDiagnosis(tunnelName string) error {
+	return startDiagnosis(tunnelName)
+}
+
+func (s *ManagerService) Diagnosis(tunnelName string) ([]DiagnosisStep, bool, error) {
+	if !conf.NameExists(tunnelName) {
+		return nil, false, os.ErrNotExist
+	}
+	return diagnosisResult(tunnelName)
+}
+
 func (s *ManagerService) ServeConn(reader io.Reader, writer io.Writer) {
+	// A UI that goes away while watching must not keep every tunnel sampled at the fast rate.
+	defer s.Watch(false)
 	decoder := gob.NewDecoder(reader)
 	encoder := gob.NewEncoder(writer)
 	for {
@@ -437,6 +515,177 @@ func (s *ManagerService) ServeConn(reader io.Reader, writer io.Writer) {
 			}
 		case UpdateMethodType:
 			s.Update()
+		case MetricsMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(trackedTunnelMetrics(tunnelName))
+			if err != nil {
+				return
+			}
+		case HealthMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			health, conflictSuspected, unstable := trackedTunnelHealth(tunnelName)
+			err = encoder.Encode(health)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(conflictSuspected)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(unstable)
+			if err != nil {
+				return
+			}
+		case WatchMethodType:
+			var watching bool
+			err := decoder.Decode(&watching)
+			if err != nil {
+				return
+			}
+			s.Watch(watching)
+		case SamplesMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			var resolution SampleResolution
+			err = decoder.Decode(&resolution)
+			if err != nil {
+				return
+			}
+			var since time.Time
+			err = decoder.Decode(&since)
+			if err != nil {
+				return
+			}
+			samples, retErr := s.Samples(tunnelName, resolution, since)
+			err = encoder.Encode(samples)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case SettingsMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			settings, allowed, retErr := s.Settings(tunnelName)
+			err = encoder.Encode(settings)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(allowed)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case SetSettingsMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			var settings TunnelSettings
+			err = decoder.Decode(&settings)
+			if err != nil {
+				return
+			}
+			retErr := s.SetSettings(tunnelName, settings)
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case HistoryMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			history, enabled, retErr := s.History(tunnelName)
+			err = encoder.Encode(history)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(enabled)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case ClearHistoryMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			retErr := s.ClearHistory(tunnelName)
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case PathMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			path, retErr := s.Path(tunnelName)
+			err = encoder.Encode(path)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case StartDiagnosisMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			retErr := s.StartDiagnosis(tunnelName)
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
+		case DiagnosisMethodType:
+			var tunnelName string
+			err := decoder.Decode(&tunnelName)
+			if err != nil {
+				return
+			}
+			steps, running, retErr := s.Diagnosis(tunnelName)
+			err = encoder.Encode(steps)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(running)
+			if err != nil {
+				return
+			}
+			err = encoder.Encode(errToString(retErr))
+			if err != nil {
+				return
+			}
 		default:
 			return
 		}
@@ -507,6 +756,10 @@ func errToString(err error) string {
 
 func IPCServerNotifyTunnelChange(name string, state TunnelState, err error) {
 	notifyAll(TunnelChangeNotificationType, false, name, state, trackedTunnelsGlobalState(), errToString(err))
+}
+
+func IPCServerNotifyTunnelHealth(name string, health TunnelHealth, conflictSuspected, unstable bool) {
+	notifyAll(TunnelHealthNotificationType, false, name, health, conflictSuspected, unstable)
 }
 
 func IPCServerNotifyTunnelsChange() {

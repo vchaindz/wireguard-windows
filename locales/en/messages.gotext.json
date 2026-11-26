@@ -654,233 +654,349 @@
             "fuzzy": true
         },
         {
-            "id": "Status:",
-            "message": "Status:",
-            "translation": "Status:",
+            "id": "1 h",
+            "message": "1 h",
+            "translation": "1 h",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "\u0026Deactivate",
-            "message": "\u0026Deactivate",
-            "translation": "\u0026Deactivate",
+            "id": "24 h",
+            "message": "24 h",
+            "translation": "24 h",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "\u0026Activate",
-            "message": "\u0026Activate",
-            "translation": "\u0026Activate",
+            "id": "1 min",
+            "message": "1 min",
+            "translation": "1 min",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Public key:",
-            "message": "Public key:",
-            "translation": "Public key:",
+            "id": "Traffic",
+            "message": "Traffic",
+            "translation": "Traffic",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Listen port:",
-            "message": "Listen port:",
-            "translation": "Listen port:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "MTU:",
-            "message": "MTU:",
-            "translation": "MTU:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Addresses:",
-            "message": "Addresses:",
-            "translation": "Addresses:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "DNS servers:",
-            "message": "DNS servers:",
-            "translation": "DNS servers:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Scripts:",
-            "message": "Scripts:",
-            "translation": "Scripts:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Table:",
-            "message": "Table:",
-            "translation": "Table:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Preshared key:",
-            "message": "Preshared key:",
-            "translation": "Preshared key:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Allowed IPs:",
-            "message": "Allowed IPs:",
-            "translation": "Allowed IPs:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Endpoint:",
-            "message": "Endpoint:",
-            "translation": "Endpoint:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Persistent keepalive:",
-            "message": "Persistent keepalive:",
-            "translation": "Persistent keepalive:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Latest handshake:",
-            "message": "Latest handshake:",
-            "translation": "Latest handshake:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Transfer:",
-            "message": "Transfer:",
-            "translation": "Transfer:",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "pre-up",
-            "message": "pre-up",
-            "translation": "pre-up",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "post-up",
-            "message": "post-up",
-            "translation": "post-up",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "pre-down",
-            "message": "pre-down",
-            "translation": "pre-down",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "post-down",
-            "message": "post-down",
-            "translation": "post-down",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "disabled, per policy",
-            "message": "disabled, per policy",
-            "translation": "disabled, per policy",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "off",
-            "message": "off",
-            "translation": "off",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "enabled",
-            "message": "enabled",
-            "translation": "enabled",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "{String} received, {String_1} sent",
-            "message": "{String} received, {String_1} sent",
-            "translation": "{String} received, {String_1} sent",
+            "id": "In {Rx}",
+            "message": "In {Rx}",
+            "translation": "In {Rx}",
             "translatorComment": "Copied from source.",
             "placeholders": [
                 {
-                    "id": "String",
+                    "id": "Rx",
                     "string": "%[1]s",
                     "type": "string",
                     "underlyingType": "string",
                     "argNum": 1,
-                    "expr": "c.RxBytes.String()"
+                    "expr": "rx"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Out {Tx}",
+            "message": "Out {Tx}",
+            "translation": "Out {Tx}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Tx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tx"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Latency",
+            "message": "Latency",
+            "translation": "Latency",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{LossPercent} lost",
+            "message": "{LossPercent} lost",
+            "translation": "{LossPercent} lost",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LossPercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(quality.lossPercent())"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "No reply",
+            "message": "No reply",
+            "translation": "No reply",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{Lost} of {Sent} lost",
+            "message": "{Lost} of {Sent} lost",
+            "translation": "{Lost} of {Sent} lost",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Lost",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.lost"
                 },
                 {
-                    "id": "String_1",
-                    "string": "%[2]s",
-                    "type": "string",
-                    "underlyingType": "string",
+                    "id": "Sent",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
                     "argNum": 2,
-                    "expr": "c.TxBytes.String()"
+                    "expr": "bucket.sent"
                 }
             ],
             "fuzzy": true
         },
         {
-            "id": "Failed to determine tunnel state",
-            "message": "Failed to determine tunnel state",
-            "translation": "Failed to determine tunnel state",
+            "id": "The endpoint name resolves",
+            "message": "The endpoint name resolves",
+            "translation": "The endpoint name resolves",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Failed to activate tunnel",
-            "message": "Failed to activate tunnel",
-            "translation": "Failed to activate tunnel",
+            "id": "The peer answers a handshake",
+            "message": "The peer answers a handshake",
+            "translation": "The peer answers a handshake",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Failed to deactivate tunnel",
-            "message": "Failed to deactivate tunnel",
-            "translation": "Failed to deactivate tunnel",
+            "id": "Pings through the tunnel are answered",
+            "message": "Pings through the tunnel are answered",
+            "translation": "Pings through the tunnel are answered",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Interface: {Name}",
-            "message": "Interface: {Name}",
-            "translation": "Interface: {Name}",
+            "id": "DNS answers through the tunnel",
+            "message": "DNS answers through the tunnel",
+            "translation": "DNS answers through the tunnel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The endpoint is reached outside the tunnel",
+            "message": "The endpoint is reached outside the tunnel",
+            "translation": "The endpoint is reached outside the tunnel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Your network or its DNS is not working, or the name in the configuration is misspelled.",
+            "message": "Your network or its DNS is not working, or the name in the configuration is misspelled.",
+            "translation": "Your network or its DNS is not working, or the name in the configuration is misspelled.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Check the endpoint and port, that the server runs, that both sides have each other's public key, and that no firewall blocks UDP.",
+            "message": "Check the endpoint and port, that the server runs, that both sides have each other's public key, and that no firewall blocks UDP.",
+            "translation": "Check the endpoint and port, that the server runs, that both sides have each other's public key, and that no firewall blocks UDP.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The peer answers but traffic does not get through: check the allowed IPs on both sides, or choose an address that answers pings.",
+            "message": "The peer answers but traffic does not get through: check the allowed IPs on both sides, or choose an address that answers pings.",
+            "translation": "The peer answers but traffic does not get through: check the allowed IPs on both sides, or choose an address that answers pings.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Check the DNS servers of the tunnel, and that the server's allowed IPs for this device include them.",
+            "message": "Check the DNS servers of the tunnel, and that the server's allowed IPs for this device include them.",
+            "translation": "Check the DNS servers of the tunnel, and that the server's allowed IPs for this device include them.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The endpoint is only reachable through the tunnel itself. Check your network connection, or remove the endpoint's address from the allowed IPs.",
+            "message": "The endpoint is only reachable through the tunnel itself. Check your network connection, or remove the endpoint's address from the allowed IPs.",
+            "translation": "The endpoint is only reachable through the tunnel itself. Check your network connection, or remove the endpoint's address from the allowed IPs.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Checks in order that the endpoint name resolves, the peer answers, pings and DNS get through the tunnel, and the endpoint is not routed into the tunnel. Only this tunnel's own addresses are contacted.",
+            "message": "Checks in order that the endpoint name resolves, the peer answers, pings and DNS get through the tunnel, and the endpoint is not routed into the tunnel. Only this tunnel's own addresses are contacted.",
+            "translation": "Checks in order that the endpoint name resolves, the peer answers, pings and DNS get through the tunnel, and the endpoint is not routed into the tunnel. Only this tunnel's own addresses are contacted.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Testing needs the tunnel to be active. A diagnostics file can be saved at any time.",
+            "message": "Testing needs the tunnel to be active. A diagnostics file can be saved at any time.",
+            "translation": "Testing needs the tunnel to be active. A diagnostics file can be saved at any time.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Testing… step {Steps1_diagnosisStepCount} of {DiagnosisStepCount}",
+            "message": "Testing… step {Steps1_diagnosisStepCount} of {DiagnosisStepCount}",
+            "translation": "Testing… step {Steps1_diagnosisStepCount} of {DiagnosisStepCount}",
             "translatorComment": "Copied from source.",
             "placeholders": [
                 {
-                    "id": "Name",
+                    "id": "Steps1_diagnosisStepCount",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "min(len(diagnosis.steps)+1, diagnosisStepCount)"
+                },
+                {
+                    "id": "DiagnosisStepCount",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "diagnosisStepCount"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Tested {Finished} · all checks passed",
+            "message": "Tested {Finished} · all checks passed",
+            "translation": "Tested {Finished} · all checks passed",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Finished",
                     "string": "%[1]s",
                     "type": "string",
                     "underlyingType": "string",
                     "argNum": 1,
-                    "expr": "config.Name"
+                    "expr": "formatAgo(now.Sub(diagnosis.finished))"
                 }
             ],
             "fuzzy": true
         },
         {
-            "id": "Peer",
-            "message": "Peer",
-            "translation": "Peer",
+            "id": "Tested {Finished} · {Failed} of {Steps} checks failed",
+            "message": "Tested {Finished} · {Failed} of {Steps} checks failed",
+            "translation": "Tested {Finished} · {Failed} of {Steps} checks failed",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Finished",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatAgo(now.Sub(diagnosis.finished))"
+                },
+                {
+                    "id": "Failed",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "failed"
+                },
+                {
+                    "id": "Steps",
+                    "string": "%[3]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 3,
+                    "expr": "len(diagnosis.steps)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "TROUBLESHOOTING",
+            "message": "TROUBLESHOOTING",
+            "translation": "TROUBLESHOOTING",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Test this tunnel",
+            "message": "Test this tunnel",
+            "translation": "Test this tunnel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save diagnostics…",
+            "message": "Save diagnostics…",
+            "translation": "Save diagnostics…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+            "message": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+            "translation": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save diagnostics to file",
+            "message": "Save diagnostics to file",
+            "translation": "Save diagnostics to file",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save diagnostics",
+            "message": "Save diagnostics",
+            "translation": "Save diagnostics",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The file describes this tunnel for whoever helps you: versions, state, measurements, the last test, recent history and the log lines about it. It never contains private or preshared keys, and public keys are shortened. Addresses and host names are replaced by placeholders unless you include them.",
+            "message": "The file describes this tunnel for whoever helps you: versions, state, measurements, the last test, recent history and the log lines about it. It never contains private or preshared keys, and public keys are shortened. Addresses and host names are replaced by placeholders unless you include them.",
+            "translation": "The file describes this tunnel for whoever helps you: versions, state, measurements, the last test, recent history and the log lines about it. It never contains private or preshared keys, and public keys are shortened. Addresses and host names are replaced by placeholders unless you include them.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "\u0026Include addresses",
+            "message": "\u0026Include addresses",
+            "translation": "\u0026Include addresses",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save…",
+            "message": "Save…",
+            "translation": "Save…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Cancel",
+            "message": "Cancel",
+            "translation": "Cancel",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -937,13 +1053,6 @@
             "id": "\u0026Save",
             "message": "\u0026Save",
             "translation": "\u0026Save",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Cancel",
-            "message": "Cancel",
-            "translation": "Cancel",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1048,6 +1157,638 @@
             "fuzzy": true
         },
         {
+            "id": "{Number} KB",
+            "message": "{Number} KB",
+            "translation": "{Number} KB",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Number} MB",
+            "message": "{Number} MB",
+            "translation": "{Number} MB",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Number} GB",
+            "message": "{Number} GB",
+            "translation": "{Number} GB",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Number} TB",
+            "message": "{Number} TB",
+            "translation": "{Number} TB",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{RoundTovalue_0}",
+            "message": "{RoundTovalue_0}",
+            "translation": "{RoundTovalue_0}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "RoundTovalue_0",
+                    "string": "%.0[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "roundTo(value, 0)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{RoundTovalue_1}",
+            "message": "{RoundTovalue_1}",
+            "translation": "{RoundTovalue_1}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "RoundTovalue_1",
+                    "string": "%.1[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "roundTo(value, 1)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{RoundTovalue_2}",
+            "message": "{RoundTovalue_2}",
+            "translation": "{RoundTovalue_2}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "RoundTovalue_2",
+                    "string": "%.2[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "roundTo(value, 2)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{5} B/s",
+            "message": "{5} B/s",
+            "translation": "{5} B/s",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "5",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(bytesPerSecond + 0.5)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{LabelformatNumbervalue_decimals}/s",
+            "message": "{LabelformatNumbervalue_decimals}/s",
+            "translation": "{LabelformatNumbervalue_decimals}/s",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LabelformatNumbervalue_decimals",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "unit.label(formatNumber(value, decimals))"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "now",
+            "message": "now",
+            "translation": "now",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{Second} s ago",
+            "message": "{Second} s ago",
+            "translation": "{Second} s ago",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Second",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / time.Second)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Minute} min ago",
+            "message": "{Minute} min ago",
+            "translation": "{Minute} min ago",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Minute",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / time.Minute)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Hour} h ago",
+            "message": "{Hour} h ago",
+            "translation": "{Hour} h ago",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Hour",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / time.Hour)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Hour} d ago",
+            "message": "{Hour} d ago",
+            "translation": "{Hour} d ago",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Hour",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / (24 * time.Hour))"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Mon",
+            "message": "Mon",
+            "translation": "Mon",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Tue",
+            "message": "Tue",
+            "translation": "Tue",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Wed",
+            "message": "Wed",
+            "translation": "Wed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Thu",
+            "message": "Thu",
+            "translation": "Thu",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Fri",
+            "message": "Fri",
+            "translation": "Fri",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sat",
+            "message": "Sat",
+            "translation": "Sat",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sun",
+            "message": "Sun",
+            "translation": "Sun",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Jan",
+            "message": "Jan",
+            "translation": "Jan",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Feb",
+            "message": "Feb",
+            "translation": "Feb",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Mar",
+            "message": "Mar",
+            "translation": "Mar",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Apr",
+            "message": "Apr",
+            "translation": "Apr",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "May",
+            "message": "May",
+            "translation": "May",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Jun",
+            "message": "Jun",
+            "translation": "Jun",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Jul",
+            "message": "Jul",
+            "translation": "Jul",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Aug",
+            "message": "Aug",
+            "translation": "Aug",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sep",
+            "message": "Sep",
+            "translation": "Sep",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Oct",
+            "message": "Oct",
+            "translation": "Oct",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Nov",
+            "message": "Nov",
+            "translation": "Nov",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Dec",
+            "message": "Dec",
+            "translation": "Dec",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Today",
+            "message": "Today",
+            "translation": "Today",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Yesterday",
+            "message": "Yesterday",
+            "translation": "Yesterday",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth} {Itoayear}",
+            "message": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth} {Itoayear}",
+            "translation": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth} {Itoayear}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "WeekdayNameweekday",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "weekdayName(weekday)"
+                },
+                {
+                    "id": "Itoadate",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "strconv.Itoa(date)"
+                },
+                {
+                    "id": "MonthNamemonth",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "monthName(month)"
+                },
+                {
+                    "id": "Itoayear",
+                    "string": "%[4]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 4,
+                    "expr": "strconv.Itoa(year)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth}",
+            "message": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth}",
+            "translation": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "WeekdayNameweekday",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "weekdayName(weekday)"
+                },
+                {
+                    "id": "Itoadate",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "strconv.Itoa(date)"
+                },
+                {
+                    "id": "MonthNamemonth",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "monthName(month)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{FormatDayt_now} {FormatClockt}",
+            "message": "{FormatDayt_now} {FormatClockt}",
+            "translation": "{FormatDayt_now} {FormatClockt}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "FormatDayt_now",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatDay(t, now)"
+                },
+                {
+                    "id": "FormatClockt",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatClock(t)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Last {UsageChartDays} days",
+            "message": "Last {UsageChartDays} days",
+            "translation": "Last {UsageChartDays} days",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "UsageChartDays",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "usageChartDays"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Day} · active {Second}",
+            "message": "{Day} · active {Second}",
+            "translation": "{Day} · active {Second}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Day",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "day"
+                },
+                {
+                    "id": "Second",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(time.Duration(recent[index].ActiveSeconds) * time.Second)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Received",
+            "message": "Received",
+            "translation": "Received",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sent",
+            "message": "Sent",
+            "translation": "Sent",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "in progress",
+            "message": "in progress",
+            "translation": "in progress",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "deactivated",
+            "message": "deactivated",
+            "translation": "deactivated",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard service stopped",
+            "message": "WireGuard service stopped",
+            "translation": "WireGuard service stopped",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "computer went to sleep",
+            "message": "computer went to sleep",
+            "translation": "computer went to sleep",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "unknown",
+            "message": "unknown",
+            "translation": "unknown",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Connection history is disabled by policy.",
+            "message": "Connection history is disabled by policy.",
+            "translation": "Connection history is disabled by policy.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Nothing recorded yet. Usage and sessions show up here once the tunnel has been active.",
+            "message": "Nothing recorded yet. Usage and sessions show up here once the tunnel has been active.",
+            "translation": "Nothing recorded yet. Usage and sessions show up here once the tunnel has been active.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "HISTORY",
+            "message": "HISTORY",
+            "translation": "HISTORY",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last 7 days",
+            "message": "Last 7 days",
+            "translation": "Last 7 days",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last 30 days",
+            "message": "Last 30 days",
+            "translation": "Last 30 days",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{FormatPercentpercent} of active time connected, over the last {UptimeDays} days",
+            "message": "{FormatPercentpercent} of active time connected, over the last {UptimeDays} days",
+            "translation": "{FormatPercentpercent} of active time connected, over the last {UptimeDays} days",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "FormatPercentpercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(percent)"
+                },
+                {
+                    "id": "UptimeDays",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "uptimeDays"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "USAGE",
+            "message": "USAGE",
+            "translation": "USAGE",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Active",
             "message": "Active",
             "translation": "Active",
@@ -1055,37 +1796,79 @@
             "fuzzy": true
         },
         {
-            "id": "Activating",
-            "message": "Activating",
-            "translation": "Activating",
+            "id": "Uptime",
+            "message": "Uptime",
+            "translation": "Uptime",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Inactive",
-            "message": "Inactive",
-            "translation": "Inactive",
+            "id": "SESSIONS",
+            "message": "SESSIONS",
+            "translation": "SESSIONS",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Deactivating",
-            "message": "Deactivating",
-            "translation": "Deactivating",
+            "id": "{RxBytes} · {TxBytes}",
+            "message": "{RxBytes} · {TxBytes}",
+            "translation": "{RxBytes} · {TxBytes}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "RxBytes",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "l18n.Sprintf(\"In %s\", formatBytes(session.RxBytes))"
+                },
+                {
+                    "id": "TxBytes",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "l18n.Sprintf(\"Out %s\", formatBytes(session.TxBytes))"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Show all {Lensessions} sessions",
+            "message": "Show all {Lensessions} sessions",
+            "translation": "Show all {Lensessions} sessions",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Lensessions",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "len(sessions)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Show fewer",
+            "message": "Show fewer",
+            "translation": "Show fewer",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Unknown state",
-            "message": "Unknown state",
-            "translation": "Unknown state",
+            "id": "Save history…",
+            "message": "Save history…",
+            "translation": "Save history…",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Log",
-            "message": "Log",
-            "translation": "Log",
+            "id": "Clear history",
+            "message": "Clear history",
+            "translation": "Clear history",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1125,13 +1908,6 @@
             "fuzzy": true
         },
         {
-            "id": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-            "message": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-            "translation": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "Export log to file",
             "message": "Export log to file",
             "translation": "Export log to file",
@@ -1139,9 +1915,44 @@
             "fuzzy": true
         },
         {
+            "id": "Log",
+            "message": "Log",
+            "translation": "Log",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Copy",
+            "message": "Copy",
+            "translation": "Copy",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save to file…",
+            "message": "Save to file…",
+            "translation": "Save to file…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "\u0026About WireGuard…",
             "message": "\u0026About WireGuard…",
             "translation": "\u0026About WireGuard…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "All",
+            "message": "All",
+            "translation": "All",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Warnings and errors",
+            "message": "Warnings and errors",
+            "translation": "Warnings and errors",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1187,185 +1998,6 @@
             "fuzzy": true
         },
         {
-            "id": "WireGuard Detection Error",
-            "message": "WireGuard Detection Error",
-            "translation": "WireGuard Detection Error",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Unable to wait for WireGuard window to appear: {Err}",
-            "message": "Unable to wait for WireGuard window to appear: {Err}",
-            "translation": "Unable to wait for WireGuard window to appear: {Err}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Err",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "err"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "WireGuard: Deactivated",
-            "message": "WireGuard: Deactivated",
-            "translation": "WireGuard: Deactivated",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Status: Unknown",
-            "message": "Status: Unknown",
-            "translation": "Status: Unknown",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Addresses: None",
-            "message": "Addresses: None",
-            "translation": "Addresses: None",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "\u0026Manage tunnels…",
-            "message": "\u0026Manage tunnels…",
-            "translation": "\u0026Manage tunnels…",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "\u0026Import tunnel(s) from file…",
-            "message": "\u0026Import tunnel(s) from file…",
-            "translation": "\u0026Import tunnel(s) from file…",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "E\u0026xit",
-            "message": "E\u0026xit",
-            "translation": "E\u0026xit",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "\u0026Tunnels",
-            "message": "\u0026Tunnels",
-            "translation": "\u0026Tunnels",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "WireGuard Activated",
-            "message": "WireGuard Activated",
-            "translation": "WireGuard Activated",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "The {Name} tunnel has been activated.",
-            "message": "The {Name} tunnel has been activated.",
-            "translation": "The {Name} tunnel has been activated.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnel.Name"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "WireGuard Deactivated",
-            "message": "WireGuard Deactivated",
-            "translation": "WireGuard Deactivated",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "The {Name} tunnel has been deactivated.",
-            "message": "The {Name} tunnel has been deactivated.",
-            "translation": "The {Name} tunnel has been deactivated.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnel.Name"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "WireGuard Tunnel Error",
-            "message": "WireGuard Tunnel Error",
-            "translation": "WireGuard Tunnel Error",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "WireGuard: {TextForStateglobalState_true}",
-            "message": "WireGuard: {TextForStateglobalState_true}",
-            "translation": "WireGuard: {TextForStateglobalState_true}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TextForStateglobalState_true",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "textForState(globalState, true)"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "Status: {StateText}",
-            "message": "Status: {StateText}",
-            "translation": "Status: {StateText}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "StateText",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "stateText"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "Addresses: {EnumerationSeparator}",
-            "message": "Addresses: {EnumerationSeparator}",
-            "translation": "Addresses: {EnumerationSeparator}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "EnumerationSeparator",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "strings.Join(addrs, l18n.EnumerationSeparator())"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
             "id": "An Update is Available!",
             "message": "An Update is Available!",
             "translation": "An Update is Available!",
@@ -1373,86 +2005,202 @@
             "fuzzy": true
         },
         {
-            "id": "WireGuard Update Available",
-            "message": "WireGuard Update Available",
-            "translation": "WireGuard Update Available",
+            "id": "Failed to determine tunnel state",
+            "message": "Failed to determine tunnel state",
+            "translation": "Failed to determine tunnel state",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "An update to WireGuard is now available. You are advised to update as soon as possible.",
-            "message": "An update to WireGuard is now available. You are advised to update as soon as possible.",
-            "translation": "An update to WireGuard is now available. You are advised to update as soon as possible.",
+            "id": "Failed to activate tunnel",
+            "message": "Failed to activate tunnel",
+            "translation": "Failed to activate tunnel",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Tunnels",
-            "message": "Tunnels",
-            "translation": "Tunnels",
+            "id": "Failed to deactivate tunnel",
+            "message": "Failed to deactivate tunnel",
+            "translation": "Failed to deactivate tunnel",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "\u0026Edit",
-            "message": "\u0026Edit",
-            "translation": "\u0026Edit",
+            "id": "Unable to change the measurement",
+            "message": "Unable to change the measurement",
+            "translation": "Unable to change the measurement",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Add \u0026empty tunnel…",
-            "message": "Add \u0026empty tunnel…",
-            "translation": "Add \u0026empty tunnel…",
+            "id": "Unable to change the favorite",
+            "message": "Unable to change the favorite",
+            "translation": "Unable to change the favorite",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Add Tunnel",
-            "message": "Add Tunnel",
-            "translation": "Add Tunnel",
+            "id": "Unable to change the color",
+            "message": "Unable to change the color",
+            "translation": "Unable to change the color",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Remove selected tunnel(s)",
-            "message": "Remove selected tunnel(s)",
-            "translation": "Remove selected tunnel(s)",
+            "id": "Unable to create tunnel",
+            "message": "Unable to create tunnel",
+            "translation": "Unable to create tunnel",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Export all tunnels to zip",
-            "message": "Export all tunnels to zip",
-            "translation": "Export all tunnels to zip",
+            "id": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "message": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "translation": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Delete tunnel ‘{Name}’",
+            "message": "Delete tunnel ‘{Name}’",
+            "translation": "Delete tunnel ‘{Name}’",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Question} You cannot undo this action.",
+            "message": "{Question} You cannot undo this action.",
+            "translation": "{Question} You cannot undo this action.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Question",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "question"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Unable to delete tunnel",
+            "message": "Unable to delete tunnel",
+            "translation": "Unable to delete tunnel",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "\u0026Toggle",
-            "message": "\u0026Toggle",
-            "translation": "\u0026Toggle",
+            "id": "A tunnel was unable to be removed: {Error}",
+            "message": "A tunnel was unable to be removed: {Error}",
+            "translation": "A tunnel was unable to be removed: {Error}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Error",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "err.Error()"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Are you sure you would like to clear the connection history of tunnel ‘{Name}’?",
+            "message": "Are you sure you would like to clear the connection history of tunnel ‘{Name}’?",
+            "translation": "Are you sure you would like to clear the connection history of tunnel ‘{Name}’?",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Clear history of ‘{Name}’",
+            "message": "Clear history of ‘{Name}’",
+            "translation": "Clear history of ‘{Name}’",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Unable to clear history",
+            "message": "Unable to clear history",
+            "translation": "Unable to clear history",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Export all tunnels to \u0026zip…",
-            "message": "Export all tunnels to \u0026zip…",
-            "translation": "Export all tunnels to \u0026zip…",
+            "id": "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+            "message": "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+            "translation": "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "Edit \u0026selected tunnel…",
-            "message": "Edit \u0026selected tunnel…",
-            "translation": "Edit \u0026selected tunnel…",
+            "id": "Save connection history to file",
+            "message": "Save connection history to file",
+            "translation": "Save connection history to file",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
         {
-            "id": "\u0026Remove selected tunnel(s)",
-            "message": "\u0026Remove selected tunnel(s)",
-            "translation": "\u0026Remove selected tunnel(s)",
+            "id": "Unable to read connection history",
+            "message": "Unable to read connection history",
+            "translation": "Unable to read connection history",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "translation": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Import tunnel(s) from file",
+            "message": "Import tunnel(s) from file",
+            "translation": "Import tunnel(s) from file",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1603,193 +2351,6 @@
             ]
         },
         {
-            "id": "Unable to create tunnel",
-            "message": "Unable to create tunnel",
-            "translation": "Unable to create tunnel",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Delete {TunnelCount} tunnels",
-            "message": "Delete {TunnelCount} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "one": {
-                            "msg": "Delete {TunnelCount} tunnel"
-                        },
-                        "other": {
-                            "msg": "Delete {TunnelCount} tunnels"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "message": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "one": {
-                            "msg": "Are you sure you would like to delete {TunnelCount} tunnel?"
-                        },
-                        "other": {
-                            "msg": "Are you sure you would like to delete {TunnelCount} tunnels?"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Delete tunnel ‘{TunnelName}’",
-            "message": "Delete tunnel ‘{TunnelName}’",
-            "translation": "Delete tunnel ‘{TunnelName}’",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "message": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "translation": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "{Question} You cannot undo this action.",
-            "message": "{Question} You cannot undo this action.",
-            "translation": "{Question} You cannot undo this action.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Question",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "question"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "Unable to delete tunnel",
-            "message": "Unable to delete tunnel",
-            "translation": "Unable to delete tunnel",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "A tunnel was unable to be removed: {Error}",
-            "message": "A tunnel was unable to be removed: {Error}",
-            "translation": "A tunnel was unable to be removed: {Error}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Error",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "errors[0].Error()"
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "Unable to delete tunnels",
-            "message": "Unable to delete tunnels",
-            "translation": "Unable to delete tunnels",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "{Lenerrors} tunnels were unable to be removed.",
-            "message": "{Lenerrors} tunnels were unable to be removed.",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "Lenerrors",
-                    "cases": {
-                        "one": {
-                            "msg": "{Lenerrors} tunnel was unable to be removed."
-                        },
-                        "other": {
-                            "msg": "{Lenerrors} tunnels were unable to be removed."
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "Lenerrors",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "len(errors)"
-                }
-            ]
-        },
-        {
-            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "translation": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Import tunnel(s) from file",
-            "message": "Import tunnel(s) from file",
-            "translation": "Import tunnel(s) from file",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
             "id": "Configuration ZIP Files (*.zip)|*.zip",
             "message": "Configuration ZIP Files (*.zip)|*.zip",
             "translation": "Configuration ZIP Files (*.zip)|*.zip",
@@ -1800,6 +2361,1831 @@
             "id": "Export tunnels to zip",
             "message": "Export tunnels to zip",
             "translation": "Export tunnels to zip",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Ethernet",
+            "message": "Ethernet",
+            "translation": "Ethernet",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Wi-Fi",
+            "message": "Wi-Fi",
+            "translation": "Wi-Fi",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "mobile network",
+            "message": "mobile network",
+            "translation": "mobile network",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "other network",
+            "message": "other network",
+            "translation": "other network",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "the peer answered from another address than the configured one",
+            "message": "the peer answered from another address than the configured one",
+            "translation": "the peer answered from another address than the configured one",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "the name now resolves to other addresses; reactivate the tunnel to follow it",
+            "message": "the name now resolves to other addresses; reactivate the tunnel to follow it",
+            "translation": "the name now resolves to other addresses; reactivate the tunnel to follow it",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Tunnel MTU",
+            "message": "Tunnel MTU",
+            "translation": "Tunnel MTU",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No, only the allowed IPs",
+            "message": "No, only the allowed IPs",
+            "translation": "No, only the allowed IPs",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Yes",
+            "message": "Yes",
+            "translation": "Yes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "All traffic",
+            "message": "All traffic",
+            "translation": "All traffic",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Endpoint",
+            "message": "Endpoint",
+            "translation": "Endpoint",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Address in use",
+            "message": "Address in use",
+            "translation": "Address in use",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "none yet",
+            "message": "none yet",
+            "translation": "none yet",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "IPv4",
+            "message": "IPv4",
+            "translation": "IPv4",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "IPv6",
+            "message": "IPv6",
+            "translation": "IPv6",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{String} ({Family})",
+            "message": "{String} ({Family})",
+            "translation": "{String} ({Family})",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "String",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "peer.Address.String()"
+                },
+                {
+                    "id": "Family",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "family"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Carried by",
+            "message": "Carried by",
+            "translation": "Carried by",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "no route outside the tunnel",
+            "message": "no route outside the tunnel",
+            "translation": "no route outside the tunnel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Carrier MTU",
+            "message": "Carrier MTU",
+            "translation": "Carrier MTU",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{CarrierMTU_10} · the tunnel MTU plus {Overhead} bytes of WireGuard does not fit; use a tunnel MTU of {CarrierMTU_overhead_10} or less",
+            "message": "{CarrierMTU_10} · the tunnel MTU plus {Overhead} bytes of WireGuard does not fit; use a tunnel MTU of {CarrierMTU_overhead_10} or less",
+            "translation": "{CarrierMTU_10} · the tunnel MTU plus {Overhead} bytes of WireGuard does not fit; use a tunnel MTU of {CarrierMTU_overhead_10} or less",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "CarrierMTU_10",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "strconv.FormatUint(uint64(peer.CarrierMTU), 10)"
+                },
+                {
+                    "id": "Overhead",
+                    "string": "%[2]d",
+                    "type": "uint32",
+                    "underlyingType": "uint32",
+                    "argNum": 2,
+                    "expr": "overhead"
+                },
+                {
+                    "id": "CarrierMTU_overhead_10",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "strconv.FormatUint(uint64(peer.CarrierMTU-overhead), 10)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Address to measure",
+            "message": "Address to measure",
+            "translation": "Address to measure",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Connection quality is measured by pinging an address through the tunnel once a second. Leave the field empty to let WireGuard choose a peer address or DNS server of the tunnel.",
+            "message": "Connection quality is measured by pinging an address through the tunnel once a second. Leave the field empty to let WireGuard choose a peer address or DNS server of the tunnel.",
+            "translation": "Connection quality is measured by pinging an address through the tunnel once a second. Leave the field empty to let WireGuard choose a peer address or DNS server of the tunnel.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "\u0026Address:",
+            "message": "\u0026Address:",
+            "translation": "\u0026Address:",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "automatic",
+            "message": "automatic",
+            "translation": "automatic",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "OK",
+            "message": "OK",
+            "translation": "OK",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Invalid address",
+            "message": "Invalid address",
+            "translation": "Invalid address",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard Detection Error",
+            "message": "WireGuard Detection Error",
+            "translation": "WireGuard Detection Error",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unable to wait for WireGuard window to appear: {Err}",
+            "message": "Unable to wait for WireGuard window to appear: {Err}",
+            "translation": "Unable to wait for WireGuard window to appear: {Err}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Err",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "err"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Not connected",
+            "message": "Not connected",
+            "translation": "Not connected",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No tunnel is active",
+            "message": "No tunnel is active",
+            "translation": "No tunnel is active",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Activating…",
+            "message": "Activating…",
+            "translation": "Activating…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Deactivating…",
+            "message": "Deactivating…",
+            "translation": "Deactivating…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Connected",
+            "message": "Connected",
+            "translation": "Connected",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Waiting for peer",
+            "message": "Waiting for peer",
+            "translation": "Waiting for peer",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Peer does not answer · network unaffected",
+            "message": "Peer does not answer · network unaffected",
+            "translation": "Peer does not answer · network unaffected",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "message": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "translation": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No connection",
+            "message": "No connection",
+            "translation": "No connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Peer does not answer",
+            "message": "Peer does not answer",
+            "translation": "Peer does not answer",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Network cut off",
+            "message": "Network cut off",
+            "translation": "Network cut off",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "message": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "translation": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Active · connection not verified yet",
+            "message": "Active · connection not verified yet",
+            "translation": "Active · connection not verified yet",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Inactive",
+            "message": "Inactive",
+            "translation": "Inactive",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unknown state",
+            "message": "Unknown state",
+            "translation": "Unknown state",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Key used elsewhere",
+            "message": "Key used elsewhere",
+            "translation": "Key used elsewhere",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translation": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The connection is unstable: it was lost and re-established recently.",
+            "message": "The connection is unstable: it was lost and re-established recently.",
+            "translation": "The connection is unstable: it was lost and re-established recently.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Listen port {Port} does not work here",
+            "message": "Listen port {Port} does not work here",
+            "translation": "Listen port {Port} does not work here",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Port",
+                    "string": "%[1]d",
+                    "type": "uint16",
+                    "underlyingType": "uint16",
+                    "argNum": 1,
+                    "expr": "port"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "message": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "translation": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Port",
+                    "string": "%[1]d",
+                    "type": "uint16",
+                    "underlyingType": "uint16",
+                    "argNum": 1,
+                    "expr": "port"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "No tunnels yet",
+            "message": "No tunnels yet",
+            "translation": "No tunnels yet",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Add the configuration you were given to get started.",
+            "message": "Add the configuration you were given to get started.",
+            "translation": "Add the configuration you were given to get started.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "There is nothing to connect to yet.",
+            "message": "There is nothing to connect to yet.",
+            "translation": "There is nothing to connect to yet.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{Name} · latest handshake {FormatAgohandshakeAgehandshake_now}",
+            "message": "{Name} · latest handshake {FormatAgohandshakeAgehandshake_now}",
+            "translation": "{Name} · latest handshake {FormatAgohandshakeAgehandshake_now}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "hero.tunnel.Name"
+                },
+                {
+                    "id": "FormatAgohandshakeAgehandshake_now",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatAgo(handshakeAge(handshake, now))"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Address",
+            "message": "Address",
+            "translation": "Address",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Connected for",
+            "message": "Connected for",
+            "translation": "Connected for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Quality",
+            "message": "Quality",
+            "translation": "Quality",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Deactivate",
+            "message": "Deactivate",
+            "translation": "Deactivate",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Details",
+            "message": "Details",
+            "translation": "Details",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Activate {Name}",
+            "message": "Activate {Name}",
+            "translation": "Activate {Name}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Import from file",
+            "message": "Import from file",
+            "translation": "Import from file",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Add a tunnel",
+            "message": "Add a tunnel",
+            "translation": "Add a tunnel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Import reads .conf files, or .zip files of them, as your VPN provider or administrator hands them out. Add a tunnel opens an editor: paste a configuration you were given as text, or write a new one with a fresh key pair.",
+            "message": "Import reads .conf files, or .zip files of them, as your VPN provider or administrator hands them out. Add a tunnel opens an editor: paste a configuration you were given as text, or write a new one with a fresh key pair.",
+            "translation": "Import reads .conf files, or .zip files of them, as your VPN provider or administrator hands them out. Add a tunnel opens an editor: paste a configuration you were given as text, or write a new one with a fresh key pair.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Tunnels can only be added by an administrator of this computer. Once one is added, it shows up here and you can switch it on and off.",
+            "message": "Tunnels can only be added by an administrator of this computer. Once one is added, it shows up here and you can switch it on and off.",
+            "translation": "Tunnels can only be added by an administrator of this computer. Once one is added, it shows up here and you can switch it on and off.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "OTHER TUNNELS",
+            "message": "OTHER TUNNELS",
+            "translation": "OTHER TUNNELS",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "TUNNELS",
+            "message": "TUNNELS",
+            "translation": "TUNNELS",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Filter tunnels by name",
+            "message": "Filter tunnels by name",
+            "translation": "Filter tunnels by name",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No tunnel name contains “{Filter}”",
+            "message": "No tunnel name contains “{Filter}”",
+            "translation": "No tunnel name contains “{Filter}”",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Filter",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "strings.TrimSpace(mtw.filter)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Add tunnel",
+            "message": "Add tunnel",
+            "translation": "Add tunnel",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Import",
+            "message": "Import",
+            "translation": "Import",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Export",
+            "message": "Export",
+            "translation": "Export",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Public key",
+            "message": "Public key",
+            "translation": "Public key",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Listen port",
+            "message": "Listen port",
+            "translation": "Listen port",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "MTU",
+            "message": "MTU",
+            "translation": "MTU",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Addresses",
+            "message": "Addresses",
+            "translation": "Addresses",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "DNS servers",
+            "message": "DNS servers",
+            "translation": "DNS servers",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "pre-up",
+            "message": "pre-up",
+            "translation": "pre-up",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "post-up",
+            "message": "post-up",
+            "translation": "post-up",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "pre-down",
+            "message": "pre-down",
+            "translation": "pre-down",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "post-down",
+            "message": "post-down",
+            "translation": "post-down",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "disabled, per policy",
+            "message": "disabled, per policy",
+            "translation": "disabled, per policy",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Scripts",
+            "message": "Scripts",
+            "translation": "Scripts",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Table",
+            "message": "Table",
+            "translation": "Table",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "off",
+            "message": "off",
+            "translation": "off",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Preshared key",
+            "message": "Preshared key",
+            "translation": "Preshared key",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "enabled",
+            "message": "enabled",
+            "translation": "enabled",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Allowed IPs",
+            "message": "Allowed IPs",
+            "translation": "Allowed IPs",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Persistent keepalive",
+            "message": "Persistent keepalive",
+            "translation": "Persistent keepalive",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Latest handshake",
+            "message": "Latest handshake",
+            "translation": "Latest handshake",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Transfer",
+            "message": "Transfer",
+            "translation": "Transfer",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{RxBytes} received, {TxBytes} sent",
+            "message": "{RxBytes} received, {TxBytes} sent",
+            "translation": "{RxBytes} received, {TxBytes} sent",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "RxBytes",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatBytes(uint64(c.RxBytes))"
+                },
+                {
+                    "id": "TxBytes",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatBytes(uint64(c.TxBytes))"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Copy public key",
+            "message": "Copy public key",
+            "translation": "Copy public key",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "CONNECTION",
+            "message": "CONNECTION",
+            "translation": "CONNECTION",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "PATH",
+            "message": "PATH",
+            "translation": "PATH",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "INTERFACE",
+            "message": "INTERFACE",
+            "translation": "INTERFACE",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "PEER",
+            "message": "PEER",
+            "translation": "PEER",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Activate",
+            "message": "Activate",
+            "translation": "Activate",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Edit",
+            "message": "Edit",
+            "translation": "Edit",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Remove",
+            "message": "Remove",
+            "translation": "Remove",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Green",
+            "message": "Green",
+            "translation": "Green",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Blue",
+            "message": "Blue",
+            "translation": "Blue",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Violet",
+            "message": "Violet",
+            "translation": "Violet",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Amber",
+            "message": "Amber",
+            "translation": "Amber",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Red",
+            "message": "Red",
+            "translation": "Red",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Teal",
+            "message": "Teal",
+            "translation": "Teal",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Pink",
+            "message": "Pink",
+            "translation": "Pink",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Gray",
+            "message": "Gray",
+            "translation": "Gray",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "None",
+            "message": "None",
+            "translation": "None",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Favorites are listed first, here and in the tray menu.",
+            "message": "Favorites are listed first, here and in the tray menu.",
+            "translation": "Favorites are listed first, here and in the tray menu.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Pings an address through the tunnel once a second to show latency and loss. Off by default, as it sends traffic of its own.",
+            "message": "Pings an address through the tunnel once a second to show latency and loss. Off by default, as it sends traffic of its own.",
+            "translation": "Pings an address through the tunnel once a second to show latency and loss. Off by default, as it sends traffic of its own.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Disabled by policy. Your administrator does not allow measuring connection quality.",
+            "message": "Disabled by policy. Your administrator does not allow measuring connection quality.",
+            "translation": "Disabled by policy. Your administrator does not allow measuring connection quality.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "SETTINGS",
+            "message": "SETTINGS",
+            "translation": "SETTINGS",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Favorite",
+            "message": "Favorite",
+            "translation": "Favorite",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Color",
+            "message": "Color",
+            "translation": "Color",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Measure connection quality",
+            "message": "Measure connection quality",
+            "translation": "Measure connection quality",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Change…",
+            "message": "Change…",
+            "translation": "Change…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Not verified",
+            "message": "Not verified",
+            "translation": "Not verified",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "No data",
+            "message": "No data",
+            "translation": "No data",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Handshake",
+            "message": "Handshake",
+            "translation": "Handshake",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Reconnect",
+            "message": "Reconnect",
+            "translation": "Reconnect",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Lost probe",
+            "message": "Lost probe",
+            "translation": "Lost probe",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unstable",
+            "message": "Unstable",
+            "translation": "Unstable",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Events",
+            "message": "Events",
+            "translation": "Events",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{Reconnects} reconnects",
+            "message": "{Reconnects} reconnects",
+            "translation": "{Reconnects} reconnects",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Reconnects",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.reconnects"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Handshakes} handshakes",
+            "message": "{Handshakes} handshakes",
+            "translation": "{Handshakes} handshakes",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Handshakes",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.handshakes"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Lost} of {Sent} probes lost",
+            "message": "{Lost} of {Sent} probes lost",
+            "translation": "{Lost} of {Sent} probes lost",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Lost",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.lost"
+                },
+                {
+                    "id": "Sent",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "bucket.sent"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Reconnects} reconnects · {Handshakes} handshakes",
+            "message": "{Reconnects} reconnects · {Handshakes} handshakes",
+            "translation": "{Reconnects} reconnects · {Handshakes} handshakes",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Reconnects",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "reconnects"
+                },
+                {
+                    "id": "Handshakes",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "handshakes"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "0 ms",
+            "message": "0 ms",
+            "translation": "0 ms",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{Ms} ms",
+            "message": "{Ms} ms",
+            "translation": "{Ms} ms",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Ms",
+                    "string": "%.1[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "ms"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Percent} %",
+            "message": "{Percent} %",
+            "translation": "{Percent} %",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Percent",
+                    "string": "%.0[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "percent"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{LossPercent} loss",
+            "message": "{LossPercent} loss",
+            "translation": "{LossPercent} loss",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LossPercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(summary.lossPercent())"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Latency} · {LossPercent} loss",
+            "message": "{Latency} · {LossPercent} loss",
+            "translation": "{Latency} · {LossPercent} loss",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Latency",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatLatency(summary.latency)"
+                },
+                {
+                    "id": "LossPercent",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatPercent(summary.lossPercent())"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Quality cannot be measured",
+            "message": "Quality cannot be measured",
+            "translation": "Quality cannot be measured",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The address used to measure the connection does not answer pings, so latency and loss are unknown. This says nothing about the tunnel itself. Choose another address on the details screen.",
+            "message": "The address used to measure the connection does not answer pings, so latency and loss are unknown. This says nothing about the tunnel itself. Choose another address on the details screen.",
+            "translation": "The address used to measure the connection does not answer pings, so latency and loss are unknown. This says nothing about the tunnel itself. Choose another address on the details screen.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Poor connection quality",
+            "message": "Poor connection quality",
+            "translation": "Poor connection quality",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{LossPercent} of the test pings in the last minute got no answer. Pages may load slowly and calls may break up.",
+            "message": "{LossPercent} of the test pings in the last minute got no answer. Pages may load slowly and calls may break up.",
+            "translation": "{LossPercent} of the test pings in the last minute got no answer. Pages may load slowly and calls may break up.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LossPercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(summary.lossPercent())"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Slow connection",
+            "message": "Slow connection",
+            "translation": "Slow connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Answers through the tunnel took {Latency} on average in the last minute, which makes the connection feel slow.",
+            "message": "Answers through the tunnel took {Latency} on average in the last minute, which makes the connection feel slow.",
+            "translation": "Answers through the tunnel took {Latency} on average in the last minute, which makes the connection feel slow.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Latency",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatLatency(summary.latency)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds} s",
+            "message": "{Seconds} s",
+            "translation": "{Seconds} s",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds__60} min",
+            "message": "{Seconds__60} min",
+            "translation": "{Seconds__60} min",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds__60",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 60"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds__3600} h {Seconds__3600__60} min",
+            "message": "{Seconds__3600} h {Seconds__3600__60} min",
+            "translation": "{Seconds__3600} h {Seconds__3600__60} min",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds__3600",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 3600"
+                },
+                {
+                    "id": "Seconds__3600__60",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 3600 / 60"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "message": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "translation": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Seconds__86400",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 86400"
+                },
+                {
+                    "id": "Seconds__86400__3600",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 86400 / 3600"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "last active {LastActiveEnd} for {LastActiveDuration}",
+            "message": "last active {LastActiveEnd} for {LastActiveDuration}",
+            "translation": "last active {LastActiveEnd} for {LastActiveDuration}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "LastActiveEnd",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatAgo(now.Sub(metrics.LastActiveEnd))"
+                },
+                {
+                    "id": "LastActiveDuration",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(metrics.LastActiveDuration)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Active for",
+            "message": "Active for",
+            "translation": "Active for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "not connected",
+            "message": "not connected",
+            "translation": "not connected",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Receiving",
+            "message": "Receiving",
+            "translation": "Receiving",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Sending",
+            "message": "Sending",
+            "translation": "Sending",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Interface errors",
+            "message": "Interface errors",
+            "translation": "Interface errors",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{InErrors} in, {OutErrors} out",
+            "message": "{InErrors} in, {OutErrors} out",
+            "translation": "{InErrors} in, {OutErrors} out",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "InErrors",
+                    "string": "%[1]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 1,
+                    "expr": "metrics.InErrors"
+                },
+                {
+                    "id": "OutErrors",
+                    "string": "%[2]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 2,
+                    "expr": "metrics.OutErrors"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Dropped packets",
+            "message": "Dropped packets",
+            "translation": "Dropped packets",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Connection failures",
+            "message": "Connection failures",
+            "translation": "Connection failures",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{ConnectionFailures}",
+            "message": "{ConnectionFailures}",
+            "translation": "{ConnectionFailures}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "ConnectionFailures",
+                    "string": "%[1]d",
+                    "type": "uint32",
+                    "underlyingType": "uint32",
+                    "argNum": 1,
+                    "expr": "metrics.ConnectionFailures"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Reconnects",
+            "message": "Reconnects",
+            "translation": "Reconnects",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last active",
+            "message": "Last active",
+            "translation": "Last active",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Last active for",
+            "message": "Last active for",
+            "translation": "Last active for",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "no reply from the measured address",
+            "message": "no reply from the measured address",
+            "translation": "no reply from the measured address",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "no answer in the last minute",
+            "message": "no answer in the last minute",
+            "translation": "no answer in the last minute",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Jitter",
+            "message": "Jitter",
+            "translation": "Jitter",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Loss",
+            "message": "Loss",
+            "translation": "Loss",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{FormatPercentloss} ({Lost} of {Sent} in the last minute)",
+            "message": "{FormatPercentloss} ({Lost} of {Sent} in the last minute)",
+            "translation": "{FormatPercentloss} ({Lost} of {Sent} in the last minute)",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "FormatPercentloss",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(loss)"
+                },
+                {
+                    "id": "Lost",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "quality.lost"
+                },
+                {
+                    "id": "Sent",
+                    "string": "%[3]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 3,
+                    "expr": "quality.sent"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Deactivated",
+            "message": "WireGuard: Deactivated",
+            "translation": "WireGuard: Deactivated",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard Activated",
+            "message": "WireGuard Activated",
+            "translation": "WireGuard Activated",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel has been activated.",
+            "message": "The {Name} tunnel has been activated.",
+            "translation": "The {Name} tunnel has been activated.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard Deactivated",
+            "message": "WireGuard Deactivated",
+            "translation": "WireGuard Deactivated",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel has been deactivated.",
+            "message": "The {Name} tunnel has been deactivated.",
+            "translation": "The {Name} tunnel has been deactivated.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard Tunnel Error",
+            "message": "WireGuard Tunnel Error",
+            "translation": "WireGuard Tunnel Error",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: No Connection",
+            "message": "WireGuard: No Connection",
+            "translation": "WireGuard: No Connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "translation": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Network Cut Off",
+            "message": "WireGuard: Network Cut Off",
+            "translation": "WireGuard: Network Cut Off",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "message": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "translation": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Unstable Connection",
+            "message": "WireGuard: Unstable Connection",
+            "translation": "WireGuard: Unstable Connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "message": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "translation": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: Key Used Elsewhere",
+            "message": "WireGuard: Key Used Elsewhere",
+            "translation": "WireGuard: Key Used Elsewhere",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "translation": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard Update Available",
+            "message": "WireGuard Update Available",
+            "translation": "WireGuard Update Available",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "An update to WireGuard is now available. You are advised to update as soon as possible.",
+            "message": "An update to WireGuard is now available. You are advised to update as soon as possible.",
+            "translation": "An update to WireGuard is now available. You are advised to update as soon as possible.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "WireGuard: {SprintfNot_connected}",
+            "message": "WireGuard: {SprintfNot_connected}",
+            "translation": "WireGuard: {SprintfNot_connected}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "SprintfNot_connected",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "l18n.Sprintf(\"Not connected\")"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Unstable connection",
+            "message": "Unstable connection",
+            "translation": "Unstable connection",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "{Name} (+{Others})",
+            "message": "{Name} (+{Others})",
+            "translation": "{Name} (+{Others})",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                },
+                {
+                    "id": "Others",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "others"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "{Name} · connected for {ConnectedSince}",
+            "message": "{Name} · connected for {ConnectedSince}",
+            "translation": "{Name} · connected for {ConnectedSince}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                },
+                {
+                    "id": "ConnectedSince",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(now.Sub(entry.metrics.ConnectedSince))"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "In {Rx} · Out {Tx}",
+            "message": "In {Rx} · Out {Tx}",
+            "translation": "In {Rx} · Out {Tx}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Rx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatRate(rate.rx)"
+                },
+                {
+                    "id": "Tx",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatRate(rate.tx)"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Turn off",
+            "message": "Turn off",
+            "translation": "Turn off",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "SWITCH TO",
+            "message": "SWITCH TO",
+            "translation": "SWITCH TO",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Manage tunnels",
+            "message": "Manage tunnels",
+            "translation": "Manage tunnels",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Import…",
+            "message": "Import…",
+            "translation": "Import…",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "About",
+            "message": "About",
+            "translation": "About",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Exit",
+            "message": "Exit",
+            "translation": "Exit",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         },
@@ -1899,6 +4285,23 @@
                     "underlyingType": "interface{Error() string}",
                     "argNum": 1,
                     "expr": "err"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Status: {StateText}",
+            "message": "Status: {StateText}",
+            "translation": "Status: {StateText}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "StateText",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "stateText"
                 }
             ],
             "fuzzy": true

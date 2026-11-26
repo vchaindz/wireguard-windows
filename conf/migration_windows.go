@@ -104,6 +104,6 @@ func migrateUnencryptedConfigs(sharingBase int, migrated MigrationCallback) {
 		migrated(config.Name, path, newPath)
 		continue
 	error:
-		log.Printf("Unable to ingest and encrypt %#q: %v", path, err)
+		log.Printf("Error: unable to ingest and encrypt %#q: %v", path, err)
 	}
 }

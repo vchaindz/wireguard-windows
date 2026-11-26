@@ -208,7 +208,7 @@ func changeTunnelServiceConfigFilePath(name, oldPath, newPath string) {
 	var err error
 	defer func() {
 		if err != nil {
-			log.Printf("Unable to change tunnel service command line argument from %#q to %#q: %v", oldPath, newPath, err)
+			log.Printf("Error: unable to change tunnel service command line argument from %#q to %#q: %v", oldPath, newPath, err)
 		}
 	}()
 	m, err := serviceManager()

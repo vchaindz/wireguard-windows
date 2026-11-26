@@ -637,205 +637,282 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Status:",
-            "message": "Status:",
-            "translation": "Stav:",
-            "translatorComment": "Copied from source."
+            "id": "1 h",
+            "message": "1 h",
+            "translation": ""
         },
         {
-            "id": "\u0026Deactivate",
-            "message": "\u0026Deactivate",
-            "translation": "\u0026Deaktivovať",
-            "translatorComment": "Copied from source."
+            "id": "24 h",
+            "message": "24 h",
+            "translation": ""
         },
         {
-            "id": "\u0026Activate",
-            "message": "\u0026Activate",
-            "translation": "\u0026Aktivovať",
-            "translatorComment": "Copied from source."
+            "id": "1 min",
+            "message": "1 min",
+            "translation": ""
         },
         {
-            "id": "Public key:",
-            "message": "Public key:",
-            "translation": "Verejný kľúč:",
-            "translatorComment": "Copied from source."
+            "id": "Traffic",
+            "message": "Traffic",
+            "translation": ""
         },
         {
-            "id": "Listen port:",
-            "message": "Listen port:",
-            "translation": "Otvorený port:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "MTU:",
-            "message": "MTU:",
-            "translation": "MTU:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Addresses:",
-            "message": "Addresses:",
-            "translation": "Adresy:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "DNS servers:",
-            "message": "DNS servers:",
-            "translation": "Servery DNS:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Scripts:",
-            "message": "Scripts:",
-            "translation": "Skripty:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Table:",
-            "message": "Table:",
-            "translation": "Tabuľka:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Preshared key:",
-            "message": "Preshared key:",
-            "translation": "Vopred zdieľaný kľúč:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Allowed IPs:",
-            "message": "Allowed IPs:",
-            "translation": "Povolené IP adresy:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Endpoint:",
-            "message": "Endpoint:",
-            "translation": "Koncový bod:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Persistent keepalive:",
-            "message": "Persistent keepalive:",
-            "translation": "Perzistentný keepalive:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Latest handshake:",
-            "message": "Latest handshake:",
-            "translation": "Posledné spojenie (handshake):",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Transfer:",
-            "message": "Transfer:",
-            "translation": "Prenos:",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "pre-up",
-            "message": "pre-up",
-            "translation": "pred zapnutím",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "post-up",
-            "message": "post-up",
-            "translation": "po zapnutí",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "pre-down",
-            "message": "pre-down",
-            "translation": "pred vypnutím",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "post-down",
-            "message": "post-down",
-            "translation": "po vypnutí",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "disabled, per policy",
-            "message": "disabled, per policy",
-            "translation": "zakázané, podľa politiky",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "off",
-            "message": "off",
-            "translation": "vypnuté",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "enabled",
-            "message": "enabled",
-            "translation": "povolené",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "{String} received, {String_1} sent",
-            "message": "{String} received, {String_1} sent",
-            "translation": "{String} prijatých, {String_1} odoslaných",
-            "translatorComment": "Copied from source.",
+            "id": "In {Rx}",
+            "message": "In {Rx}",
+            "translation": "",
             "placeholders": [
                 {
-                    "id": "String",
+                    "id": "Rx",
                     "string": "%[1]s",
                     "type": "string",
                     "underlyingType": "string",
                     "argNum": 1,
-                    "expr": "c.RxBytes.String()"
+                    "expr": "rx"
+                }
+            ]
+        },
+        {
+            "id": "Out {Tx}",
+            "message": "Out {Tx}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Tx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tx"
+                }
+            ]
+        },
+        {
+            "id": "Latency",
+            "message": "Latency",
+            "translation": ""
+        },
+        {
+            "id": "{LossPercent} lost",
+            "message": "{LossPercent} lost",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "LossPercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(quality.lossPercent())"
+                }
+            ]
+        },
+        {
+            "id": "No reply",
+            "message": "No reply",
+            "translation": ""
+        },
+        {
+            "id": "{Lost} of {Sent} lost",
+            "message": "{Lost} of {Sent} lost",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Lost",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.lost"
                 },
                 {
-                    "id": "String_1",
-                    "string": "%[2]s",
-                    "type": "string",
-                    "underlyingType": "string",
+                    "id": "Sent",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
                     "argNum": 2,
-                    "expr": "c.TxBytes.String()"
+                    "expr": "bucket.sent"
                 }
             ]
         },
         {
-            "id": "Failed to determine tunnel state",
-            "message": "Failed to determine tunnel state",
-            "translation": "Nepodarilo sa zistiť stav tunela",
-            "translatorComment": "Copied from source."
+            "id": "The endpoint name resolves",
+            "message": "The endpoint name resolves",
+            "translation": ""
         },
         {
-            "id": "Failed to activate tunnel",
-            "message": "Failed to activate tunnel",
-            "translation": "Nepodarilo sa aktivovať tunel",
-            "translatorComment": "Copied from source."
+            "id": "The peer answers a handshake",
+            "message": "The peer answers a handshake",
+            "translation": ""
         },
         {
-            "id": "Failed to deactivate tunnel",
-            "message": "Failed to deactivate tunnel",
-            "translation": "Nepodarilo sa deaktivovať tunel",
-            "translatorComment": "Copied from source."
+            "id": "Pings through the tunnel are answered",
+            "message": "Pings through the tunnel are answered",
+            "translation": ""
         },
         {
-            "id": "Interface: {Name}",
-            "message": "Interface: {Name}",
-            "translation": "Rozhranie: {Name}",
-            "translatorComment": "Copied from source.",
+            "id": "DNS answers through the tunnel",
+            "message": "DNS answers through the tunnel",
+            "translation": ""
+        },
+        {
+            "id": "The endpoint is reached outside the tunnel",
+            "message": "The endpoint is reached outside the tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Your network or its DNS is not working, or the name in the configuration is misspelled.",
+            "message": "Your network or its DNS is not working, or the name in the configuration is misspelled.",
+            "translation": ""
+        },
+        {
+            "id": "Check the endpoint and port, that the server runs, that both sides have each other's public key, and that no firewall blocks UDP.",
+            "message": "Check the endpoint and port, that the server runs, that both sides have each other's public key, and that no firewall blocks UDP.",
+            "translation": ""
+        },
+        {
+            "id": "The peer answers but traffic does not get through: check the allowed IPs on both sides, or choose an address that answers pings.",
+            "message": "The peer answers but traffic does not get through: check the allowed IPs on both sides, or choose an address that answers pings.",
+            "translation": ""
+        },
+        {
+            "id": "Check the DNS servers of the tunnel, and that the server's allowed IPs for this device include them.",
+            "message": "Check the DNS servers of the tunnel, and that the server's allowed IPs for this device include them.",
+            "translation": ""
+        },
+        {
+            "id": "The endpoint is only reachable through the tunnel itself. Check your network connection, or remove the endpoint's address from the allowed IPs.",
+            "message": "The endpoint is only reachable through the tunnel itself. Check your network connection, or remove the endpoint's address from the allowed IPs.",
+            "translation": ""
+        },
+        {
+            "id": "Checks in order that the endpoint name resolves, the peer answers, pings and DNS get through the tunnel, and the endpoint is not routed into the tunnel. Only this tunnel's own addresses are contacted.",
+            "message": "Checks in order that the endpoint name resolves, the peer answers, pings and DNS get through the tunnel, and the endpoint is not routed into the tunnel. Only this tunnel's own addresses are contacted.",
+            "translation": ""
+        },
+        {
+            "id": "Testing needs the tunnel to be active. A diagnostics file can be saved at any time.",
+            "message": "Testing needs the tunnel to be active. A diagnostics file can be saved at any time.",
+            "translation": ""
+        },
+        {
+            "id": "Testing… step {Steps1_diagnosisStepCount} of {DiagnosisStepCount}",
+            "message": "Testing… step {Steps1_diagnosisStepCount} of {DiagnosisStepCount}",
+            "translation": "",
             "placeholders": [
                 {
-                    "id": "Name",
+                    "id": "Steps1_diagnosisStepCount",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "min(len(diagnosis.steps)+1, diagnosisStepCount)"
+                },
+                {
+                    "id": "DiagnosisStepCount",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "diagnosisStepCount"
+                }
+            ]
+        },
+        {
+            "id": "Tested {Finished} · all checks passed",
+            "message": "Tested {Finished} · all checks passed",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Finished",
                     "string": "%[1]s",
                     "type": "string",
                     "underlyingType": "string",
                     "argNum": 1,
-                    "expr": "config.Name"
+                    "expr": "formatAgo(now.Sub(diagnosis.finished))"
                 }
             ]
         },
         {
-            "id": "Peer",
-            "message": "Peer",
-            "translation": "Peer",
+            "id": "Tested {Finished} · {Failed} of {Steps} checks failed",
+            "message": "Tested {Finished} · {Failed} of {Steps} checks failed",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Finished",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatAgo(now.Sub(diagnosis.finished))"
+                },
+                {
+                    "id": "Failed",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "failed"
+                },
+                {
+                    "id": "Steps",
+                    "string": "%[3]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 3,
+                    "expr": "len(diagnosis.steps)"
+                }
+            ]
+        },
+        {
+            "id": "TROUBLESHOOTING",
+            "message": "TROUBLESHOOTING",
+            "translation": ""
+        },
+        {
+            "id": "Test this tunnel",
+            "message": "Test this tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Save diagnostics…",
+            "message": "Save diagnostics…",
+            "translation": ""
+        },
+        {
+            "id": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+            "message": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+            "translation": "Textové súbory (*.txt)|*.txt|Všetky súbory (*.*)|*.*",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Save diagnostics to file",
+            "message": "Save diagnostics to file",
+            "translation": ""
+        },
+        {
+            "id": "Save diagnostics",
+            "message": "Save diagnostics",
+            "translation": ""
+        },
+        {
+            "id": "The file describes this tunnel for whoever helps you: versions, state, measurements, the last test, recent history and the log lines about it. It never contains private or preshared keys, and public keys are shortened. Addresses and host names are replaced by placeholders unless you include them.",
+            "message": "The file describes this tunnel for whoever helps you: versions, state, measurements, the last test, recent history and the log lines about it. It never contains private or preshared keys, and public keys are shortened. Addresses and host names are replaced by placeholders unless you include them.",
+            "translation": ""
+        },
+        {
+            "id": "\u0026Include addresses",
+            "message": "\u0026Include addresses",
+            "translation": ""
+        },
+        {
+            "id": "Save…",
+            "message": "Save…",
+            "translation": ""
+        },
+        {
+            "id": "Cancel",
+            "message": "Cancel",
+            "translation": "Zrušiť",
             "translatorComment": "Copied from source."
         },
         {
@@ -884,12 +961,6 @@
             "id": "\u0026Save",
             "message": "\u0026Save",
             "translation": "\u0026Uložiť",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Cancel",
-            "message": "Cancel",
-            "translation": "Zrušiť",
             "translatorComment": "Copied from source."
         },
         {
@@ -983,40 +1054,597 @@
             ]
         },
         {
+            "id": "{Number} KB",
+            "message": "{Number} KB",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ]
+        },
+        {
+            "id": "{Number} MB",
+            "message": "{Number} MB",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ]
+        },
+        {
+            "id": "{Number} GB",
+            "message": "{Number} GB",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ]
+        },
+        {
+            "id": "{Number} TB",
+            "message": "{Number} TB",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Number",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "number"
+                }
+            ]
+        },
+        {
+            "id": "{RoundTovalue_0}",
+            "message": "{RoundTovalue_0}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "RoundTovalue_0",
+                    "string": "%.0[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "roundTo(value, 0)"
+                }
+            ]
+        },
+        {
+            "id": "{RoundTovalue_1}",
+            "message": "{RoundTovalue_1}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "RoundTovalue_1",
+                    "string": "%.1[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "roundTo(value, 1)"
+                }
+            ]
+        },
+        {
+            "id": "{RoundTovalue_2}",
+            "message": "{RoundTovalue_2}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "RoundTovalue_2",
+                    "string": "%.2[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "roundTo(value, 2)"
+                }
+            ]
+        },
+        {
+            "id": "{5} B/s",
+            "message": "{5} B/s",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "5",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(bytesPerSecond + 0.5)"
+                }
+            ]
+        },
+        {
+            "id": "{LabelformatNumbervalue_decimals}/s",
+            "message": "{LabelformatNumbervalue_decimals}/s",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "LabelformatNumbervalue_decimals",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "unit.label(formatNumber(value, decimals))"
+                }
+            ]
+        },
+        {
+            "id": "now",
+            "message": "now",
+            "translation": ""
+        },
+        {
+            "id": "{Second} s ago",
+            "message": "{Second} s ago",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Second",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / time.Second)"
+                }
+            ]
+        },
+        {
+            "id": "{Minute} min ago",
+            "message": "{Minute} min ago",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Minute",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / time.Minute)"
+                }
+            ]
+        },
+        {
+            "id": "{Hour} h ago",
+            "message": "{Hour} h ago",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Hour",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / time.Hour)"
+                }
+            ]
+        },
+        {
+            "id": "{Hour} d ago",
+            "message": "{Hour} d ago",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Hour",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "int(ago / (24 * time.Hour))"
+                }
+            ]
+        },
+        {
+            "id": "Mon",
+            "message": "Mon",
+            "translation": ""
+        },
+        {
+            "id": "Tue",
+            "message": "Tue",
+            "translation": ""
+        },
+        {
+            "id": "Wed",
+            "message": "Wed",
+            "translation": ""
+        },
+        {
+            "id": "Thu",
+            "message": "Thu",
+            "translation": ""
+        },
+        {
+            "id": "Fri",
+            "message": "Fri",
+            "translation": ""
+        },
+        {
+            "id": "Sat",
+            "message": "Sat",
+            "translation": ""
+        },
+        {
+            "id": "Sun",
+            "message": "Sun",
+            "translation": ""
+        },
+        {
+            "id": "Jan",
+            "message": "Jan",
+            "translation": ""
+        },
+        {
+            "id": "Feb",
+            "message": "Feb",
+            "translation": ""
+        },
+        {
+            "id": "Mar",
+            "message": "Mar",
+            "translation": ""
+        },
+        {
+            "id": "Apr",
+            "message": "Apr",
+            "translation": ""
+        },
+        {
+            "id": "May",
+            "message": "May",
+            "translation": ""
+        },
+        {
+            "id": "Jun",
+            "message": "Jun",
+            "translation": ""
+        },
+        {
+            "id": "Jul",
+            "message": "Jul",
+            "translation": ""
+        },
+        {
+            "id": "Aug",
+            "message": "Aug",
+            "translation": ""
+        },
+        {
+            "id": "Sep",
+            "message": "Sep",
+            "translation": ""
+        },
+        {
+            "id": "Oct",
+            "message": "Oct",
+            "translation": ""
+        },
+        {
+            "id": "Nov",
+            "message": "Nov",
+            "translation": ""
+        },
+        {
+            "id": "Dec",
+            "message": "Dec",
+            "translation": ""
+        },
+        {
+            "id": "Today",
+            "message": "Today",
+            "translation": ""
+        },
+        {
+            "id": "Yesterday",
+            "message": "Yesterday",
+            "translation": ""
+        },
+        {
+            "id": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth} {Itoayear}",
+            "message": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth} {Itoayear}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "WeekdayNameweekday",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "weekdayName(weekday)"
+                },
+                {
+                    "id": "Itoadate",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "strconv.Itoa(date)"
+                },
+                {
+                    "id": "MonthNamemonth",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "monthName(month)"
+                },
+                {
+                    "id": "Itoayear",
+                    "string": "%[4]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 4,
+                    "expr": "strconv.Itoa(year)"
+                }
+            ]
+        },
+        {
+            "id": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth}",
+            "message": "{WeekdayNameweekday} {Itoadate} {MonthNamemonth}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "WeekdayNameweekday",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "weekdayName(weekday)"
+                },
+                {
+                    "id": "Itoadate",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "strconv.Itoa(date)"
+                },
+                {
+                    "id": "MonthNamemonth",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "monthName(month)"
+                }
+            ]
+        },
+        {
+            "id": "{FormatDayt_now} {FormatClockt}",
+            "message": "{FormatDayt_now} {FormatClockt}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "FormatDayt_now",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatDay(t, now)"
+                },
+                {
+                    "id": "FormatClockt",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatClock(t)"
+                }
+            ]
+        },
+        {
+            "id": "Last {UsageChartDays} days",
+            "message": "Last {UsageChartDays} days",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "UsageChartDays",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "usageChartDays"
+                }
+            ]
+        },
+        {
+            "id": "{Day} · active {Second}",
+            "message": "{Day} · active {Second}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Day",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "day"
+                },
+                {
+                    "id": "Second",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(time.Duration(recent[index].ActiveSeconds) * time.Second)"
+                }
+            ]
+        },
+        {
+            "id": "Received",
+            "message": "Received",
+            "translation": ""
+        },
+        {
+            "id": "Sent",
+            "message": "Sent",
+            "translation": ""
+        },
+        {
+            "id": "in progress",
+            "message": "in progress",
+            "translation": ""
+        },
+        {
+            "id": "deactivated",
+            "message": "deactivated",
+            "translation": ""
+        },
+        {
+            "id": "WireGuard service stopped",
+            "message": "WireGuard service stopped",
+            "translation": ""
+        },
+        {
+            "id": "computer went to sleep",
+            "message": "computer went to sleep",
+            "translation": ""
+        },
+        {
+            "id": "unknown",
+            "message": "unknown",
+            "translation": ""
+        },
+        {
+            "id": "Connection history is disabled by policy.",
+            "message": "Connection history is disabled by policy.",
+            "translation": ""
+        },
+        {
+            "id": "Nothing recorded yet. Usage and sessions show up here once the tunnel has been active.",
+            "message": "Nothing recorded yet. Usage and sessions show up here once the tunnel has been active.",
+            "translation": ""
+        },
+        {
+            "id": "HISTORY",
+            "message": "HISTORY",
+            "translation": ""
+        },
+        {
+            "id": "Last 7 days",
+            "message": "Last 7 days",
+            "translation": ""
+        },
+        {
+            "id": "Last 30 days",
+            "message": "Last 30 days",
+            "translation": ""
+        },
+        {
+            "id": "{FormatPercentpercent} of active time connected, over the last {UptimeDays} days",
+            "message": "{FormatPercentpercent} of active time connected, over the last {UptimeDays} days",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "FormatPercentpercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(percent)"
+                },
+                {
+                    "id": "UptimeDays",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "uptimeDays"
+                }
+            ]
+        },
+        {
+            "id": "USAGE",
+            "message": "USAGE",
+            "translation": ""
+        },
+        {
             "id": "Active",
             "message": "Active",
             "translation": "Aktívny",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Activating",
-            "message": "Activating",
-            "translation": "Aktivuje sa",
-            "translatorComment": "Copied from source."
+            "id": "Uptime",
+            "message": "Uptime",
+            "translation": ""
         },
         {
-            "id": "Inactive",
-            "message": "Inactive",
-            "translation": "Neaktívny",
-            "translatorComment": "Copied from source."
+            "id": "SESSIONS",
+            "message": "SESSIONS",
+            "translation": ""
         },
         {
-            "id": "Deactivating",
-            "message": "Deactivating",
-            "translation": "Deaktivuje sa",
-            "translatorComment": "Copied from source."
+            "id": "{RxBytes} · {TxBytes}",
+            "message": "{RxBytes} · {TxBytes}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "RxBytes",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "l18n.Sprintf(\"In %s\", formatBytes(session.RxBytes))"
+                },
+                {
+                    "id": "TxBytes",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "l18n.Sprintf(\"Out %s\", formatBytes(session.TxBytes))"
+                }
+            ]
         },
         {
-            "id": "Unknown state",
-            "message": "Unknown state",
-            "translation": "Neznámy stav",
-            "translatorComment": "Copied from source."
+            "id": "Show all {Lensessions} sessions",
+            "message": "Show all {Lensessions} sessions",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Lensessions",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "len(sessions)"
+                }
+            ]
         },
         {
-            "id": "Log",
-            "message": "Log",
-            "translation": "Denník udalostí",
-            "translatorComment": "Copied from source."
+            "id": "Show fewer",
+            "message": "Show fewer",
+            "translation": ""
+        },
+        {
+            "id": "Save history…",
+            "message": "Save history…",
+            "translation": ""
+        },
+        {
+            "id": "Clear history",
+            "message": "Clear history",
+            "translation": ""
         },
         {
             "id": "\u0026Copy",
@@ -1049,22 +1677,42 @@
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-            "message": "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-            "translation": "Textové súbory (*.txt)|*.txt|Všetky súbory (*.*)|*.*",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "Export log to file",
             "message": "Export log to file",
             "translation": "Exportovať denník udalostí do súboru",
             "translatorComment": "Copied from source."
         },
         {
+            "id": "Log",
+            "message": "Log",
+            "translation": "Denník udalostí",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Copy",
+            "message": "Copy",
+            "translation": ""
+        },
+        {
+            "id": "Save to file…",
+            "message": "Save to file…",
+            "translation": ""
+        },
+        {
             "id": "\u0026About WireGuard…",
             "message": "\u0026About WireGuard…",
             "translation": "\u0026O WireGuard…",
             "translatorComment": "Copied from source."
+        },
+        {
+            "id": "All",
+            "message": "All",
+            "translation": ""
+        },
+        {
+            "id": "Warnings and errors",
+            "message": "Warnings and errors",
+            "translation": ""
         },
         {
             "id": "Tunnel Error",
@@ -1105,243 +1753,178 @@
             ]
         },
         {
-            "id": "WireGuard Detection Error",
-            "message": "WireGuard Detection Error",
-            "translation": "Chyba detekcie WireGuard",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Unable to wait for WireGuard window to appear: {Err}",
-            "message": "Unable to wait for WireGuard window to appear: {Err}",
-            "translation": "Nie je možné čakať na zobrazenie WireGuard okna: {Err}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Err",
-                    "string": "%[1]v",
-                    "type": "error",
-                    "underlyingType": "interface{Error() string}",
-                    "argNum": 1,
-                    "expr": "err"
-                }
-            ]
-        },
-        {
-            "id": "WireGuard: Deactivated",
-            "message": "WireGuard: Deactivated",
-            "translation": "WireGuard: deaktivovaný",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Status: Unknown",
-            "message": "Status: Unknown",
-            "translation": "Stav: Neznámy",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Addresses: None",
-            "message": "Addresses: None",
-            "translation": "Adresa: žiadna",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Manage tunnels…",
-            "message": "\u0026Manage tunnels…",
-            "translation": "\u0026Spravovať tunely…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Import tunnel(s) from file…",
-            "message": "\u0026Import tunnel(s) from file…",
-            "translation": "\u0026Importovať tunel(y) zo súboru…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "E\u0026xit",
-            "message": "E\u0026xit",
-            "translation": "U\u0026končiť",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Tunnels",
-            "message": "\u0026Tunnels",
-            "translation": "\u0026Tunely",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "WireGuard Activated",
-            "message": "WireGuard Activated",
-            "translation": "WireGuard je aktivovaný",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "The {Name} tunnel has been activated.",
-            "message": "The {Name} tunnel has been activated.",
-            "translation": "Tunel {Name} bol aktivovaný.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnel.Name"
-                }
-            ]
-        },
-        {
-            "id": "WireGuard Deactivated",
-            "message": "WireGuard Deactivated",
-            "translation": "WireGuard je deaktivovaný",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "The {Name} tunnel has been deactivated.",
-            "message": "The {Name} tunnel has been deactivated.",
-            "translation": "Tunel {Name} bol deaktivovaný.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Name",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnel.Name"
-                }
-            ]
-        },
-        {
-            "id": "WireGuard Tunnel Error",
-            "message": "WireGuard Tunnel Error",
-            "translation": "Chyba WireGuard tunelu",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "WireGuard: {TextForStateglobalState_true}",
-            "message": "WireGuard: {TextForStateglobalState_true}",
-            "translation": "WireGuard: {TextForStateglobalState_true}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TextForStateglobalState_true",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "textForState(globalState, true)"
-                }
-            ]
-        },
-        {
-            "id": "Status: {StateText}",
-            "message": "Status: {StateText}",
-            "translation": "Stav: {StateText}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "StateText",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "stateText"
-                }
-            ]
-        },
-        {
-            "id": "Addresses: {EnumerationSeparator}",
-            "message": "Addresses: {EnumerationSeparator}",
-            "translation": "Adresy: {EnumerationSeparator}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "EnumerationSeparator",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "strings.Join(addrs, l18n.EnumerationSeparator())"
-                }
-            ]
-        },
-        {
             "id": "An Update is Available!",
             "message": "An Update is Available!",
             "translation": "Je dostupná aktualizácia!",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "WireGuard Update Available",
-            "message": "WireGuard Update Available",
-            "translation": "Dostupná aktualizácia pre WireGuard",
+            "id": "Failed to determine tunnel state",
+            "message": "Failed to determine tunnel state",
+            "translation": "Nepodarilo sa zistiť stav tunela",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "An update to WireGuard is now available. You are advised to update as soon as possible.",
-            "message": "An update to WireGuard is now available. You are advised to update as soon as possible.",
-            "translation": "Je k dispozícii aktualizácia programu WireGuard. Je odporúčané čo najskôr vykonať aktualizáciu.",
+            "id": "Failed to activate tunnel",
+            "message": "Failed to activate tunnel",
+            "translation": "Nepodarilo sa aktivovať tunel",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Tunnels",
-            "message": "Tunnels",
-            "translation": "Tunely",
+            "id": "Failed to deactivate tunnel",
+            "message": "Failed to deactivate tunnel",
+            "translation": "Nepodarilo sa deaktivovať tunel",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "\u0026Edit",
-            "message": "\u0026Edit",
-            "translation": "\u0026Upraviť",
+            "id": "Unable to change the measurement",
+            "message": "Unable to change the measurement",
+            "translation": ""
+        },
+        {
+            "id": "Unable to change the favorite",
+            "message": "Unable to change the favorite",
+            "translation": ""
+        },
+        {
+            "id": "Unable to change the color",
+            "message": "Unable to change the color",
+            "translation": ""
+        },
+        {
+            "id": "Unable to create tunnel",
+            "message": "Unable to create tunnel",
+            "translation": "Tunel sa nedá vytvoriť",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Add \u0026empty tunnel…",
-            "message": "Add \u0026empty tunnel…",
-            "translation": "Pridať \u0026prázdny tunel…",
+            "id": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "message": "Are you sure you would like to delete tunnel ‘{Name}’?",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Delete tunnel ‘{Name}’",
+            "message": "Delete tunnel ‘{Name}’",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "{Question} You cannot undo this action.",
+            "message": "{Question} You cannot undo this action.",
+            "translation": "{Question} Túto akciu nemôže vrátiť späť.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Question",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "question"
+                }
+            ]
+        },
+        {
+            "id": "Unable to delete tunnel",
+            "message": "Unable to delete tunnel",
+            "translation": "Tunel sa nedá odstrániť",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Add Tunnel",
-            "message": "Add Tunnel",
-            "translation": "Pridať tunel",
+            "id": "A tunnel was unable to be removed: {Error}",
+            "message": "A tunnel was unable to be removed: {Error}",
+            "translation": "Nebolo možné odstrániť tunel: {Error}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Error",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "err.Error()"
+                }
+            ]
+        },
+        {
+            "id": "Are you sure you would like to clear the connection history of tunnel ‘{Name}’?",
+            "message": "Are you sure you would like to clear the connection history of tunnel ‘{Name}’?",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Clear history of ‘{Name}’",
+            "message": "Clear history of ‘{Name}’",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Unable to clear history",
+            "message": "Unable to clear history",
+            "translation": ""
+        },
+        {
+            "id": "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+            "message": "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
+            "translation": ""
+        },
+        {
+            "id": "Save connection history to file",
+            "message": "Save connection history to file",
+            "translation": ""
+        },
+        {
+            "id": "Unable to read connection history",
+            "message": "Unable to read connection history",
+            "translation": ""
+        },
+        {
+            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
+            "translation": "Konfiguračné súbory (*.zip, *.conf)|*.zip;*.conf|Všetky súbory (*.*)|*.*",
             "translatorComment": "Copied from source."
         },
         {
-            "id": "Remove selected tunnel(s)",
-            "message": "Remove selected tunnel(s)",
-            "translation": "Odstrániť označený(é) tunel(y)",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Export all tunnels to zip",
-            "message": "Export all tunnels to zip",
-            "translation": "Export všetkých tunelov do zip súboru",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Toggle",
-            "message": "\u0026Toggle",
-            "translation": "P\u0026repnúť",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Export all tunnels to \u0026zip…",
-            "message": "Export all tunnels to \u0026zip…",
-            "translation": "Export všetkých tunelov do \u0026zip súboru…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Edit \u0026selected tunnel…",
-            "message": "Edit \u0026selected tunnel…",
-            "translation": "Upraviť \u0026označený tunel…",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "\u0026Remove selected tunnel(s)",
-            "message": "\u0026Remove selected tunnel(s)",
-            "translation": "\u0026Odstrániť označené tunely",
+            "id": "Import tunnel(s) from file",
+            "message": "Import tunnel(s) from file",
+            "translation": "Importovať tunel(y) zo súboru",
             "translatorComment": "Copied from source."
         },
         {
@@ -1497,202 +2080,6 @@
             ]
         },
         {
-            "id": "Unable to create tunnel",
-            "message": "Unable to create tunnel",
-            "translation": "Tunel sa nedá vytvoriť",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Delete {TunnelCount} tunnels",
-            "message": "Delete {TunnelCount} tunnels",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "few": {
-                            "msg": "Odstránene {TunnelCount} tunely"
-                        },
-                        "many": {
-                            "msg": "Odstránených {TunnelCount} tunelov"
-                        },
-                        "one": {
-                            "msg": "Odstránený {TunnelCount} tunel"
-                        },
-                        "other": {
-                            "msg": "Odstránených {TunnelCount} tunelov"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "message": "Are you sure you would like to delete {TunnelCount} tunnels?",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "TunnelCount",
-                    "cases": {
-                        "few": {
-                            "msg": "Ste si istý, že si želáte odstrániť {TunnelCount} tunely?"
-                        },
-                        "many": {
-                            "msg": "Ste si istý, že si želáte odstrániť {TunnelCount} tunelov?"
-                        },
-                        "one": {
-                            "msg": "Ste si istý, že si želáte odstrániť {TunnelCount} tunel?"
-                        },
-                        "other": {
-                            "msg": "Ste si istý, že si želáte odstrániť {TunnelCount} tunelov?"
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "TunnelCount",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "tunnelCount"
-                }
-            ]
-        },
-        {
-            "id": "Delete tunnel ‘{TunnelName}’",
-            "message": "Delete tunnel ‘{TunnelName}’",
-            "translation": "Odstránenie tunela ‘{TunnelName}’",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ]
-        },
-        {
-            "id": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "message": "Are you sure you would like to delete tunnel ‘{TunnelName}’?",
-            "translation": "Ste si istý, že si želáte odstrániť tunel ‘{TunnelName}’?",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "TunnelName",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "tunnelName"
-                }
-            ]
-        },
-        {
-            "id": "{Question} You cannot undo this action.",
-            "message": "{Question} You cannot undo this action.",
-            "translation": "{Question} Túto akciu nemôže vrátiť späť.",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Question",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "question"
-                }
-            ]
-        },
-        {
-            "id": "Unable to delete tunnel",
-            "message": "Unable to delete tunnel",
-            "translation": "Tunel sa nedá odstrániť",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "A tunnel was unable to be removed: {Error}",
-            "message": "A tunnel was unable to be removed: {Error}",
-            "translation": "Nebolo možné odstrániť tunel: {Error}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Error",
-                    "string": "%[1]s",
-                    "type": "string",
-                    "underlyingType": "string",
-                    "argNum": 1,
-                    "expr": "errors[0].Error()"
-                }
-            ]
-        },
-        {
-            "id": "Unable to delete tunnels",
-            "message": "Unable to delete tunnels",
-            "translation": "Tunely sa nedajú odstrániť",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "{Lenerrors} tunnels were unable to be removed.",
-            "message": "{Lenerrors} tunnels were unable to be removed.",
-            "translation": {
-                "select": {
-                    "feature": "plural",
-                    "arg": "Lenerrors",
-                    "cases": {
-                        "few": {
-                            "msg": "{Lenerrors} tunely nebolo možné odstrániť."
-                        },
-                        "many": {
-                            "msg": "{Lenerrors} tunelov nebolo možné odstrániť."
-                        },
-                        "one": {
-                            "msg": "{Lenerrors} tunel nebolo možné odstrániť."
-                        },
-                        "other": {
-                            "msg": "{Lenerrors} tunelov nebolo možné odstrániť."
-                        }
-                    }
-                }
-            },
-            "placeholders": [
-                {
-                    "id": "Lenerrors",
-                    "string": "%[1]d",
-                    "type": "int",
-                    "underlyingType": "int",
-                    "argNum": 1,
-                    "expr": "len(errors)"
-                }
-            ]
-        },
-        {
-            "id": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "message": "Configuration Files (*.zip, *.conf)|*.zip;*.conf|All Files (*.*)|*.*",
-            "translation": "Konfiguračné súbory (*.zip, *.conf)|*.zip;*.conf|Všetky súbory (*.*)|*.*",
-            "translatorComment": "Copied from source."
-        },
-        {
-            "id": "Import tunnel(s) from file",
-            "message": "Import tunnel(s) from file",
-            "translation": "Importovať tunel(y) zo súboru",
-            "translatorComment": "Copied from source."
-        },
-        {
             "id": "Configuration ZIP Files (*.zip)|*.zip",
             "message": "Configuration ZIP Files (*.zip)|*.zip",
             "translation": "Konfiguračné ZIP súbory (*.zip)|*.zip",
@@ -1703,6 +2090,1476 @@
             "message": "Export tunnels to zip",
             "translation": "Export tunelov do zip súboru",
             "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Ethernet",
+            "message": "Ethernet",
+            "translation": ""
+        },
+        {
+            "id": "Wi-Fi",
+            "message": "Wi-Fi",
+            "translation": ""
+        },
+        {
+            "id": "mobile network",
+            "message": "mobile network",
+            "translation": ""
+        },
+        {
+            "id": "other network",
+            "message": "other network",
+            "translation": ""
+        },
+        {
+            "id": "the peer answered from another address than the configured one",
+            "message": "the peer answered from another address than the configured one",
+            "translation": ""
+        },
+        {
+            "id": "the name now resolves to other addresses; reactivate the tunnel to follow it",
+            "message": "the name now resolves to other addresses; reactivate the tunnel to follow it",
+            "translation": ""
+        },
+        {
+            "id": "Tunnel MTU",
+            "message": "Tunnel MTU",
+            "translation": ""
+        },
+        {
+            "id": "No, only the allowed IPs",
+            "message": "No, only the allowed IPs",
+            "translation": ""
+        },
+        {
+            "id": "Yes",
+            "message": "Yes",
+            "translation": ""
+        },
+        {
+            "id": "All traffic",
+            "message": "All traffic",
+            "translation": ""
+        },
+        {
+            "id": "Endpoint",
+            "message": "Endpoint",
+            "translation": ""
+        },
+        {
+            "id": "Address in use",
+            "message": "Address in use",
+            "translation": ""
+        },
+        {
+            "id": "none yet",
+            "message": "none yet",
+            "translation": ""
+        },
+        {
+            "id": "IPv4",
+            "message": "IPv4",
+            "translation": ""
+        },
+        {
+            "id": "IPv6",
+            "message": "IPv6",
+            "translation": ""
+        },
+        {
+            "id": "{String} ({Family})",
+            "message": "{String} ({Family})",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "String",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "peer.Address.String()"
+                },
+                {
+                    "id": "Family",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "family"
+                }
+            ]
+        },
+        {
+            "id": "Carried by",
+            "message": "Carried by",
+            "translation": ""
+        },
+        {
+            "id": "no route outside the tunnel",
+            "message": "no route outside the tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Carrier MTU",
+            "message": "Carrier MTU",
+            "translation": ""
+        },
+        {
+            "id": "{CarrierMTU_10} · the tunnel MTU plus {Overhead} bytes of WireGuard does not fit; use a tunnel MTU of {CarrierMTU_overhead_10} or less",
+            "message": "{CarrierMTU_10} · the tunnel MTU plus {Overhead} bytes of WireGuard does not fit; use a tunnel MTU of {CarrierMTU_overhead_10} or less",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "CarrierMTU_10",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "strconv.FormatUint(uint64(peer.CarrierMTU), 10)"
+                },
+                {
+                    "id": "Overhead",
+                    "string": "%[2]d",
+                    "type": "uint32",
+                    "underlyingType": "uint32",
+                    "argNum": 2,
+                    "expr": "overhead"
+                },
+                {
+                    "id": "CarrierMTU_overhead_10",
+                    "string": "%[3]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 3,
+                    "expr": "strconv.FormatUint(uint64(peer.CarrierMTU-overhead), 10)"
+                }
+            ]
+        },
+        {
+            "id": "Address to measure",
+            "message": "Address to measure",
+            "translation": ""
+        },
+        {
+            "id": "Connection quality is measured by pinging an address through the tunnel once a second. Leave the field empty to let WireGuard choose a peer address or DNS server of the tunnel.",
+            "message": "Connection quality is measured by pinging an address through the tunnel once a second. Leave the field empty to let WireGuard choose a peer address or DNS server of the tunnel.",
+            "translation": ""
+        },
+        {
+            "id": "\u0026Address:",
+            "message": "\u0026Address:",
+            "translation": ""
+        },
+        {
+            "id": "automatic",
+            "message": "automatic",
+            "translation": ""
+        },
+        {
+            "id": "OK",
+            "message": "OK",
+            "translation": ""
+        },
+        {
+            "id": "Invalid address",
+            "message": "Invalid address",
+            "translation": ""
+        },
+        {
+            "id": "WireGuard Detection Error",
+            "message": "WireGuard Detection Error",
+            "translation": "Chyba detekcie WireGuard",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Unable to wait for WireGuard window to appear: {Err}",
+            "message": "Unable to wait for WireGuard window to appear: {Err}",
+            "translation": "Nie je možné čakať na zobrazenie WireGuard okna: {Err}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Err",
+                    "string": "%[1]v",
+                    "type": "error",
+                    "underlyingType": "interface{Error() string}",
+                    "argNum": 1,
+                    "expr": "err"
+                }
+            ]
+        },
+        {
+            "id": "Not connected",
+            "message": "Not connected",
+            "translation": ""
+        },
+        {
+            "id": "No tunnel is active",
+            "message": "No tunnel is active",
+            "translation": ""
+        },
+        {
+            "id": "Activating…",
+            "message": "Activating…",
+            "translation": ""
+        },
+        {
+            "id": "Deactivating…",
+            "message": "Deactivating…",
+            "translation": ""
+        },
+        {
+            "id": "Connected",
+            "message": "Connected",
+            "translation": ""
+        },
+        {
+            "id": "Waiting for peer",
+            "message": "Waiting for peer",
+            "translation": ""
+        },
+        {
+            "id": "Peer does not answer · network unaffected",
+            "message": "Peer does not answer · network unaffected",
+            "translation": ""
+        },
+        {
+            "id": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "message": "Routes have not been applied, so the rest of your network is unaffected. Check the endpoint, the keys and your network.",
+            "translation": ""
+        },
+        {
+            "id": "No connection",
+            "message": "No connection",
+            "translation": ""
+        },
+        {
+            "id": "Peer does not answer",
+            "message": "Peer does not answer",
+            "translation": ""
+        },
+        {
+            "id": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": ""
+        },
+        {
+            "id": "Network cut off",
+            "message": "Network cut off",
+            "translation": ""
+        },
+        {
+            "id": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "message": "This tunnel takes over all network traffic, but its peer does not answer. Nothing gets through until it answers or you deactivate the tunnel.",
+            "translation": ""
+        },
+        {
+            "id": "Active · connection not verified yet",
+            "message": "Active · connection not verified yet",
+            "translation": ""
+        },
+        {
+            "id": "Inactive",
+            "message": "Inactive",
+            "translation": "Neaktívny",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Unknown state",
+            "message": "Unknown state",
+            "translation": "Neznámy stav",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Key used elsewhere",
+            "message": "Key used elsewhere",
+            "translation": ""
+        },
+        {
+            "id": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using this tunnel's key, which breaks connections on both. Give each device its own key pair.",
+            "translation": ""
+        },
+        {
+            "id": "The connection is unstable: it was lost and re-established recently.",
+            "message": "The connection is unstable: it was lost and re-established recently.",
+            "translation": ""
+        },
+        {
+            "id": "Listen port {Port} does not work here",
+            "message": "Listen port {Port} does not work here",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Port",
+                    "string": "%[1]d",
+                    "type": "uint16",
+                    "underlyingType": "uint16",
+                    "argNum": 1,
+                    "expr": "port"
+                }
+            ]
+        },
+        {
+            "id": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "message": "No reply arrived on the listen port of this tunnel, so it is connected from a random port instead. The router or another device on this network may be using port {Port}. Remove ListenPort from the configuration or choose another port.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Port",
+                    "string": "%[1]d",
+                    "type": "uint16",
+                    "underlyingType": "uint16",
+                    "argNum": 1,
+                    "expr": "port"
+                }
+            ]
+        },
+        {
+            "id": "No tunnels yet",
+            "message": "No tunnels yet",
+            "translation": ""
+        },
+        {
+            "id": "Add the configuration you were given to get started.",
+            "message": "Add the configuration you were given to get started.",
+            "translation": ""
+        },
+        {
+            "id": "There is nothing to connect to yet.",
+            "message": "There is nothing to connect to yet.",
+            "translation": ""
+        },
+        {
+            "id": "{Name} · latest handshake {FormatAgohandshakeAgehandshake_now}",
+            "message": "{Name} · latest handshake {FormatAgohandshakeAgehandshake_now}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "hero.tunnel.Name"
+                },
+                {
+                    "id": "FormatAgohandshakeAgehandshake_now",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatAgo(handshakeAge(handshake, now))"
+                }
+            ]
+        },
+        {
+            "id": "Address",
+            "message": "Address",
+            "translation": ""
+        },
+        {
+            "id": "Connected for",
+            "message": "Connected for",
+            "translation": ""
+        },
+        {
+            "id": "Quality",
+            "message": "Quality",
+            "translation": ""
+        },
+        {
+            "id": "Deactivate",
+            "message": "Deactivate",
+            "translation": ""
+        },
+        {
+            "id": "Details",
+            "message": "Details",
+            "translation": ""
+        },
+        {
+            "id": "Activate {Name}",
+            "message": "Activate {Name}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Import from file",
+            "message": "Import from file",
+            "translation": ""
+        },
+        {
+            "id": "Add a tunnel",
+            "message": "Add a tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Import reads .conf files, or .zip files of them, as your VPN provider or administrator hands them out. Add a tunnel opens an editor: paste a configuration you were given as text, or write a new one with a fresh key pair.",
+            "message": "Import reads .conf files, or .zip files of them, as your VPN provider or administrator hands them out. Add a tunnel opens an editor: paste a configuration you were given as text, or write a new one with a fresh key pair.",
+            "translation": ""
+        },
+        {
+            "id": "Tunnels can only be added by an administrator of this computer. Once one is added, it shows up here and you can switch it on and off.",
+            "message": "Tunnels can only be added by an administrator of this computer. Once one is added, it shows up here and you can switch it on and off.",
+            "translation": ""
+        },
+        {
+            "id": "OTHER TUNNELS",
+            "message": "OTHER TUNNELS",
+            "translation": ""
+        },
+        {
+            "id": "TUNNELS",
+            "message": "TUNNELS",
+            "translation": ""
+        },
+        {
+            "id": "Filter tunnels by name",
+            "message": "Filter tunnels by name",
+            "translation": ""
+        },
+        {
+            "id": "No tunnel name contains “{Filter}”",
+            "message": "No tunnel name contains “{Filter}”",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Filter",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "strings.TrimSpace(mtw.filter)"
+                }
+            ]
+        },
+        {
+            "id": "Add tunnel",
+            "message": "Add tunnel",
+            "translation": ""
+        },
+        {
+            "id": "Import",
+            "message": "Import",
+            "translation": ""
+        },
+        {
+            "id": "Export",
+            "message": "Export",
+            "translation": ""
+        },
+        {
+            "id": "Public key",
+            "message": "Public key",
+            "translation": ""
+        },
+        {
+            "id": "Listen port",
+            "message": "Listen port",
+            "translation": ""
+        },
+        {
+            "id": "MTU",
+            "message": "MTU",
+            "translation": ""
+        },
+        {
+            "id": "Addresses",
+            "message": "Addresses",
+            "translation": ""
+        },
+        {
+            "id": "DNS servers",
+            "message": "DNS servers",
+            "translation": ""
+        },
+        {
+            "id": "pre-up",
+            "message": "pre-up",
+            "translation": "pred zapnutím",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "post-up",
+            "message": "post-up",
+            "translation": "po zapnutí",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "pre-down",
+            "message": "pre-down",
+            "translation": "pred vypnutím",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "post-down",
+            "message": "post-down",
+            "translation": "po vypnutí",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "disabled, per policy",
+            "message": "disabled, per policy",
+            "translation": "zakázané, podľa politiky",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Scripts",
+            "message": "Scripts",
+            "translation": ""
+        },
+        {
+            "id": "Table",
+            "message": "Table",
+            "translation": ""
+        },
+        {
+            "id": "off",
+            "message": "off",
+            "translation": "vypnuté",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Preshared key",
+            "message": "Preshared key",
+            "translation": ""
+        },
+        {
+            "id": "enabled",
+            "message": "enabled",
+            "translation": "povolené",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "Allowed IPs",
+            "message": "Allowed IPs",
+            "translation": ""
+        },
+        {
+            "id": "Persistent keepalive",
+            "message": "Persistent keepalive",
+            "translation": ""
+        },
+        {
+            "id": "Latest handshake",
+            "message": "Latest handshake",
+            "translation": ""
+        },
+        {
+            "id": "Transfer",
+            "message": "Transfer",
+            "translation": ""
+        },
+        {
+            "id": "{RxBytes} received, {TxBytes} sent",
+            "message": "{RxBytes} received, {TxBytes} sent",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "RxBytes",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatBytes(uint64(c.RxBytes))"
+                },
+                {
+                    "id": "TxBytes",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatBytes(uint64(c.TxBytes))"
+                }
+            ]
+        },
+        {
+            "id": "Copy public key",
+            "message": "Copy public key",
+            "translation": ""
+        },
+        {
+            "id": "CONNECTION",
+            "message": "CONNECTION",
+            "translation": ""
+        },
+        {
+            "id": "PATH",
+            "message": "PATH",
+            "translation": ""
+        },
+        {
+            "id": "INTERFACE",
+            "message": "INTERFACE",
+            "translation": ""
+        },
+        {
+            "id": "PEER",
+            "message": "PEER",
+            "translation": ""
+        },
+        {
+            "id": "Activate",
+            "message": "Activate",
+            "translation": ""
+        },
+        {
+            "id": "Edit",
+            "message": "Edit",
+            "translation": ""
+        },
+        {
+            "id": "Remove",
+            "message": "Remove",
+            "translation": ""
+        },
+        {
+            "id": "Green",
+            "message": "Green",
+            "translation": ""
+        },
+        {
+            "id": "Blue",
+            "message": "Blue",
+            "translation": ""
+        },
+        {
+            "id": "Violet",
+            "message": "Violet",
+            "translation": ""
+        },
+        {
+            "id": "Amber",
+            "message": "Amber",
+            "translation": ""
+        },
+        {
+            "id": "Red",
+            "message": "Red",
+            "translation": ""
+        },
+        {
+            "id": "Teal",
+            "message": "Teal",
+            "translation": ""
+        },
+        {
+            "id": "Pink",
+            "message": "Pink",
+            "translation": ""
+        },
+        {
+            "id": "Gray",
+            "message": "Gray",
+            "translation": ""
+        },
+        {
+            "id": "None",
+            "message": "None",
+            "translation": ""
+        },
+        {
+            "id": "Favorites are listed first, here and in the tray menu.",
+            "message": "Favorites are listed first, here and in the tray menu.",
+            "translation": ""
+        },
+        {
+            "id": "Pings an address through the tunnel once a second to show latency and loss. Off by default, as it sends traffic of its own.",
+            "message": "Pings an address through the tunnel once a second to show latency and loss. Off by default, as it sends traffic of its own.",
+            "translation": ""
+        },
+        {
+            "id": "Disabled by policy. Your administrator does not allow measuring connection quality.",
+            "message": "Disabled by policy. Your administrator does not allow measuring connection quality.",
+            "translation": ""
+        },
+        {
+            "id": "SETTINGS",
+            "message": "SETTINGS",
+            "translation": ""
+        },
+        {
+            "id": "Favorite",
+            "message": "Favorite",
+            "translation": ""
+        },
+        {
+            "id": "Color",
+            "message": "Color",
+            "translation": ""
+        },
+        {
+            "id": "Measure connection quality",
+            "message": "Measure connection quality",
+            "translation": ""
+        },
+        {
+            "id": "Change…",
+            "message": "Change…",
+            "translation": ""
+        },
+        {
+            "id": "Not verified",
+            "message": "Not verified",
+            "translation": ""
+        },
+        {
+            "id": "No data",
+            "message": "No data",
+            "translation": ""
+        },
+        {
+            "id": "Handshake",
+            "message": "Handshake",
+            "translation": ""
+        },
+        {
+            "id": "Reconnect",
+            "message": "Reconnect",
+            "translation": ""
+        },
+        {
+            "id": "Lost probe",
+            "message": "Lost probe",
+            "translation": ""
+        },
+        {
+            "id": "Unstable",
+            "message": "Unstable",
+            "translation": ""
+        },
+        {
+            "id": "Events",
+            "message": "Events",
+            "translation": ""
+        },
+        {
+            "id": "{Reconnects} reconnects",
+            "message": "{Reconnects} reconnects",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Reconnects",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.reconnects"
+                }
+            ]
+        },
+        {
+            "id": "{Handshakes} handshakes",
+            "message": "{Handshakes} handshakes",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Handshakes",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.handshakes"
+                }
+            ]
+        },
+        {
+            "id": "{Lost} of {Sent} probes lost",
+            "message": "{Lost} of {Sent} probes lost",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Lost",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "bucket.lost"
+                },
+                {
+                    "id": "Sent",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "bucket.sent"
+                }
+            ]
+        },
+        {
+            "id": "{Reconnects} reconnects · {Handshakes} handshakes",
+            "message": "{Reconnects} reconnects · {Handshakes} handshakes",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Reconnects",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "reconnects"
+                },
+                {
+                    "id": "Handshakes",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "handshakes"
+                }
+            ]
+        },
+        {
+            "id": "0 ms",
+            "message": "0 ms",
+            "translation": ""
+        },
+        {
+            "id": "{Ms} ms",
+            "message": "{Ms} ms",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Ms",
+                    "string": "%.1[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "ms"
+                }
+            ]
+        },
+        {
+            "id": "{Percent} %",
+            "message": "{Percent} %",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Percent",
+                    "string": "%.0[1]f",
+                    "type": "float64",
+                    "underlyingType": "float64",
+                    "argNum": 1,
+                    "expr": "percent"
+                }
+            ]
+        },
+        {
+            "id": "{LossPercent} loss",
+            "message": "{LossPercent} loss",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "LossPercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(summary.lossPercent())"
+                }
+            ]
+        },
+        {
+            "id": "{Latency} · {LossPercent} loss",
+            "message": "{Latency} · {LossPercent} loss",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Latency",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatLatency(summary.latency)"
+                },
+                {
+                    "id": "LossPercent",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatPercent(summary.lossPercent())"
+                }
+            ]
+        },
+        {
+            "id": "Quality cannot be measured",
+            "message": "Quality cannot be measured",
+            "translation": ""
+        },
+        {
+            "id": "The address used to measure the connection does not answer pings, so latency and loss are unknown. This says nothing about the tunnel itself. Choose another address on the details screen.",
+            "message": "The address used to measure the connection does not answer pings, so latency and loss are unknown. This says nothing about the tunnel itself. Choose another address on the details screen.",
+            "translation": ""
+        },
+        {
+            "id": "Poor connection quality",
+            "message": "Poor connection quality",
+            "translation": ""
+        },
+        {
+            "id": "{LossPercent} of the test pings in the last minute got no answer. Pages may load slowly and calls may break up.",
+            "message": "{LossPercent} of the test pings in the last minute got no answer. Pages may load slowly and calls may break up.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "LossPercent",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(summary.lossPercent())"
+                }
+            ]
+        },
+        {
+            "id": "Slow connection",
+            "message": "Slow connection",
+            "translation": ""
+        },
+        {
+            "id": "Answers through the tunnel took {Latency} on average in the last minute, which makes the connection feel slow.",
+            "message": "Answers through the tunnel took {Latency} on average in the last minute, which makes the connection feel slow.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Latency",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatLatency(summary.latency)"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds} s",
+            "message": "{Seconds} s",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds__60} min",
+            "message": "{Seconds__60} min",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds__60",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 60"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds__3600} h {Seconds__3600__60} min",
+            "message": "{Seconds__3600} h {Seconds__3600__60} min",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds__3600",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 3600"
+                },
+                {
+                    "id": "Seconds__3600__60",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 3600 / 60"
+                }
+            ]
+        },
+        {
+            "id": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "message": "{Seconds__86400} d {Seconds__86400__3600} h",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Seconds__86400",
+                    "string": "%[1]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 1,
+                    "expr": "seconds / 86400"
+                },
+                {
+                    "id": "Seconds__86400__3600",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "seconds % 86400 / 3600"
+                }
+            ]
+        },
+        {
+            "id": "last active {LastActiveEnd} for {LastActiveDuration}",
+            "message": "last active {LastActiveEnd} for {LastActiveDuration}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "LastActiveEnd",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatAgo(now.Sub(metrics.LastActiveEnd))"
+                },
+                {
+                    "id": "LastActiveDuration",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(metrics.LastActiveDuration)"
+                }
+            ]
+        },
+        {
+            "id": "Active for",
+            "message": "Active for",
+            "translation": ""
+        },
+        {
+            "id": "not connected",
+            "message": "not connected",
+            "translation": ""
+        },
+        {
+            "id": "Receiving",
+            "message": "Receiving",
+            "translation": ""
+        },
+        {
+            "id": "Sending",
+            "message": "Sending",
+            "translation": ""
+        },
+        {
+            "id": "Interface errors",
+            "message": "Interface errors",
+            "translation": ""
+        },
+        {
+            "id": "{InErrors} in, {OutErrors} out",
+            "message": "{InErrors} in, {OutErrors} out",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "InErrors",
+                    "string": "%[1]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 1,
+                    "expr": "metrics.InErrors"
+                },
+                {
+                    "id": "OutErrors",
+                    "string": "%[2]d",
+                    "type": "uint64",
+                    "underlyingType": "uint64",
+                    "argNum": 2,
+                    "expr": "metrics.OutErrors"
+                }
+            ]
+        },
+        {
+            "id": "Dropped packets",
+            "message": "Dropped packets",
+            "translation": ""
+        },
+        {
+            "id": "Connection failures",
+            "message": "Connection failures",
+            "translation": ""
+        },
+        {
+            "id": "{ConnectionFailures}",
+            "message": "{ConnectionFailures}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "ConnectionFailures",
+                    "string": "%[1]d",
+                    "type": "uint32",
+                    "underlyingType": "uint32",
+                    "argNum": 1,
+                    "expr": "metrics.ConnectionFailures"
+                }
+            ]
+        },
+        {
+            "id": "Reconnects",
+            "message": "Reconnects",
+            "translation": ""
+        },
+        {
+            "id": "Last active",
+            "message": "Last active",
+            "translation": ""
+        },
+        {
+            "id": "Last active for",
+            "message": "Last active for",
+            "translation": ""
+        },
+        {
+            "id": "no reply from the measured address",
+            "message": "no reply from the measured address",
+            "translation": ""
+        },
+        {
+            "id": "no answer in the last minute",
+            "message": "no answer in the last minute",
+            "translation": ""
+        },
+        {
+            "id": "Jitter",
+            "message": "Jitter",
+            "translation": ""
+        },
+        {
+            "id": "Loss",
+            "message": "Loss",
+            "translation": ""
+        },
+        {
+            "id": "{FormatPercentloss} ({Lost} of {Sent} in the last minute)",
+            "message": "{FormatPercentloss} ({Lost} of {Sent} in the last minute)",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "FormatPercentloss",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatPercent(loss)"
+                },
+                {
+                    "id": "Lost",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "quality.lost"
+                },
+                {
+                    "id": "Sent",
+                    "string": "%[3]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 3,
+                    "expr": "quality.sent"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard: Deactivated",
+            "message": "WireGuard: Deactivated",
+            "translation": "WireGuard: deaktivovaný",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "WireGuard Activated",
+            "message": "WireGuard Activated",
+            "translation": "WireGuard je aktivovaný",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "The {Name} tunnel has been activated.",
+            "message": "The {Name} tunnel has been activated.",
+            "translation": "Tunel {Name} bol aktivovaný.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard Deactivated",
+            "message": "WireGuard Deactivated",
+            "translation": "WireGuard je deaktivovaný",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "The {Name} tunnel has been deactivated.",
+            "message": "The {Name} tunnel has been deactivated.",
+            "translation": "Tunel {Name} bol deaktivovaný.",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard Tunnel Error",
+            "message": "WireGuard Tunnel Error",
+            "translation": "Chyba WireGuard tunelu",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "WireGuard: No Connection",
+            "message": "WireGuard: No Connection",
+            "translation": ""
+        },
+        {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Its routes have not been applied, so the rest of your network is unaffected.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard: Network Cut Off",
+            "message": "WireGuard: Network Cut Off",
+            "translation": ""
+        },
+        {
+            "id": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "message": "The {Name} tunnel takes over all network traffic, but its peer does not answer. Your network is cut off until the peer answers or you deactivate the tunnel.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "message": "The {Name} tunnel is active, but its peer does not answer. Check the endpoint, the keys and your network.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard: Unstable Connection",
+            "message": "WireGuard: Unstable Connection",
+            "translation": ""
+        },
+        {
+            "id": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "message": "The connection of the {Name} tunnel was lost and re-established. If this keeps happening, check your network, or whether another device uses the same configuration.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard: Key Used Elsewhere",
+            "message": "WireGuard: Key Used Elsewhere",
+            "translation": ""
+        },
+        {
+            "id": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "message": "Another device appears to be using the key of the {Name} tunnel, which breaks connections on both. Give each device its own key pair.",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "tunnel.Name"
+                }
+            ]
+        },
+        {
+            "id": "WireGuard Update Available",
+            "message": "WireGuard Update Available",
+            "translation": "Dostupná aktualizácia pre WireGuard",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "An update to WireGuard is now available. You are advised to update as soon as possible.",
+            "message": "An update to WireGuard is now available. You are advised to update as soon as possible.",
+            "translation": "Je k dispozícii aktualizácia programu WireGuard. Je odporúčané čo najskôr vykonať aktualizáciu.",
+            "translatorComment": "Copied from source."
+        },
+        {
+            "id": "WireGuard: {SprintfNot_connected}",
+            "message": "WireGuard: {SprintfNot_connected}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "SprintfNot_connected",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "l18n.Sprintf(\"Not connected\")"
+                }
+            ]
+        },
+        {
+            "id": "Unstable connection",
+            "message": "Unstable connection",
+            "translation": ""
+        },
+        {
+            "id": "{Name} (+{Others})",
+            "message": "{Name} (+{Others})",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                },
+                {
+                    "id": "Others",
+                    "string": "%[2]d",
+                    "type": "int",
+                    "underlyingType": "int",
+                    "argNum": 2,
+                    "expr": "others"
+                }
+            ]
+        },
+        {
+            "id": "{Name} · connected for {ConnectedSince}",
+            "message": "{Name} · connected for {ConnectedSince}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                },
+                {
+                    "id": "ConnectedSince",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatDuration(now.Sub(entry.metrics.ConnectedSince))"
+                }
+            ]
+        },
+        {
+            "id": "In {Rx} · Out {Tx}",
+            "message": "In {Rx} · Out {Tx}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Rx",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "formatRate(rate.rx)"
+                },
+                {
+                    "id": "Tx",
+                    "string": "%[2]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 2,
+                    "expr": "formatRate(rate.tx)"
+                }
+            ]
+        },
+        {
+            "id": "Turn off",
+            "message": "Turn off",
+            "translation": ""
+        },
+        {
+            "id": "SWITCH TO",
+            "message": "SWITCH TO",
+            "translation": ""
+        },
+        {
+            "id": "Manage tunnels",
+            "message": "Manage tunnels",
+            "translation": ""
+        },
+        {
+            "id": "Import…",
+            "message": "Import…",
+            "translation": ""
+        },
+        {
+            "id": "About",
+            "message": "About",
+            "translation": ""
+        },
+        {
+            "id": "Exit",
+            "message": "Exit",
+            "translation": ""
         },
         {
             "id": "{Title} (unsigned build, no updates)",
@@ -1791,6 +3648,22 @@
                     "underlyingType": "interface{Error() string}",
                     "argNum": 1,
                     "expr": "err"
+                }
+            ]
+        },
+        {
+            "id": "Status: {StateText}",
+            "message": "Status: {StateText}",
+            "translation": "Stav: {StateText}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "StateText",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "stateText"
                 }
             ]
         },
